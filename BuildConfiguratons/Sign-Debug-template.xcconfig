@@ -1,0 +1,19 @@
+//
+//  Sign-Debug.xcconfig
+//  Diffusion
+//
+//  Created by Fahim Farook on 15/12/2022.
+//
+
+// Detailed explanation of how to set this up can be found here: https://ajpagente.github.io/mobile/using-xcconfig/
+// Note: This is your personal signing details. *Do not* check this into the repo. The Debug.xcconfig file includes this one so that you can modify this without impacting the project.
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+// See the first link above for details on how to get the following values
+DEVELOPMENT_TEAM = <10 character Team ID>
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = <40 character SHA1 Hash from provisionin profile for iOS>
+PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*] = <36 character UUID from provisioning profile for iOS>
+
+CODE_SIGN_IDENTITY[sdk=macos*] = <40 character SHA1 Hash from provisionin profile for macOS>
+PROVISIONING_PROFILE_SPECIFIER[sdk=macos*] = <36 character UUID from provisioning profile for macOS>

@@ -1,0 +1,13 @@
+//
+//  Release.xcconfig
+//  Diffusion
+//
+//  Created by Fahim Farook on 15/12/2022.
+//
+
+// Detailed explanation of how to set this up can be found here: https://ajpagente.github.io/mobile/using-xcconfig/
+// Note: This file is the one referenced from the Xcode project and this file can be checked into the Git repo. But this references the file with your personal info (Sign-Debug.xccconfig) and that file should not be checked into the repo.
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+#include "Sign-Release.xcconfig"

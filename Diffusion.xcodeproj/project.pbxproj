@@ -41,6 +41,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DD651294294ADF9D0035EC0F /* Sign-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Sign-Debug.xcconfig"; sourceTree = "<group>"; };
+		DD651295294ADFAB0035EC0F /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		DD651296294AE18F0035EC0F /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		DD651297294AE1A70035EC0F /* Sign-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Sign-Release.xcconfig"; sourceTree = "<group>"; };
 		EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineLoader.swift; sourceTree = "<group>"; };
 		EBB5BA5929426E06003A2A5B /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
 		EBE4438729488DCA00CDA605 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -88,6 +92,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DD651293294ADF680035EC0F /* BuildConfiguratons */ = {
+			isa = PBXGroup;
+			children = (
+				DD651294294ADF9D0035EC0F /* Sign-Debug.xcconfig */,
+				DD651295294ADFAB0035EC0F /* Debug.xcconfig */,
+				DD651296294AE18F0035EC0F /* Release.xcconfig */,
+				DD651297294AE1A70035EC0F /* Sign-Release.xcconfig */,
+			);
+			path = BuildConfiguratons;
+			sourceTree = "<group>";
+		};
 		EBB5BA5129425B07003A2A5B /* Pipeline */ = {
 			isa = PBXGroup;
 			children = (
@@ -102,10 +117,11 @@
 			children = (
 				EBE4438729488DCA00CDA605 /* README.md */,
 				EBE443892948953600CDA605 /* LICENSE */,
-				EBE755FF293E910800806B32 /* Packages */,
 				EBE755C7293E37DD00806B32 /* Diffusion */,
 				EBE755D9293E37DE00806B32 /* DiffusionTests */,
 				EBE755E3293E37DE00806B32 /* DiffusionUITests */,
+				DD651293294ADF680035EC0F /* BuildConfiguratons */,
+				EBE755FF293E910800806B32 /* Packages */,
 				EBE755C6293E37DD00806B32 /* Products */,
 				EBE75603293E93BB00806B32 /* Frameworks */,
 			);
@@ -476,14 +492,16 @@
 		};
 		EBE755EB293E37DE00806B32 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD651295294ADFAB0035EC0F /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Diffusion/Diffusion.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "$(inherited)";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Diffusion/Preview Content\"";
-				DEVELOPMENT_TEAM = ZWDJQ796RU;
+				DEVELOPMENT_TEAM = "$(inherited)";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -502,11 +520,12 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pcuenca.Diffusion;
+				PRODUCT_BUNDLE_IDENTIFIER = org.farook.Diffusion;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "$(inherited)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -516,14 +535,16 @@
 		};
 		EBE755EC293E37DE00806B32 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD651296294AE18F0035EC0F /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Diffusion/Diffusion.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "$(inherited)";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Diffusion/Preview Content\"";
-				DEVELOPMENT_TEAM = ZWDJQ796RU;
+				DEVELOPMENT_TEAM = "$(inherited)";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -542,11 +563,12 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pcuenca.Diffusion;
+				PRODUCT_BUNDLE_IDENTIFIER = org.farook.Diffusion;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "$(inherited)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -556,6 +578,7 @@
 		};
 		EBE755EE293E37DE00806B32 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD651295294ADFAB0035EC0F /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -579,6 +602,7 @@
 		};
 		EBE755EF293E37DE00806B32 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD651296294AE18F0035EC0F /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -602,6 +626,7 @@
 		};
 		EBE755F1293E37DE00806B32 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD651295294ADFAB0035EC0F /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -624,6 +649,7 @@
 		};
 		EBE755F2293E37DE00806B32 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD651296294AE18F0035EC0F /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
