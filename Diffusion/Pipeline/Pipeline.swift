@@ -29,15 +29,16 @@ class Pipeline {
         self.pipeline = pipeline
     }
     
-    func generate(prompt: String, scheduler: StableDiffusionScheduler, numInferenceSteps stepCount: Int = 50, seed: UInt32? = nil) throws -> CGImage {
+	func generate(prompt: String, scheduler: StableDiffusionScheduler, numInferenceSteps stepCount: Int = 50, imageCount: Int = 1, safetyOn: Bool = false, seed: UInt32? = nil) throws -> CGImage {
         let beginDate = Date()
         print("Generating...")
         let theSeed = seed ?? UInt32.random(in: 0..<UInt32.max)
         let images = try pipeline.generateImages(
             prompt: prompt,
-            imageCount: 1,
+            imageCount: imageCount,
             stepCount: stepCount,
             seed: theSeed,
+			disableSafety: !safetyOn,
             scheduler: scheduler
         ) { progress in
             handleProgress(progress)

@@ -33,7 +33,7 @@ struct LoadingView: View {
     var body: some View {
         VStack {
             switch currentView {
-            case .textToImage: TextToImage().transition(.opacity)
+            case .textToImage: TextToImageView().transition(.opacity)
             case .error(let message): ErrorPopover(errorMessage: message).transition(.move(edge: .top))
             case .loading:
                 // TODO: Don't present progress view if the pipeline is cached
