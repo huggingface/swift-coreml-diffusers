@@ -11,7 +11,7 @@ import Combine
 import StableDiffusion
 
 // TODO: bind to UI controls
-let scheduler = StableDiffusionScheduler.dpmpp
+let scheduler = StableDiffusionScheduler.dpmSolverMultistepScheduler
 let steps = 25
 let seed: UInt32? = nil
 
