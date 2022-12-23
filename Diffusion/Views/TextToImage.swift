@@ -26,6 +26,46 @@ enum GenerationState {
     case idle(String)
 }
 
+/// Presents "Share" + "Save" buttons on Mac; just "Share" on iOS/iPadOS.
+/// This is because I didn't find a way for "Share" to show a Save option when running on macOS.
+struct ShareButtons: View {
+    var image: CGImage
+    var name: String
+    
+    var filename: String {
+        name.replacingOccurrences(of: " ", with: "_")
+    }
+    
+    var body: some View {
+        let imageView = Image(image, scale: 1, label: Text(name))
+
+        if (ProcessInfo.processInfo.isMacCatalystApp) {
+            HStack {
+                ShareLink(item: imageView, preview: SharePreview(name, image: imageView))
+                Button() {
+                    guard let imageData = UIImage(cgImage: image).pngData() else {
+                        return
+                    }
+                    do {
+                        let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(filename).png")
+                        try imageData.write(to: fileURL)
+                        let controller = UIDocumentPickerViewController(forExporting: [fileURL])
+                        
+                        let scene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+                        scene.windows.first!.rootViewController!.present(controller, animated: true)
+                    } catch {
+                        print("Error creating file")
+                    }
+                } label: {
+                    Label("Save…", systemImage: "square.and.arrow.down")
+                }
+            }
+        } else {
+            ShareLink(item: imageView, preview: SharePreview(name, image: imageView))
+        }
+    }
+}
+
 struct ImageWithPlaceholder: View {
     var image: Binding<CGImage?>
     var state: Binding<GenerationState>
@@ -50,8 +90,8 @@ struct ImageWithPlaceholder: View {
             let imageView = Image(theImage, scale: 1, label: Text("generated"))
             return AnyView(
                 VStack {
-                imageView.resizable().clipShape(RoundedRectangle(cornerRadius: 20))
-                    ShareLink(item: imageView, preview: SharePreview(lastPrompt, image: imageView))
+                    imageView.resizable().clipShape(RoundedRectangle(cornerRadius: 20))
+                    ShareButtons(image: theImage, name: lastPrompt)
             })
         }
     }
