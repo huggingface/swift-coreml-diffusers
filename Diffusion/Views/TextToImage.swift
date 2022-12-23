@@ -92,13 +92,15 @@ struct ImageWithPlaceholder: View {
                 VStack {
                     imageView.resizable().clipShape(RoundedRectangle(cornerRadius: 20))
                     HStack {
-                        if let interval = interval {
-                            Text(String(format:"Time: %.1fs", interval))
-                        }
-                        Spacer()
-                        ShareButtons(image: theImage, name: lastPrompt)
-                        Spacer()
-                    }
+                        let intervalString = String(format: "Time: %.1fs", interval ?? 0)
+                        Rectangle().fill(.clear).overlay(Text(intervalString).frame(maxWidth: .infinity, alignment: .leading).padding(.leading))
+                        Rectangle().fill(.clear).overlay(
+                            HStack {
+                                Spacer()
+                                ShareButtons(image: theImage, name: lastPrompt).padding(.trailing)
+                            }
+                        )
+                    }.frame(maxHeight: 25)
             })
         }
     }
