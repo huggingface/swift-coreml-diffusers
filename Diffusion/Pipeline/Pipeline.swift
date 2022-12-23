@@ -29,7 +29,7 @@ class Pipeline {
         self.pipeline = pipeline
     }
     
-    func generate(prompt: String, scheduler: StableDiffusionScheduler, numInferenceSteps stepCount: Int = 50, seed: UInt32? = nil) throws -> CGImage {
+    func generate(prompt: String, scheduler: StableDiffusionScheduler, numInferenceSteps stepCount: Int = 50, seed: UInt32? = nil) throws -> (CGImage, TimeInterval) {
         let beginDate = Date()
         print("Generating...")
         let theSeed = seed ?? UInt32.random(in: 0..<UInt32.max)
@@ -43,11 +43,12 @@ class Pipeline {
             handleProgress(progress)
             return true
         }
-        print("Got images: \(images) in \(Date().timeIntervalSince(beginDate))")
+        let interval = Date().timeIntervalSince(beginDate)
+        print("Got images: \(images) in \(interval)")
         
         // unwrap the 1 image we asked for
         guard let image = images.compactMap({ $0 }).first else { throw "Generation failed" }
-        return image
+        return (image, interval)
     }
 
     func handleProgress(_ progress: StableDiffusionPipeline.Progress) {

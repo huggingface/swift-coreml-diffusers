@@ -15,7 +15,7 @@ let scheduler = StableDiffusionScheduler.dpmSolverMultistepScheduler
 let steps = 25
 let seed: UInt32? = nil
 
-func generate(pipeline: Pipeline?, prompt: String) async -> CGImage? {
+func generate(pipeline: Pipeline?, prompt: String) async -> (CGImage, TimeInterval)? {
     guard let pipeline = pipeline else { return nil }
     return try? pipeline.generate(prompt: prompt, scheduler: scheduler, numInferenceSteps: steps, seed: seed)
 }
@@ -23,7 +23,7 @@ func generate(pipeline: Pipeline?, prompt: String) async -> CGImage? {
 enum GenerationState {
     case startup
     case running(StableDiffusionProgress?)
-    case idle(String)
+    case idle(String, TimeInterval?)
 }
 
 /// Presents "Share" + "Save" buttons on Mac; just "Share" on iOS/iPadOS.
@@ -82,7 +82,7 @@ struct ImageWithPlaceholder: View {
             let fraction = Double(step) / Double(progress.stepCount)
             let label = "Step \(step) of \(progress.stepCount)"
             return AnyView(ProgressView(label, value: fraction, total: 1).padding())
-        case .idle(let lastPrompt):
+        case .idle(let lastPrompt, let interval):
             guard let theImage = image.wrappedValue else {
                 return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
             }
@@ -91,7 +91,14 @@ struct ImageWithPlaceholder: View {
             return AnyView(
                 VStack {
                     imageView.resizable().clipShape(RoundedRectangle(cornerRadius: 20))
-                    ShareButtons(image: theImage, name: lastPrompt)
+                    HStack {
+                        if let interval = interval {
+                            Text(String(format:"Time: %.1fs", interval))
+                        }
+                        Spacer()
+                        ShareButtons(image: theImage, name: lastPrompt)
+                        Spacer()
+                    }
             })
         }
     }
@@ -110,8 +117,9 @@ struct TextToImage: View {
         if case .running = state { return }
         Task {
             state = .running(nil)
-            image = await generate(pipeline: context.pipeline, prompt: prompt)
-            state = .idle(prompt)
+            let interval: TimeInterval?
+            (image, interval) = await generate(pipeline: context.pipeline, prompt: prompt) ?? (nil, nil)
+            state = .idle(prompt, interval)
         }
     }
     
