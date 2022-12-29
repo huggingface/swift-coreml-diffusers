@@ -1,0 +1,15 @@
+//
+//  common.xcconfig
+//  Diffusion
+//
+//  Created by Pedro Cuenca on 202212.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+// Update if you fork this repo
+DEVELOPMENT_TEAM = ZWDJQ796RU
+
+// Disable code-signing for macOS
+CODE_SIGN_IDENTITY[sdk=macos*] =

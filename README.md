@@ -16,6 +16,10 @@ For faster inference, we use a very fast scheduler: [DPM-Solver++](https://githu
   * ~10s in macOS on MacBook Pro M1 Max (64 GB).
   * ~1 min 15s in iPhone 14 Pro.
 
+## How to Build
+
+If you clone or fork this repo, please update `common.xcconfig` with your development team identifier. Code signing is required to run on iOS, but it's currently disabled for macOS.
+
 ## Limitations
 
 - The UI does not expose a way to configure the scheduler, number of inference steps, or generation seed. These are all available in the underlying code.

@@ -44,6 +44,7 @@
 		EB33A51E2954E1BC00B16357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineLoader.swift; sourceTree = "<group>"; };
 		EBB5BA5929426E06003A2A5B /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
+		EBE3FF4A295DFE2400E921AA /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = config/common.xcconfig; sourceTree = "<group>"; };
 		EBE4438729488DCA00CDA605 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EBE443892948953600CDA605 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		EBE755C5293E37DD00806B32 /* Diffusion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Diffusion.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +102,7 @@
 		EBE755BC293E37DD00806B32 = {
 			isa = PBXGroup;
 			children = (
+				EBE3FF4A295DFE2400E921AA /* common.xcconfig */,
 				EBE4438729488DCA00CDA605 /* README.md */,
 				EBE443892948953600CDA605 /* LICENSE */,
 				EBE755FF293E910800806B32 /* Packages */,
@@ -478,6 +480,7 @@
 		};
 		EBE755EB293E37DE00806B32 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EBE3FF4A295DFE2400E921AA /* common.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -485,7 +488,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Diffusion/Preview Content\"";
-				DEVELOPMENT_TEAM = ZWDJQ796RU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -519,6 +521,7 @@
 		};
 		EBE755EC293E37DE00806B32 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EBE3FF4A295DFE2400E921AA /* common.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -526,7 +529,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Diffusion/Preview Content\"";
-				DEVELOPMENT_TEAM = ZWDJQ796RU;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
