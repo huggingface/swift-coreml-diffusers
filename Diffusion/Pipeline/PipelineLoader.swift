@@ -15,7 +15,7 @@ import ZIPFoundation
 import StableDiffusion
 
 class PipelineLoader {
-    static let models = Path.applicationSupport / "models"
+    static let models = Path.applicationSupport / "hf-diffusion-models"
     
     let url: URL
     private var downloadSubscriber: Cancellable?
