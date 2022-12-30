@@ -9,7 +9,7 @@
 import SwiftUI
 import Combine
 
-let PIPELINE_URL = "https://huggingface.co/pcuenq/coreml-stable-diffusion/resolve/main/coreml-stable-diffusion-v1-5_original_compiled.zip"
+let model = ModelInfo.v2Base
 
 class DiffusionGlobals: ObservableObject {
     @Published var pipeline: Pipeline? = nil
@@ -44,7 +44,7 @@ struct LoadingView: View {
         .environmentObject(context)
         .onAppear {
             Task.init {
-                let loader = PipelineLoader(url: URL(string: PIPELINE_URL)!)
+                let loader = PipelineLoader(model: model)
                 stateSubscriber = loader.statePublisher.sink { state in
                     DispatchQueue.main.async {
                         switch state {

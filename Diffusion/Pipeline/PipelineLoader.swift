@@ -17,11 +17,11 @@ import StableDiffusion
 class PipelineLoader {
     static let models = Path.applicationSupport / "hf-diffusion-models"
     
-    let url: URL
+    let model: ModelInfo
     private var downloadSubscriber: Cancellable?
 
-    init(url: URL) {
-        self.url = url
+    init(model: ModelInfo) {
+        self.model = model
         state = .undetermined
         setInitialState()
     }
@@ -64,6 +64,10 @@ extension PipelineLoader {
 }
 
 extension PipelineLoader {
+    var url: URL {
+        return model.bestURL
+    }
+    
     var filename: String {
         return url.lastPathComponent
     }
@@ -130,10 +134,11 @@ extension PipelineLoader {
     func load(url: URL) async throws -> StableDiffusionPipeline {
         let beginDate = Date()
         let configuration = MLModelConfiguration()
-        configuration.computeUnits = .cpuAndGPU       // .all works for v1.4, but not for v1.5. TODO: measure performance on different devices
+        configuration.computeUnits = model.bestComputeUnits
         let pipeline = try StableDiffusionPipeline(resourcesAt: url,
                                                    configuration: configuration,
-                                                   disableSafety: false)
+                                                   disableSafety: false,
+                                                   reduceMemory: model.reduceMemory)
         print("Pipeline loaded in \(Date().timeIntervalSince(beginDate))")
         state = .loaded
         return pipeline

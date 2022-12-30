@@ -17,4 +17,7 @@ struct DiffusionApp: App {
     }
 }
 
+// A couple of helpers
+
 extension String: Error {}
+let runningOnMac = ProcessInfo.processInfo.isMacCatalystApp

@@ -39,7 +39,7 @@ struct ShareButtons: View {
     var body: some View {
         let imageView = Image(image, scale: 1, label: Text(name))
 
-        if (ProcessInfo.processInfo.isMacCatalystApp) {
+        if runningOnMac {
             HStack {
                 ShareLink(item: imageView, preview: SharePreview(name, image: imageView))
                 Button() {
