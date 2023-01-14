@@ -7,14 +7,14 @@
 
 import SwiftUI
 import CompactSlider
-//import StableDiffusion
 
 
 struct PromptView: View {
     
-    var models = ["hf-default-model"]
+    static let models = ModelInfo.MODELS
+    static let modelNames = models.map { $0.modelVersion }
     
-    @State private var model = "hf-default-model"
+    @State private var model = ModelInfo.v2Base.modelVersion
     @State private var positivePrompt = ""
     @State private var negativePrompt = ""
     @State private var steps = 50.0
@@ -33,10 +33,10 @@ struct PromptView: View {
                 Group {
                     DisclosureGroup {
                         Picker("", selection: $model) {
-                                        ForEach(models, id: \.self) {
-                                            Text($0)
-                                        }
-                                    }
+                            ForEach(Self.modelNames, id: \.self) {
+                                Text($0)
+                            }
+                        }
                     } label: {
                         Label("Model", systemImage: "cpu").foregroundColor(.secondary)
                     }

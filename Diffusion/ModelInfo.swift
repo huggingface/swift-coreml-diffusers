@@ -60,22 +60,29 @@ extension ModelInfo {
     // TODO: repo does not exist yet
     static let v14Base = ModelInfo(
         modelId: "pcuenq/coreml-stable-diffusion-v1-4",
-        modelVersion: "1.4"
+        modelVersion: "CompVis/stable-diffusion-v1-4"
     )
 
     static let v15Base = ModelInfo(
         modelId: "pcuenq/coreml-stable-diffusion-v1-5",
-        modelVersion: "1.5"
+        modelVersion: "runwayml/stable-diffusion-v1-5"
     )
     
     static let v2Base = ModelInfo(
         modelId: "pcuenq/coreml-stable-diffusion-2-base",
-        modelVersion: "2-base"
+        modelVersion: "stabilityai/stable-diffusion-2-base"
     )
 
     static let v21Base = ModelInfo(
         modelId: "pcuenq/coreml-stable-diffusion-2-1-base",
-        modelVersion: "2.1-base",
+        modelVersion: "stabilityai/stable-diffusion-2-1-base",
         supportsEncoder: true
     )
+    
+    static let MODELS = [
+        ModelInfo.v14Base,
+        ModelInfo.v15Base,
+        ModelInfo.v2Base,
+        ModelInfo.v21Base
+    ]
 }
