@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CompactSlider
+//import StableDiffusion
 
 
 struct PromptView: View {

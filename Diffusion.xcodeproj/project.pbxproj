@@ -12,6 +12,15 @@
 		EBB5BA5829425E17003A2A5B /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = EBB5BA5729425E17003A2A5B /* Path */; };
 		EBB5BA5A29426E06003A2A5B /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5929426E06003A2A5B /* Downloader.swift */; };
 		EBB5BA5D294504DE003A2A5B /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = EBB5BA5C294504DE003A2A5B /* ZIPFoundation */; };
+		EBDD7DAA29731F6C00C1C4B2 /* Pipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE75601293E91E200806B32 /* Pipeline.swift */; };
+		EBDD7DAB29731F7500C1C4B2 /* PipelineLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */; };
+		EBDD7DAD29731FB300C1C4B2 /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = EBDD7DAC29731FB300C1C4B2 /* Path */; };
+		EBDD7DAF29731FB300C1C4B2 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = EBDD7DAE29731FB300C1C4B2 /* ZIPFoundation */; };
+		EBDD7DB129731FB300C1C4B2 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EBDD7DB029731FB300C1C4B2 /* StableDiffusion */; };
+		EBDD7DB32973200200C1C4B2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DB22973200200C1C4B2 /* Utils.swift */; };
+		EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DB22973200200C1C4B2 /* Utils.swift */; };
+		EBDD7DB52973201800C1C4B2 /* ModelInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */; };
+		EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5929426E06003A2A5B /* Downloader.swift */; };
 		EBE3FF4C295E1EFE00E921AA /* ModelInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */; };
 		EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE755C8293E37DD00806B32 /* DiffusionApp.swift */; };
 		EBE755CB293E37DD00806B32 /* TextToImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE755CA293E37DD00806B32 /* TextToImage.swift */; };
@@ -53,6 +62,7 @@
 		EB33A51E2954E1BC00B16357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineLoader.swift; sourceTree = "<group>"; };
 		EBB5BA5929426E06003A2A5B /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
+		EBDD7DB22973200200C1C4B2 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		EBE3FF4A295DFE2400E921AA /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = config/common.xcconfig; sourceTree = "<group>"; };
 		EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelInfo.swift; sourceTree = "<group>"; };
 		EBE4438729488DCA00CDA605 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -110,6 +120,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F155203C297118E700DC009B /* CompactSlider in Frameworks */,
+				EBDD7DB129731FB300C1C4B2 /* StableDiffusion in Frameworks */,
+				EBDD7DAD29731FB300C1C4B2 /* Path in Frameworks */,
+				EBDD7DAF29731FB300C1C4B2 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +173,7 @@
 				EBE7560A29411A5E00806B32 /* Views */,
 				EBB5BA5929426E06003A2A5B /* Downloader.swift */,
 				EBE755C8293E37DD00806B32 /* DiffusionApp.swift */,
+				EBDD7DB22973200200C1C4B2 /* Utils.swift */,
 				EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */,
 				EBE755CC293E37DD00806B32 /* Assets.xcassets */,
 				EBE755CE293E37DD00806B32 /* Diffusion.entitlements */,
@@ -314,6 +328,9 @@
 			name = "Diffusion-macOS";
 			packageProductDependencies = (
 				F155203B297118E700DC009B /* CompactSlider */,
+				EBDD7DAC29731FB300C1C4B2 /* Path */,
+				EBDD7DAE29731FB300C1C4B2 /* ZIPFoundation */,
+				EBDD7DB029731FB300C1C4B2 /* StableDiffusion */,
 			);
 			productName = "Diffusion-macOS";
 			productReference = F15520212971093300DC009B /* Diffusion-macOS.app */;
@@ -420,6 +437,7 @@
 				EBE756092941178600806B32 /* Loading.swift in Sources */,
 				EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */,
 				EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */,
+				EBDD7DB32973200200C1C4B2 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,10 +462,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EBDD7DAB29731F7500C1C4B2 /* PipelineLoader.swift in Sources */,
+				EBDD7DAA29731F6C00C1C4B2 /* Pipeline.swift in Sources */,
 				F15520262971093300DC009B /* ContentView.swift in Sources */,
+				EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */,
 				F1552031297109C300DC009B /* PromptView.swift in Sources */,
+				EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */,
 				F155203429710B3600DC009B /* StatusView.swift in Sources */,
 				F15520242971093300DC009B /* Diffusion_macOSApp.swift in Sources */,
+				EBDD7DB52973201800C1C4B2 /* ModelInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -902,6 +925,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
 			productName = ZIPFoundation;
+		};
+		EBDD7DAC29731FB300C1C4B2 /* Path */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EBB5BA5629425E17003A2A5B /* XCRemoteSwiftPackageReference "Path.swift" */;
+			productName = Path;
+		};
+		EBDD7DAE29731FB300C1C4B2 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+		EBDD7DB029731FB300C1C4B2 /* StableDiffusion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB33A51B2954D89F00B16357 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
+			productName = StableDiffusion;
 		};
 		F155203B297118E700DC009B /* CompactSlider */ = {
 			isa = XCSwiftPackageProductDependency;

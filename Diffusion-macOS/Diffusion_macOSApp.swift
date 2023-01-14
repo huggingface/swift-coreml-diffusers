@@ -15,3 +15,5 @@ struct Diffusion_macOSApp: App {
         }
     }
 }
+
+let runningOnMac = false
