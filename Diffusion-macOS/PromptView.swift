@@ -35,6 +35,10 @@ struct PromptView: View {
     @State private var pipelineState: PipelineState = .downloading(0)
 
     func modelDidChange(model: ModelInfo) {
+        print("Loading model \(model)")
+        Settings.shared.currentModel = model
+        
+        pipelineState = .downloading(0)
         Task.init {
             let loader = PipelineLoader(model: model)
             stateSubscriber = loader.statePublisher.sink { state in
@@ -78,7 +82,8 @@ struct PromptView: View {
                             }
                         }
                         .onChange(of: model) { theModel in
-                            print("Model changed to \(theModel) model: \(model)")
+                            guard let model = ModelInfo.from(modelVersion: theModel) else { return }
+                            modelDidChange(model: model)
                         }
                     } label: {
                         Label("Model", systemImage: "cpu").foregroundColor(.secondary)
