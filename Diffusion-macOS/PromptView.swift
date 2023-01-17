@@ -9,6 +9,13 @@ import Combine
 import SwiftUI
 import CompactSlider
 
+enum PipelineState {
+    case downloading(Double)
+    case uncompressing
+    case loading
+    case ready
+    case failed(Error)
+}
 
 struct PromptView: View {
     @StateObject var context = DiffusionGlobals()
@@ -24,9 +31,8 @@ struct PromptView: View {
     @State private var seed = 386.0
     
     // TODO: refactor download with similar code in Loading.swift (iOS)
-    @State private var preparationPhase = "Downloading…"
-    @State private var downloadProgress: Double = 0
     @State private var stateSubscriber: Cancellable?
+    @State private var pipelineState: PipelineState = .downloading(0)
 
     func modelDidChange(model: ModelInfo) {
         Task.init {
@@ -35,14 +41,11 @@ struct PromptView: View {
                 DispatchQueue.main.async {
                     switch state {
                     case .downloading(let progress):
-                        preparationPhase = "Downloading"
-                        downloadProgress = progress
+                        pipelineState = .downloading(progress)
                     case .uncompressing:
-                        preparationPhase = "Uncompressing"
-                        downloadProgress = 1
+                        pipelineState = .uncompressing
                     case .readyOnDisk:
-                        preparationPhase = "Loading"
-                        downloadProgress = 1
+                        pipelineState = .loading
                     default:
                         break
                     }
@@ -50,9 +53,10 @@ struct PromptView: View {
             }
             do {
                 context.pipeline = try await loader.prepare()
+                pipelineState = .ready
             } catch {
-                // TODO: expose to user
                 print("Could not load model, error: \(error)")
+                pipelineState = .failed(error)
             }
         }
     }
@@ -129,17 +133,9 @@ struct PromptView: View {
                         Label("Random Seed", systemImage: "leaf").foregroundColor(.secondary)
                     }
                 }
-                
             }
-            Button {
-                // Generate image here
-            } label: {
-                Text("Generate")
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-            }
-            .buttonStyle(.borderedProminent)
-//            StatusView()
+            
+            StatusView(pipelineState: $pipelineState)
         }
         .padding()
         .onAppear {
