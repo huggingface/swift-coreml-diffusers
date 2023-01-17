@@ -1,0 +1,11 @@
+//
+//  debug.xcconfig
+//  Diffusion
+//
+//  Created by Pedro Cuenca on 17/1/23.
+//
+
+#include "common.xcconfig"
+
+// Disable code-signing for macOS
+CODE_SIGN_IDENTITY[sdk=macos*] =

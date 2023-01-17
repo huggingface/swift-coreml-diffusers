@@ -66,6 +66,7 @@
 		EBB5BA5929426E06003A2A5B /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
 		EBDD7DB22973200200C1C4B2 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		EBDD7DB72976AAFE00C1C4B2 /* State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
+		EBDD7DBA2976F03600C1C4B2 /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		EBE3FF4A295DFE2400E921AA /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = config/common.xcconfig; sourceTree = "<group>"; };
 		EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelInfo.swift; sourceTree = "<group>"; };
 		EBE4438729488DCA00CDA605 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -145,6 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				EBE3FF4A295DFE2400E921AA /* common.xcconfig */,
+				EBDD7DBA2976F03600C1C4B2 /* debug.xcconfig */,
 				EBE4438729488DCA00CDA605 /* README.md */,
 				EBE443892948953600CDA605 /* LICENSE */,
 				EBE755FF293E910800806B32 /* Packages */,
@@ -607,7 +609,7 @@
 		};
 		EBE755EB293E37DE00806B32 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EBE3FF4A295DFE2400E921AA /* common.xcconfig */;
+			baseConfigurationReference = EBDD7DBA2976F03600C1C4B2 /* debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -777,7 +779,7 @@
 		};
 		F155202D2971093400DC009B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EBE3FF4A295DFE2400E921AA /* common.xcconfig */;
+			baseConfigurationReference = EBDD7DBA2976F03600C1C4B2 /* debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -804,6 +806,7 @@
 		};
 		F155202E2971093400DC009B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EBE3FF4A295DFE2400E921AA /* common.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

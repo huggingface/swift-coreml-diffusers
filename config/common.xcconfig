@@ -11,7 +11,4 @@
 // Update if you fork this repo
 DEVELOPMENT_TEAM = ZWDJQ796RU
 
-// Disable code-signing for macOS
-CODE_SIGN_IDENTITY[sdk=macos*] =
-
 PRODUCT_BUNDLE_IDENTIFIER = com.huggingface.DiffusionApp
