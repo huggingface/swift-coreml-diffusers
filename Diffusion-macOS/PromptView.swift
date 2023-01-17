@@ -5,21 +5,57 @@
 //  Created by Cyril Zakka on 1/12/23.
 //
 
+import Combine
 import SwiftUI
 import CompactSlider
 
 
 struct PromptView: View {
-    
+    @StateObject var context = DiffusionGlobals()
+
     static let models = ModelInfo.MODELS
     static let modelNames = models.map { $0.modelVersion }
     
-    @State private var model = ModelInfo.v2Base.modelVersion
+    @State private var model = Settings.shared.currentModel.modelVersion
     @State private var positivePrompt = ""
     @State private var negativePrompt = ""
     @State private var steps = 50.0
     @State private var numImages = 1.0
     @State private var seed = 386.0
+    
+    // TODO: refactor download with similar code in Loading.swift (iOS)
+    @State private var preparationPhase = "Downloading…"
+    @State private var downloadProgress: Double = 0
+    @State private var stateSubscriber: Cancellable?
+
+    func modelDidChange(model: ModelInfo) {
+        Task.init {
+            let loader = PipelineLoader(model: model)
+            stateSubscriber = loader.statePublisher.sink { state in
+                DispatchQueue.main.async {
+                    switch state {
+                    case .downloading(let progress):
+                        preparationPhase = "Downloading"
+                        downloadProgress = progress
+                    case .uncompressing:
+                        preparationPhase = "Uncompressing"
+                        downloadProgress = 1
+                    case .readyOnDisk:
+                        preparationPhase = "Loading"
+                        downloadProgress = 1
+                    default:
+                        break
+                    }
+                }
+            }
+            do {
+                context.pipeline = try await loader.prepare()
+            } catch {
+                // TODO: expose to user
+                print("Could not load model, error: \(error)")
+            }
+        }
+    }
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -36,6 +72,9 @@ struct PromptView: View {
                             ForEach(Self.modelNames, id: \.self) {
                                 Text($0)
                             }
+                        }
+                        .onChange(of: model) { theModel in
+                            print("Model changed to \(theModel) model: \(model)")
                         }
                     } label: {
                         Label("Model", systemImage: "cpu").foregroundColor(.secondary)
@@ -58,7 +97,7 @@ struct PromptView: View {
                     }
                     
                     Divider()
-                    
+
                     DisclosureGroup {
                         CompactSlider(value: $steps, in: 0...250, step: 5) {
                             Text("Steps")
@@ -68,7 +107,7 @@ struct PromptView: View {
                     } label: {
                         Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary)
                     }
-                    
+
                     Divider()
                     DisclosureGroup() {
                         CompactSlider(value: $numImages, in: 0...10, step: 1) {
@@ -101,7 +140,11 @@ struct PromptView: View {
             }
             .buttonStyle(.borderedProminent)
 //            StatusView()
-        }.padding()
+        }
+        .padding()
+        .onAppear {
+            modelDidChange(model: ModelInfo.from(modelVersion: model) ?? ModelInfo.v2Base)
+        }
     }
 }
 

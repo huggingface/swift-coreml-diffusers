@@ -11,10 +11,6 @@ import Combine
 
 let model = ModelInfo.v2Base
 
-class DiffusionGlobals: ObservableObject {
-    @Published var pipeline: Pipeline? = nil
-}
-
 struct LoadingView: View {
     @StateObject var context = DiffusionGlobals()
 
