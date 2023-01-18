@@ -112,26 +112,28 @@ struct ControlsView: View {
                     } label: {
                         Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary)
                     }
-
                     Divider()
+                    
+//                    DisclosureGroup() {
+//                        CompactSlider(value: $generation.numImages, in: 0...10, step: 1) {
+//                            Text("Number of Images")
+//                            Spacer()
+//                            Text("\(Int(generation.numImages))")
+//                        }.padding(.leading, 10)
+//                    } label: {
+//                        Label("Number of images", systemImage: "photo.stack").foregroundColor(.secondary)
+//                    }
+//                    Divider()
+                    
                     DisclosureGroup() {
-                        CompactSlider(value: $generation.numImages, in: 0...10, step: 1) {
-                            Text("Number of Images")
-                            Spacer()
-                            Text("\(Int(generation.numImages))")
-                        }.padding(.leading, 10)
-                    } label: {
-                        Label("Number of images", systemImage: "photo.stack").foregroundColor(.secondary)
-                    }
-                    Divider()
-                    DisclosureGroup() {
-                        CompactSlider(value: $generation.seed, in: 0...1000, step: 1) {
-                            Text("Random seed")
+                        let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
+                        CompactSlider(value: $generation.seed, in: -1...1000, step: 1) {
+                            Text(sliderLabel)
                             Spacer()
                             Text("\(Int(generation.seed))")
                         }.padding(.leading, 10)
                     } label: {
-                        Label("Random Seed", systemImage: "leaf").foregroundColor(.secondary)
+                        Label("Seed", systemImage: "leaf").foregroundColor(.secondary)
                     }
                 }
             }

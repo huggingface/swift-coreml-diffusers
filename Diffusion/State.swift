@@ -41,13 +41,13 @@ class GenerationContext: ObservableObject {
     // FIXME: Double to support the slider component
     @Published var steps = 25.0
     @Published var numImages = 1.0
-    @Published var seed = 0.0
+    @Published var seed = -1.0
 
     private var progressSubscriber: Cancellable?
 
     func generate() async -> (CGImage, TimeInterval)? {
         guard let pipeline = pipeline else { return nil }
-        let seed = self.seed > 0 ? UInt32(self.seed) : nil
+        let seed = self.seed >= 0 ? UInt32(self.seed) : nil
         return try? pipeline.generate(prompt: positivePrompt, scheduler: scheduler, numInferenceSteps: Int(steps), seed: seed)
     }
 }
