@@ -12,7 +12,7 @@ struct ContentView: View {
 
     var body: some View {
         NavigationSplitView {
-            PromptView()
+            ControlsView()
                 .navigationSplitViewColumnWidth(min: 250, ideal: 300)
         } detail: {
             GeneratedImageView()

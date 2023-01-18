@@ -38,7 +38,7 @@
 		F15520262971093300DC009B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15520252971093300DC009B /* ContentView.swift */; };
 		F15520282971093400DC009B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F15520272971093400DC009B /* Assets.xcassets */; };
 		F155202B2971093400DC009B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F155202A2971093400DC009B /* Preview Assets.xcassets */; };
-		F1552031297109C300DC009B /* PromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1552030297109C300DC009B /* PromptView.swift */; };
+		F1552031297109C300DC009B /* ControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1552030297109C300DC009B /* ControlsView.swift */; };
 		F155203229710A1300DC009B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EBE755CC293E37DD00806B32 /* Assets.xcassets */; };
 		F155203429710B3600DC009B /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F155203329710B3600DC009B /* StatusView.swift */; };
 		F155203C297118E700DC009B /* CompactSlider in Frameworks */ = {isa = PBXBuildFile; productRef = F155203B297118E700DC009B /* CompactSlider */; };
@@ -92,7 +92,7 @@
 		F15520272971093400DC009B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F155202A2971093400DC009B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F155202C2971093400DC009B /* Diffusion_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Diffusion_macOS.entitlements; sourceTree = "<group>"; };
-		F1552030297109C300DC009B /* PromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptView.swift; sourceTree = "<group>"; };
+		F1552030297109C300DC009B /* ControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsView.swift; sourceTree = "<group>"; };
 		F155203329710B3600DC009B /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -244,7 +244,7 @@
 				F15520232971093300DC009B /* Diffusion_macOSApp.swift */,
 				F15520252971093300DC009B /* ContentView.swift */,
 				EBDD7DBB2977FFB300C1C4B2 /* GeneratedImageView.swift */,
-				F1552030297109C300DC009B /* PromptView.swift */,
+				F1552030297109C300DC009B /* ControlsView.swift */,
 				F155203329710B3600DC009B /* StatusView.swift */,
 				F15520272971093400DC009B /* Assets.xcassets */,
 				F155202C2971093400DC009B /* Diffusion_macOS.entitlements */,
@@ -477,7 +477,7 @@
 				F15520262971093300DC009B /* ContentView.swift in Sources */,
 				EBDD7DB92976AAFE00C1C4B2 /* State.swift in Sources */,
 				EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */,
-				F1552031297109C300DC009B /* PromptView.swift in Sources */,
+				F1552031297109C300DC009B /* ControlsView.swift in Sources */,
 				EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */,
 				F155203429710B3600DC009B /* StatusView.swift in Sources */,
 				F15520242971093300DC009B /* Diffusion_macOSApp.swift in Sources */,

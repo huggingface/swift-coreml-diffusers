@@ -17,7 +17,7 @@ enum PipelineState {
     case failed(Error)
 }
 
-struct PromptView: View {
+struct ControlsView: View {
     @EnvironmentObject var generation: GenerationContext
 
     static let models = ModelInfo.MODELS
