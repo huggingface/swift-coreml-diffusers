@@ -6,10 +6,74 @@
 //
 
 import SwiftUI
+import ImageIO
+
+
+// AppKit version that uses NSImage, NSSavePanel
+struct ShareButtons: View {
+    var image: CGImage
+    var name: String
+    
+    var filename: String {
+        name.replacingOccurrences(of: " ", with: "_")
+    }
+    
+    func showSavePanel() -> URL? {
+        let savePanel = NSSavePanel()
+        savePanel.allowedContentTypes = [.png]
+        savePanel.canCreateDirectories = true
+        savePanel.isExtensionHidden = false
+        savePanel.title = "Save your image"
+        savePanel.message = "Choose a folder and a name to store the image."
+        savePanel.nameFieldLabel = "File name:"
+        savePanel.nameFieldStringValue = filename
+
+        let response = savePanel.runModal()
+        return response == .OK ? savePanel.url : nil
+    }
+
+    func savePNG(cgImage: CGImage, path: URL) {
+        let image = NSImage(cgImage: cgImage, size: .zero)
+        let imageRepresentation = NSBitmapImageRep(data: image.tiffRepresentation!)
+        guard let pngData = imageRepresentation?.representation(using: .png, properties: [:]) else {
+            print("Error generating PNG data")
+            return
+        }
+        do {
+            try pngData.write(to: path)
+        } catch {
+            print("Error saving: \(error)")
+        }
+    }
+
+    var body: some View {
+        let imageView = Image(image, scale: 1, label: Text(name))
+        HStack {
+            ShareLink(item: imageView, preview: SharePreview(name, image: imageView))
+            Button() {
+                if let url = showSavePanel() {
+                    savePNG(cgImage: image, path: url)
+                }
+            } label: {
+                Label("Save…", systemImage: "square.and.arrow.down")
+            }
+        }
+    }
+}
 
 struct ContentView: View {
     @StateObject var generation = GenerationContext()
 
+    func toolbar() -> any View {
+        if case .complete(let prompt, let cgImage, _) = generation.state, let cgImage = cgImage {
+            return ShareButtons(image: cgImage, name: prompt)
+        } else {
+            let prompt = DEFAULT_PROMPT
+            let cgImage = NSImage(imageLiteralResourceName: "placeholder").cgImage(forProposedRect: nil, context: nil, hints: nil)!
+            return ShareButtons(image: cgImage, name: prompt)
+        }
+    }
+    
     var body: some View {
         NavigationSplitView {
             ControlsView()
@@ -20,14 +84,7 @@ struct ContentView: View {
                 .frame(width: 512, height: 512)
                 .cornerRadius(15)
                 .toolbar {
-                    if case .complete(let prompt, let cgImage, _) = generation.state, let cgImage = cgImage {
-                        let image = Image(cgImage, scale: 1, label: Text(prompt))
-                        ShareLink(prompt, item: image, preview: SharePreview(prompt, image: image))
-                    } else {
-                        let prompt = DEFAULT_PROMPT
-                        let image = Image("placeholder")
-                        ShareLink(prompt, item: image, preview: SharePreview(prompt, image: image))
-                    }
+                    AnyView(toolbar())
                 }
 
         }
