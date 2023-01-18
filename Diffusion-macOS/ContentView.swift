@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var context = GenerationContext()
+    @StateObject var generation = GenerationContext()
 
     var body: some View {
         NavigationSplitView {
@@ -26,7 +26,7 @@ struct ContentView: View {
                 }
 
         }
-        .environmentObject(context)
+        .environmentObject(generation)
     }
 }
 

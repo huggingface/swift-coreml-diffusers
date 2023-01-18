@@ -18,7 +18,7 @@ enum PipelineState {
 }
 
 struct PromptView: View {
-    @EnvironmentObject var context: GenerationContext
+    @EnvironmentObject var generation: GenerationContext
 
     static let models = ModelInfo.MODELS
     static let modelNames = models.map { $0.modelVersion }
@@ -57,7 +57,7 @@ struct PromptView: View {
                 }
             }
             do {
-                context.pipeline = try await loader.prepare()
+                generation.pipeline = try await loader.prepare()
                 pipelineState = .ready
             } catch {
                 print("Could not load model, error: \(error)")

@@ -94,18 +94,18 @@ struct ImageWithPlaceholder: View {
 }
 
 struct TextToImage: View {
-    @EnvironmentObject var context: GenerationContext
+    @EnvironmentObject var generation: GenerationContext
 
     @State private var prompt = "Labrador in the style of Vermeer"
 
     func submit() {
-        if case .running = context.state { return }
+        if case .running = generation.state { return }
         Task {
-            context.state = .running(nil)
+            generation.state = .running(nil)
             let interval: TimeInterval?
             let image: CGImage?
-            (image, interval) = await context.generate(prompt: prompt, steps: steps, seed: seed) ?? (nil, nil)
-            context.state = .complete(prompt, image, interval)
+            (image, interval) = await generation.generate(prompt: prompt, steps: steps, seed: seed) ?? (nil, nil)
+            generation.state = .complete(prompt, image, interval)
         }
     }
     
@@ -123,7 +123,7 @@ struct TextToImage: View {
                 .padding()
                 .buttonStyle(.borderedProminent)
             }
-            ImageWithPlaceholder(state: $context.state)
+            ImageWithPlaceholder(state: $generation.state)
                 .scaledToFit()
             Spacer()
         }
