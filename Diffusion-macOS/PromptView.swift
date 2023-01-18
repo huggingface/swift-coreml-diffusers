@@ -24,11 +24,12 @@ struct PromptView: View {
     static let modelNames = models.map { $0.modelVersion }
     
     @State private var model = Settings.shared.currentModel.modelVersion
-    @State private var positivePrompt = ""
+    @State private var positivePrompt = "Labrador in the style of Vermeer"
     @State private var negativePrompt = ""
-    @State private var steps = 50.0
+    @State private var steps = 25.0
     @State private var numImages = 1.0
     @State private var seed = 386.0
+    @State private var disclosedPrompt = true
     
     // TODO: refactor download with similar code in Loading.swift (iOS)
     @State private var stateSubscriber: Cancellable?
@@ -91,7 +92,7 @@ struct PromptView: View {
                     
                     Divider()
                     
-                    DisclosureGroup {
+                    DisclosureGroup(isExpanded: $disclosedPrompt) {
                         Group {
                             TextField("Positive prompt", text: $positivePrompt,
                                       axis: .vertical).lineLimit(5)
@@ -108,7 +109,7 @@ struct PromptView: View {
                     Divider()
 
                     DisclosureGroup {
-                        CompactSlider(value: $steps, in: 0...250, step: 5) {
+                        CompactSlider(value: $steps, in: 0...150, step: 5) {
                             Text("Steps")
                             Spacer()
                             Text("\(Int(steps))")
@@ -144,6 +145,7 @@ struct PromptView: View {
         }
         .padding()
         .onAppear {
+            print(PipelineLoader.models)
             modelDidChange(model: ModelInfo.from(modelVersion: model) ?? ModelInfo.v2Base)
         }
     }

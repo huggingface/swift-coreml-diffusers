@@ -16,7 +16,7 @@ struct ContentView: View {
             Image("placeholder")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 400, height: 400)
+                .frame(width: 512, height: 512)
                 .cornerRadius(15)
                 .toolbar {
                     Button(action: {}) {
