@@ -8,22 +8,25 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var context = GenerationContext()
+
     var body: some View {
         NavigationSplitView {
             PromptView()
                 .navigationSplitViewColumnWidth(min: 250, ideal: 300)
         } detail: {
-            Image("placeholder")
-                .resizable()
+            GeneratedImageView()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 512, height: 512)
                 .cornerRadius(15)
                 .toolbar {
                     Button(action: {}) {
-                                Label("share", systemImage: "square.and.arrow.up")
-                            }
-                        }
+                        Label("share", systemImage: "square.and.arrow.up")
+                    }
+                }
+
         }
+        .environmentObject(context)
     }
 }
 
