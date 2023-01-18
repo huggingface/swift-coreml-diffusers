@@ -16,4 +16,4 @@ struct Diffusion_macOSApp: App {
     }
 }
 
-let runningOnMac = false
+let runningOnMac = true
