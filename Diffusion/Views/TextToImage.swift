@@ -10,9 +10,6 @@ import SwiftUI
 import Combine
 import StableDiffusion
 
-// TODO: bind to UI controls
-let steps = 25
-let seed: UInt32? = nil
 
 /// Presents "Share" + "Save" buttons on Mac; just "Share" on iOS/iPadOS.
 /// This is because I didn't find a way for "Share" to show a Save option when running on macOS.
@@ -96,23 +93,21 @@ struct ImageWithPlaceholder: View {
 struct TextToImage: View {
     @EnvironmentObject var generation: GenerationContext
 
-    @State private var prompt = "Labrador in the style of Vermeer"
-
     func submit() {
         if case .running = generation.state { return }
         Task {
             generation.state = .running(nil)
             let interval: TimeInterval?
             let image: CGImage?
-            (image, interval) = await generation.generate(prompt: prompt, steps: steps, seed: seed) ?? (nil, nil)
-            generation.state = .complete(prompt, image, interval)
+            (image, interval) = await generation.generate() ?? (nil, nil)
+            generation.state = .complete(generation.positivePrompt, image, interval)
         }
     }
     
     var body: some View {
         VStack {
             HStack {
-                TextField("Prompt", text: $prompt)
+                TextField("Prompt", text: $generation.positivePrompt)
                     .textFieldStyle(.roundedBorder)
                     .onSubmit {
                         submit()

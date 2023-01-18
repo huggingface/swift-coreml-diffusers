@@ -17,9 +17,8 @@ struct StatusView: View {
             generation.state = .running(nil)
             let interval: TimeInterval?
             let image: CGImage?
-            let prompt = "Portrait of cat in a tuxedo, oil on canvas"
-            (image, interval) = await generation.generate(prompt: prompt) ?? (nil, nil)
-            generation.state = .complete(prompt, image, interval)
+            (image, interval) = await generation.generate() ?? (nil, nil)
+            generation.state = .complete(generation.positivePrompt, image, interval)
         }
     }
     
@@ -75,7 +74,6 @@ struct StatusView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 
-                // Generation state
                 AnyView(generationStatusView())
             }
         case .failed:

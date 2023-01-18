@@ -34,12 +34,21 @@ class GenerationContext: ObservableObject {
         }
     }
     @Published var state: GenerationState = .startup
+    
+    @Published var positivePrompt = "Labrador in the style of Vermeer"
+    @Published var negativePrompt = ""
+    
+    // FIXME: Double to support the slider component
+    @Published var steps = 25.0
+    @Published var numImages = 1.0
+    @Published var seed = 0.0
 
     private var progressSubscriber: Cancellable?
 
-    func generate(prompt: String, steps: Int = 25, seed: UInt32? = nil) async -> (CGImage, TimeInterval)? {
+    func generate() async -> (CGImage, TimeInterval)? {
         guard let pipeline = pipeline else { return nil }
-        return try? pipeline.generate(prompt: prompt, scheduler: scheduler, numInferenceSteps: steps, seed: seed)
+        let seed = self.seed > 0 ? UInt32(self.seed) : nil
+        return try? pipeline.generate(prompt: positivePrompt, scheduler: scheduler, numInferenceSteps: Int(steps), seed: seed)
     }
 }
 
