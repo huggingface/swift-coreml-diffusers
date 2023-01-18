@@ -18,7 +18,7 @@ enum PipelineState {
 }
 
 struct PromptView: View {
-    @StateObject var context = DiffusionGlobals()
+    @StateObject var context = GenerationContext()
 
     static let models = ModelInfo.MODELS
     static let modelNames = models.map { $0.modelVersion }

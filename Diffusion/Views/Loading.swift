@@ -12,7 +12,7 @@ import Combine
 let model = ModelInfo.v2Base
 
 struct LoadingView: View {
-    @StateObject var context = DiffusionGlobals()
+    @StateObject var context = GenerationContext()
 
     @State private var preparationPhase = "Downloading…"
     @State private var downloadProgress: Double = 0

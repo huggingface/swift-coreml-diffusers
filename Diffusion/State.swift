@@ -9,8 +9,15 @@ import SwiftUI
 
 let DEFAULT_MODEL = ModelInfo.v2Base
 
-class DiffusionGlobals: ObservableObject {
+enum GenerationState {
+    case startup
+    case running(StableDiffusionProgress?)
+    case complete(String, CGImage?, TimeInterval?)
+}
+
+class GenerationContext: ObservableObject {
     @Published var pipeline: Pipeline? = nil
+    @Published var state: GenerationState = .startup
 }
 
 class Settings {

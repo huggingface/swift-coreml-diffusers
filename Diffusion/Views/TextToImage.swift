@@ -20,12 +20,6 @@ func generate(pipeline: Pipeline?, prompt: String) async -> (CGImage, TimeInterv
     return try? pipeline.generate(prompt: prompt, scheduler: scheduler, numInferenceSteps: steps, seed: seed)
 }
 
-enum GenerationState {
-    case startup
-    case running(StableDiffusionProgress?)
-    case idle(String, TimeInterval?)
-}
-
 /// Presents "Share" + "Save" buttons on Mac; just "Share" on iOS/iPadOS.
 /// This is because I didn't find a way for "Share" to show a Save option when running on macOS.
 struct ShareButtons: View {
@@ -67,7 +61,6 @@ struct ShareButtons: View {
 }
 
 struct ImageWithPlaceholder: View {
-    var image: Binding<CGImage?>
     var state: Binding<GenerationState>
         
     var body: some View {
@@ -82,8 +75,8 @@ struct ImageWithPlaceholder: View {
             let fraction = Double(step) / Double(progress.stepCount)
             let label = "Step \(step) of \(progress.stepCount)"
             return AnyView(ProgressView(label, value: fraction, total: 1).padding())
-        case .idle(let lastPrompt, let interval):
-            guard let theImage = image.wrappedValue else {
+        case .complete(let lastPrompt, let image, let interval):
+            guard let theImage = image else {
                 return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
             }
                               
@@ -107,7 +100,7 @@ struct ImageWithPlaceholder: View {
 }
 
 struct TextToImage: View {
-    @EnvironmentObject var context: DiffusionGlobals
+    @EnvironmentObject var context: GenerationContext
 
     @State private var prompt = "Labrador in the style of Vermeer"
     @State private var image: CGImage? = nil
@@ -121,7 +114,7 @@ struct TextToImage: View {
             state = .running(nil)
             let interval: TimeInterval?
             (image, interval) = await generate(pipeline: context.pipeline, prompt: prompt) ?? (nil, nil)
-            state = .idle(prompt, interval)
+            state = .complete(prompt, image, interval)
         }
     }
     
@@ -139,7 +132,7 @@ struct TextToImage: View {
                 .padding()
                 .buttonStyle(.borderedProminent)
             }
-            ImageWithPlaceholder(image: $image, state: $state)
+            ImageWithPlaceholder(state: $state)
                 .scaledToFit()
             Spacer()
         }
