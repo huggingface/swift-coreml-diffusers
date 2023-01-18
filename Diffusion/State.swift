@@ -48,7 +48,7 @@ class GenerationContext: ObservableObject {
     func generate() async -> (CGImage, TimeInterval)? {
         guard let pipeline = pipeline else { return nil }
         let seed = self.seed >= 0 ? UInt32(self.seed) : nil
-        return try? pipeline.generate(prompt: positivePrompt, scheduler: scheduler, numInferenceSteps: Int(steps), seed: seed)
+        return try? pipeline.generate(prompt: positivePrompt, negativePrompt: negativePrompt, scheduler: scheduler, numInferenceSteps: Int(steps), seed: seed)
     }
 }
 
