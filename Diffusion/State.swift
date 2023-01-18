@@ -10,6 +10,7 @@ import SwiftUI
 import StableDiffusion
 
 let DEFAULT_MODEL = ModelInfo.v2Base
+let DEFAULT_PROMPT = "Labrador in the style of Vermeer"
 
 enum GenerationState {
     case startup
@@ -35,7 +36,7 @@ class GenerationContext: ObservableObject {
     }
     @Published var state: GenerationState = .startup
     
-    @Published var positivePrompt = "Labrador in the style of Vermeer"
+    @Published var positivePrompt = DEFAULT_PROMPT
     @Published var negativePrompt = ""
     
     // FIXME: Double to support the slider component

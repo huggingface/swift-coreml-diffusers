@@ -20,8 +20,13 @@ struct ContentView: View {
                 .frame(width: 512, height: 512)
                 .cornerRadius(15)
                 .toolbar {
-                    Button(action: {}) {
-                        Label("share", systemImage: "square.and.arrow.up")
+                    if case .complete(let prompt, let cgImage, _) = generation.state, let cgImage = cgImage {
+                        let image = Image(cgImage, scale: 1, label: Text(prompt))
+                        ShareLink(prompt, item: image, preview: SharePreview(prompt, image: image))
+                    } else {
+                        let prompt = DEFAULT_PROMPT
+                        let image = Image("placeholder")
+                        ShareLink(prompt, item: image, preview: SharePreview(prompt, image: image))
                     }
                 }
 
