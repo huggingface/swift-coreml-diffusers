@@ -11,14 +11,8 @@ import Combine
 import StableDiffusion
 
 // TODO: bind to UI controls
-let scheduler = StableDiffusionScheduler.dpmSolverMultistepScheduler
 let steps = 25
 let seed: UInt32? = nil
-
-func generate(pipeline: Pipeline?, prompt: String) async -> (CGImage, TimeInterval)? {
-    guard let pipeline = pipeline else { return nil }
-    return try? pipeline.generate(prompt: prompt, scheduler: scheduler, numInferenceSteps: steps, seed: seed)
-}
 
 /// Presents "Share" + "Save" buttons on Mac; just "Share" on iOS/iPadOS.
 /// This is because I didn't find a way for "Share" to show a Save option when running on macOS.
@@ -103,18 +97,15 @@ struct TextToImage: View {
     @EnvironmentObject var context: GenerationContext
 
     @State private var prompt = "Labrador in the style of Vermeer"
-    @State private var image: CGImage? = nil
-    @State private var state: GenerationState = .startup
-    
-    @State private var progressSubscriber: Cancellable?
 
     func submit() {
-        if case .running = state { return }
+        if case .running = context.state { return }
         Task {
-            state = .running(nil)
+            context.state = .running(nil)
             let interval: TimeInterval?
-            (image, interval) = await generate(pipeline: context.pipeline, prompt: prompt) ?? (nil, nil)
-            state = .complete(prompt, image, interval)
+            let image: CGImage?
+            (image, interval) = await context.generate(prompt: prompt, steps: steps, seed: seed) ?? (nil, nil)
+            context.state = .complete(prompt, image, interval)
         }
     }
     
@@ -132,16 +123,10 @@ struct TextToImage: View {
                 .padding()
                 .buttonStyle(.borderedProminent)
             }
-            ImageWithPlaceholder(state: $state)
+            ImageWithPlaceholder(state: $context.state)
                 .scaledToFit()
             Spacer()
         }
         .padding()
-        .onAppear {
-            progressSubscriber = context.pipeline!.progressPublisher.sink { progress in
-                guard let progress = progress else { return }
-                state = .running(progress)
-            }
-        }
     }
 }
