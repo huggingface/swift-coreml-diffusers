@@ -1,4 +1,4 @@
-#  Diffusers
+#  Swift Diffusers
 
 This is a simple app that shows how to integrate Apple's [Core ML Stable Diffusion implementation](https://github.com/apple/ml-stable-diffusion) in a native Swift UI application. It can be used for faster iteration, or as sample code for other use cases.
 
