@@ -13,10 +13,11 @@ For faster inference, we use a very fast scheduler: [DPM-Solver++](https://githu
 
 - macOS Ventura 13.1, iOS/iPadOS 16.2, Xcode 14.2.
 - Performance (after the initial generation, which is slower)
-  * ~8.3s in macOS on MacBook Pro M1 Max (64 GB). Model: Stable Diffusion v2-base, ORIGINAL attention implementation, CPU + GPU.
+  * ~8s in macOS on MacBook Pro M1 Max (64 GB). Model: Stable Diffusion v2-base, ORIGINAL attention implementation, CPU + GPU.
   * 23 ~ 30s on iPhone 13 Pro. Model: Stable Diffusion v2-base, SPLIT_EINSUM attention, CPU + Neural Engine, memory reduction enabled.
 
 Performance on iPhone is somewhat erratic, sometimes it's ~20x slower and the phone heats up. This happens because the model could not be scheduled to run on the Neural Engine and everything happens in the CPU. We have not been able to determine the reasons for this problem. If you observe the same, here are some recommendations:
+- Detach from Xcode
 - Kill apps you are not using.
 - Let the iPhone cool down before repeating the test.
 - Reboot your device.
@@ -27,14 +28,11 @@ If you clone or fork this repo, please update `common.xcconfig` with your develo
 
 ## Limitations
 
-- The UI does not expose a way to configure the scheduler, number of inference steps, or generation seed. These are all available in the underlying code.
-- A single model (Stable Diffusion v1.5) is considered. The Core ML compute units have been hardcoded to CPU and GPU, since that's what gives best results on my Mac (M1 Max MacBook Pro).
-- Sometimes generation returns a `nil` image. This needs to be investigated.
+- A handful of models are currently supported.
+- The Core ML compute units have been hardcoded to CPU and GPU on macOS, and to CPU + Neural Engine on iOS/iPadOS.
 
 ## Next Steps
 
-- Improve UI. Allow the user to select generation parameters.
-- Allow other models to run. Provide a recommended "compute units" configuration based on model and platform.
-- Implement other interesting schedulers.
-- Implement negative prompts.
-- Explore other features (image to image, for example).
+- Allow users to select compute units to verify the combination that achieves the best performance on their hardware.
+- Implement other schedulers, additional options.
+- Experiment with smaller distilled models.
