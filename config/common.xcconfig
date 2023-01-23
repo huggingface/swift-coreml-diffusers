@@ -3,13 +3,14 @@
 //  Diffusion
 //
 //  Created by Pedro Cuenca on 202212.
+//  See LICENSE at https://github.com/huggingface/swift-coreml-diffusers/LICENSE
 //
 
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-// Update if you fork this repo
-DEVELOPMENT_TEAM = ZWDJQ796RU
+PRODUCT_NAME = Diffusers
 
-// Disable code-signing for macOS
-CODE_SIGN_IDENTITY[sdk=macos*] =
+// Update if you fork this repo
+DEVELOPMENT_TEAM = 2EADP68M95
+PRODUCT_BUNDLE_IDENTIFIER = com.huggingface.Diffusers

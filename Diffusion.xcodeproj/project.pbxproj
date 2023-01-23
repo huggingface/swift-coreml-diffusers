@@ -12,6 +12,19 @@
 		EBB5BA5829425E17003A2A5B /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = EBB5BA5729425E17003A2A5B /* Path */; };
 		EBB5BA5A29426E06003A2A5B /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5929426E06003A2A5B /* Downloader.swift */; };
 		EBB5BA5D294504DE003A2A5B /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = EBB5BA5C294504DE003A2A5B /* ZIPFoundation */; };
+		EBDD7DAA29731F6C00C1C4B2 /* Pipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE75601293E91E200806B32 /* Pipeline.swift */; };
+		EBDD7DAB29731F7500C1C4B2 /* PipelineLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */; };
+		EBDD7DAD29731FB300C1C4B2 /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = EBDD7DAC29731FB300C1C4B2 /* Path */; };
+		EBDD7DAF29731FB300C1C4B2 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = EBDD7DAE29731FB300C1C4B2 /* ZIPFoundation */; };
+		EBDD7DB129731FB300C1C4B2 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EBDD7DB029731FB300C1C4B2 /* StableDiffusion */; };
+		EBDD7DB32973200200C1C4B2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DB22973200200C1C4B2 /* Utils.swift */; };
+		EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DB22973200200C1C4B2 /* Utils.swift */; };
+		EBDD7DB52973201800C1C4B2 /* ModelInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */; };
+		EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5929426E06003A2A5B /* Downloader.swift */; };
+		EBDD7DB82976AAFE00C1C4B2 /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DB72976AAFE00C1C4B2 /* State.swift */; };
+		EBDD7DB92976AAFE00C1C4B2 /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DB72976AAFE00C1C4B2 /* State.swift */; };
+		EBDD7DBD2977FFB300C1C4B2 /* GeneratedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DBB2977FFB300C1C4B2 /* GeneratedImageView.swift */; };
+		EBDD7DC02978642200C1C4B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EBE755CC293E37DD00806B32 /* Assets.xcassets */; };
 		EBE3FF4C295E1EFE00E921AA /* ModelInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */; };
 		EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE755C8293E37DD00806B32 /* DiffusionApp.swift */; };
 		EBE755CB293E37DD00806B32 /* TextToImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE755CA293E37DD00806B32 /* TextToImage.swift */; };
@@ -22,6 +35,12 @@
 		EBE755E7293E37DE00806B32 /* DiffusionUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE755E6293E37DE00806B32 /* DiffusionUITestsLaunchTests.swift */; };
 		EBE75602293E91E200806B32 /* Pipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE75601293E91E200806B32 /* Pipeline.swift */; };
 		EBE756092941178600806B32 /* Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE756082941178600806B32 /* Loading.swift */; };
+		F15520242971093300DC009B /* Diffusion_macOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15520232971093300DC009B /* Diffusion_macOSApp.swift */; };
+		F15520262971093300DC009B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15520252971093300DC009B /* ContentView.swift */; };
+		F155202B2971093400DC009B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F155202A2971093400DC009B /* Preview Assets.xcassets */; };
+		F1552031297109C300DC009B /* ControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1552030297109C300DC009B /* ControlsView.swift */; };
+		F155203429710B3600DC009B /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F155203329710B3600DC009B /* StatusView.swift */; };
+		F155203C297118E700DC009B /* CompactSlider in Frameworks */ = {isa = PBXBuildFile; productRef = F155203B297118E700DC009B /* CompactSlider */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +64,10 @@
 		EB33A51E2954E1BC00B16357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineLoader.swift; sourceTree = "<group>"; };
 		EBB5BA5929426E06003A2A5B /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
+		EBDD7DB22973200200C1C4B2 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		EBDD7DB72976AAFE00C1C4B2 /* State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
+		EBDD7DBA2976F03600C1C4B2 /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
+		EBDD7DBB2977FFB300C1C4B2 /* GeneratedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedImageView.swift; sourceTree = "<group>"; };
 		EBE3FF4A295DFE2400E921AA /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = config/common.xcconfig; sourceTree = "<group>"; };
 		EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelInfo.swift; sourceTree = "<group>"; };
 		EBE4438729488DCA00CDA605 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -62,6 +85,13 @@
 		EBE755E6293E37DE00806B32 /* DiffusionUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffusionUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		EBE75601293E91E200806B32 /* Pipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pipeline.swift; sourceTree = "<group>"; };
 		EBE756082941178600806B32 /* Loading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loading.swift; sourceTree = "<group>"; };
+		F15520212971093300DC009B /* Diffusers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Diffusers.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F15520232971093300DC009B /* Diffusion_macOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diffusion_macOSApp.swift; sourceTree = "<group>"; };
+		F15520252971093300DC009B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F155202A2971093400DC009B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		F155202C2971093400DC009B /* Diffusion_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Diffusion_macOS.entitlements; sourceTree = "<group>"; };
+		F1552030297109C300DC009B /* ControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsView.swift; sourceTree = "<group>"; };
+		F155203329710B3600DC009B /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +119,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F155201E2971093300DC009B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F155203C297118E700DC009B /* CompactSlider in Frameworks */,
+				EBDD7DB129731FB300C1C4B2 /* StableDiffusion in Frameworks */,
+				EBDD7DAD29731FB300C1C4B2 /* Path in Frameworks */,
+				EBDD7DAF29731FB300C1C4B2 /* ZIPFoundation in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -105,10 +146,12 @@
 			isa = PBXGroup;
 			children = (
 				EBE3FF4A295DFE2400E921AA /* common.xcconfig */,
+				EBDD7DBA2976F03600C1C4B2 /* debug.xcconfig */,
 				EBE4438729488DCA00CDA605 /* README.md */,
 				EBE443892948953600CDA605 /* LICENSE */,
 				EBE755FF293E910800806B32 /* Packages */,
 				EBE755C7293E37DD00806B32 /* Diffusion */,
+				F15520222971093300DC009B /* Diffusion-macOS */,
 				EBE755D9293E37DE00806B32 /* DiffusionTests */,
 				EBE755E3293E37DE00806B32 /* DiffusionUITests */,
 				EBE755C6293E37DD00806B32 /* Products */,
@@ -122,6 +165,7 @@
 				EBE755C5293E37DD00806B32 /* Diffusion.app */,
 				EBE755D6293E37DE00806B32 /* DiffusionTests.xctest */,
 				EBE755E0293E37DE00806B32 /* DiffusionUITests.xctest */,
+				F15520212971093300DC009B /* Diffusers.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -134,7 +178,9 @@
 				EBE7560A29411A5E00806B32 /* Views */,
 				EBB5BA5929426E06003A2A5B /* Downloader.swift */,
 				EBE755C8293E37DD00806B32 /* DiffusionApp.swift */,
+				EBDD7DB22973200200C1C4B2 /* Utils.swift */,
 				EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */,
+				EBDD7DB72976AAFE00C1C4B2 /* State.swift */,
 				EBE755CC293E37DD00806B32 /* Assets.xcassets */,
 				EBE755CE293E37DD00806B32 /* Diffusion.entitlements */,
 				EBE755CF293E37DD00806B32 /* Preview Content */,
@@ -188,6 +234,28 @@
 				EBE755CA293E37DD00806B32 /* TextToImage.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		F15520222971093300DC009B /* Diffusion-macOS */ = {
+			isa = PBXGroup;
+			children = (
+				F15520232971093300DC009B /* Diffusion_macOSApp.swift */,
+				F15520252971093300DC009B /* ContentView.swift */,
+				EBDD7DBB2977FFB300C1C4B2 /* GeneratedImageView.swift */,
+				F1552030297109C300DC009B /* ControlsView.swift */,
+				F155203329710B3600DC009B /* StatusView.swift */,
+				F155202C2971093400DC009B /* Diffusion_macOS.entitlements */,
+				F15520292971093400DC009B /* Preview Content */,
+			);
+			path = "Diffusion-macOS";
+			sourceTree = "<group>";
+		};
+		F15520292971093400DC009B /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				F155202A2971093400DC009B /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -251,6 +319,29 @@
 			productReference = EBE755E0293E37DE00806B32 /* DiffusionUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		F15520202971093300DC009B /* Diffusion-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F155202F2971093400DC009B /* Build configuration list for PBXNativeTarget "Diffusion-macOS" */;
+			buildPhases = (
+				F155201D2971093300DC009B /* Sources */,
+				F155201E2971093300DC009B /* Frameworks */,
+				F155201F2971093300DC009B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Diffusion-macOS";
+			packageProductDependencies = (
+				F155203B297118E700DC009B /* CompactSlider */,
+				EBDD7DAC29731FB300C1C4B2 /* Path */,
+				EBDD7DAE29731FB300C1C4B2 /* ZIPFoundation */,
+				EBDD7DB029731FB300C1C4B2 /* StableDiffusion */,
+			);
+			productName = "Diffusion-macOS";
+			productReference = F15520212971093300DC009B /* Diffusers.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -258,7 +349,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1410;
+				LastSwiftUpdateCheck = 1420;
 				LastUpgradeCheck = 1410;
 				TargetAttributes = {
 					EBE755C4293E37DD00806B32 = {
@@ -271,6 +362,9 @@
 					EBE755DF293E37DE00806B32 = {
 						CreatedOnToolsVersion = 14.1;
 						TestTargetID = EBE755C4293E37DD00806B32;
+					};
+					F15520202971093300DC009B = {
+						CreatedOnToolsVersion = 14.2;
 					};
 				};
 			};
@@ -287,6 +381,7 @@
 				EBB5BA5629425E17003A2A5B /* XCRemoteSwiftPackageReference "Path.swift" */,
 				EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				EB33A51B2954D89F00B16357 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
+				F155203A297118E600DC009B /* XCRemoteSwiftPackageReference "CompactSlider" */,
 			);
 			productRefGroup = EBE755C6293E37DD00806B32 /* Products */;
 			projectDirPath = "";
@@ -295,6 +390,7 @@
 				EBE755C4293E37DD00806B32 /* Diffusion */,
 				EBE755D5293E37DE00806B32 /* DiffusionTests */,
 				EBE755DF293E37DE00806B32 /* DiffusionUITests */,
+				F15520202971093300DC009B /* Diffusion-macOS */,
 			);
 		};
 /* End PBXProject section */
@@ -323,6 +419,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F155201F2971093300DC009B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EBDD7DC02978642200C1C4B2 /* Assets.xcassets in Resources */,
+				F155202B2971093400DC009B /* Preview Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -335,8 +440,10 @@
 				EBB5BA5A29426E06003A2A5B /* Downloader.swift in Sources */,
 				EBE3FF4C295E1EFE00E921AA /* ModelInfo.swift in Sources */,
 				EBE756092941178600806B32 /* Loading.swift in Sources */,
+				EBDD7DB82976AAFE00C1C4B2 /* State.swift in Sources */,
 				EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */,
 				EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */,
+				EBDD7DB32973200200C1C4B2 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,6 +461,24 @@
 			files = (
 				EBE755E7293E37DE00806B32 /* DiffusionUITestsLaunchTests.swift in Sources */,
 				EBE755E5293E37DE00806B32 /* DiffusionUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F155201D2971093300DC009B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EBDD7DAB29731F7500C1C4B2 /* PipelineLoader.swift in Sources */,
+				EBDD7DAA29731F6C00C1C4B2 /* Pipeline.swift in Sources */,
+				F15520262971093300DC009B /* ContentView.swift in Sources */,
+				EBDD7DB92976AAFE00C1C4B2 /* State.swift in Sources */,
+				EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */,
+				F1552031297109C300DC009B /* ControlsView.swift in Sources */,
+				EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */,
+				F155203429710B3600DC009B /* StatusView.swift in Sources */,
+				F15520242971093300DC009B /* Diffusion_macOSApp.swift in Sources */,
+				EBDD7DB52973201800C1C4B2 /* ModelInfo.swift in Sources */,
+				EBDD7DBD2977FFB300C1C4B2 /* GeneratedImageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,7 +609,7 @@
 		};
 		EBE755EB293E37DE00806B32 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EBE3FF4A295DFE2400E921AA /* common.xcconfig */;
+			baseConfigurationReference = EBDD7DBA2976F03600C1C4B2 /* debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -511,7 +636,6 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pcuenca.DiffusionApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -552,7 +676,6 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pcuenca.DiffusionApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -654,6 +777,65 @@
 			};
 			name = Release;
 		};
+		F155202D2971093400DC009B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EBDD7DBA2976F03600C1C4B2 /* debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = "Diffusion-macOS/Diffusion_macOS.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Diffusion-macOS/Preview Content\"";
+				DEVELOPMENT_TEAM = 2EADP68M95;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F155202E2971093400DC009B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EBE3FF4A295DFE2400E921AA /* common.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = "Diffusion-macOS/Diffusion_macOS.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Diffusion-macOS/Preview Content\"";
+				DEVELOPMENT_TEAM = 2EADP68M95;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.huggingface.Diffusers;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -693,6 +875,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		F155202F2971093400DC009B /* Build configuration list for PBXNativeTarget "Diffusion-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F155202D2971093400DC009B /* Debug */,
+				F155202E2971093400DC009B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -720,6 +911,14 @@
 				minimumVersion = 0.9.9;
 			};
 		};
+		F155203A297118E600DC009B /* XCRemoteSwiftPackageReference "CompactSlider" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/buh/CompactSlider.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -737,6 +936,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
 			productName = ZIPFoundation;
+		};
+		EBDD7DAC29731FB300C1C4B2 /* Path */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EBB5BA5629425E17003A2A5B /* XCRemoteSwiftPackageReference "Path.swift" */;
+			productName = Path;
+		};
+		EBDD7DAE29731FB300C1C4B2 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+		EBDD7DB029731FB300C1C4B2 /* StableDiffusion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB33A51B2954D89F00B16357 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
+			productName = StableDiffusion;
+		};
+		F155203B297118E700DC009B /* CompactSlider */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F155203A297118E600DC009B /* XCRemoteSwiftPackageReference "CompactSlider" */;
+			productName = CompactSlider;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

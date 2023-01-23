@@ -11,12 +11,8 @@ import Combine
 
 let model = ModelInfo.v2Base
 
-class DiffusionGlobals: ObservableObject {
-    @Published var pipeline: Pipeline? = nil
-}
-
 struct LoadingView: View {
-    @StateObject var context = DiffusionGlobals()
+    @StateObject var generation = GenerationContext()
 
     @State private var preparationPhase = "Downloading…"
     @State private var downloadProgress: Double = 0
@@ -41,7 +37,7 @@ struct LoadingView: View {
             }
         }
         .animation(.easeIn, value: currentView)
-        .environmentObject(context)
+        .environmentObject(generation)
         .onAppear {
             Task.init {
                 let loader = PipelineLoader(model: model)
@@ -63,7 +59,7 @@ struct LoadingView: View {
                     }
                 }
                 do {
-                    context.pipeline = try await loader.prepare()
+                    generation.pipeline = try await loader.prepare()
                     self.currentView = .textToImage
                 } catch {
                     self.currentView = .error("Could not load model, error: \(error)")
