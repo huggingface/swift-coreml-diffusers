@@ -25,8 +25,11 @@ struct ControlsView: View {
     static let modelNames = models.map { $0.modelVersion }
     
     @State private var model = Settings.shared.currentModel.modelVersion
+    @State private var disclosedModel = true
     @State private var disclosedPrompt = true
-    
+    @State private var disclosedSteps = false
+    @State private var disclosedSeed = false
+
     // TODO: refactor download with similar code in Loading.swift (iOS)
     @State private var stateSubscriber: Cancellable?
     @State private var pipelineState: PipelineState = .downloading(0)
@@ -72,7 +75,7 @@ struct ControlsView: View {
             
             ScrollView {
                 Group {
-                    DisclosureGroup {
+                    DisclosureGroup(isExpanded: $disclosedModel) {
                         Picker("", selection: $model) {
                             ForEach(Self.modelNames, id: \.self) {
                                 Text($0)
@@ -83,7 +86,11 @@ struct ControlsView: View {
                             modelDidChange(model: model)
                         }
                     } label: {
-                        Label("Model", systemImage: "cpu").foregroundColor(.secondary)
+                        Label("Model from Hub", systemImage: "cpu").foregroundColor(.secondary).onTapGesture {
+                            withAnimation {
+                                disclosedModel.toggle()
+                            }
+                        }
                     }
                     
                     Divider()
@@ -99,19 +106,27 @@ struct ControlsView: View {
                                 .textFieldStyle(.squareBorder)
                         }.padding(.leading, 10)
                     } label: {
-                        Label("Prompts", systemImage: "text.quote").foregroundColor(.secondary)
+                        Label("Prompts", systemImage: "text.quote").foregroundColor(.secondary).onTapGesture {
+                            withAnimation {
+                                disclosedPrompt.toggle()
+                            }
+                        }
                     }
                     
                     Divider()
 
-                    DisclosureGroup {
+                    DisclosureGroup(isExpanded: $disclosedSteps) {
                         CompactSlider(value: $generation.steps, in: 0...150, step: 5) {
                             Text("Steps")
                             Spacer()
                             Text("\(Int(generation.steps))")
                         }.padding(.leading, 10)
                     } label: {
-                        Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary)
+                        Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary).onTapGesture {
+                            withAnimation {
+                                disclosedSteps.toggle()
+                            }
+                        }
                     }
                     Divider()
                     
@@ -126,7 +141,7 @@ struct ControlsView: View {
 //                    }
 //                    Divider()
                     
-                    DisclosureGroup() {
+                        DisclosureGroup(isExpanded: $disclosedSeed) {
                         let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
                         CompactSlider(value: $generation.seed, in: -1...1000, step: 1) {
                             Text(sliderLabel)
@@ -134,7 +149,11 @@ struct ControlsView: View {
                             Text("\(Int(generation.seed))")
                         }.padding(.leading, 10)
                     } label: {
-                        Label("Seed", systemImage: "leaf").foregroundColor(.secondary)
+                        Label("Seed", systemImage: "leaf").foregroundColor(.secondary).onTapGesture {
+                            withAnimation {
+                                disclosedSeed.toggle()
+                            }
+                        }
                     }
                 }
             }
