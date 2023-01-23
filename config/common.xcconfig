@@ -8,7 +8,8 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-// Update if you fork this repo
-DEVELOPMENT_TEAM = ZWDJQ796RU
+PRODUCT_NAME = Diffusers
 
-PRODUCT_BUNDLE_IDENTIFIER = com.huggingface.DiffusionApp
+// Update if you fork this repo
+DEVELOPMENT_TEAM = 2EADP68M95
+PRODUCT_BUNDLE_IDENTIFIER = com.huggingface.Diffusers

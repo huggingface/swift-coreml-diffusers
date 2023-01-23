@@ -4,5 +4,7 @@
 	<dict>
 	    <key>NSPhotoLibraryAddUsageDescription</key>
     	<string>To be able to save generated images to your Photo Library, you’ll need to allow this.</string>
+	    <key>CFBundleDisplayName</key>
+    	<string>Diffusers</string>
 	</dict>
 </plist>
