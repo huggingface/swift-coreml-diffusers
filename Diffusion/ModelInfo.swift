@@ -59,7 +59,7 @@ extension ModelInfo {
 extension ModelInfo {
     // TODO: repo does not exist yet
     static let v14Base = ModelInfo(
-        modelId: "pcuenq/coreml-stable-diffusion-v1-4",
+        modelId: "pcuenq/coreml-stable-diffusion-1-4",
         modelVersion: "CompVis/stable-diffusion-v1-4"
     )
 
@@ -79,11 +79,17 @@ extension ModelInfo {
         supportsEncoder: true
     )
     
+    static let ofaSmall = ModelInfo(
+        modelId: "pcuenq/coreml-small-stable-diffusion-v0",
+        modelVersion: "OFA-Sys/small-stable-diffusion-v0"
+    )
+
     static let MODELS = [
-//        ModelInfo.v14Base,
+        ModelInfo.v14Base,
         ModelInfo.v15Base,
         ModelInfo.v2Base,
-        ModelInfo.v21Base
+        ModelInfo.v21Base,
+        ModelInfo.ofaSmall
     ]
     
     static func from(modelVersion: String) -> ModelInfo? {
