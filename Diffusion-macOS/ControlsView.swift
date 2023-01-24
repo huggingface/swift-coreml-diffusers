@@ -18,6 +18,31 @@ enum PipelineState {
     case failed(Error)
 }
 
+//struct LabelToggleDisclosureGroupStyle: DisclosureGroupStyle {
+//    func makeBody(configuration: Configuration) -> some View {
+//        VStack {
+//            HStack {
+//                Button {
+//                    withAnimation {
+//                        configuration.isExpanded.toggle()
+//                    }
+//                } label: {
+//                    Image(systemName: configuration.isExpanded ? "chevron.down.circle.fill" : "chevron.right.circle.fill")
+//                }.buttonStyle(.plain).foregroundColor(.primary).colorInvert()
+//                configuration.label.onTapGesture {
+//                    withAnimation {
+//                        configuration.isExpanded.toggle()
+//                    }
+//                }
+//                Spacer()
+//            }
+//            if configuration.isExpanded {
+//                configuration.content
+//            }
+//        }
+//    }
+//}
+
 struct ControlsView: View {
     @EnvironmentObject var generation: GenerationContext
 
