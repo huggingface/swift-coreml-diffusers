@@ -18,30 +18,32 @@ enum PipelineState {
     case failed(Error)
 }
 
-//struct LabelToggleDisclosureGroupStyle: DisclosureGroupStyle {
-//    func makeBody(configuration: Configuration) -> some View {
-//        VStack {
-//            HStack {
-//                Button {
-//                    withAnimation {
-//                        configuration.isExpanded.toggle()
-//                    }
-//                } label: {
-//                    Image(systemName: configuration.isExpanded ? "chevron.down.circle.fill" : "chevron.right.circle.fill")
-//                }.buttonStyle(.plain).foregroundColor(.primary).colorInvert()
-//                configuration.label.onTapGesture {
-//                    withAnimation {
-//                        configuration.isExpanded.toggle()
-//                    }
-//                }
-//                Spacer()
-//            }
-//            if configuration.isExpanded {
-//                configuration.content
-//            }
-//        }
-//    }
-//}
+/// Mimics the native appearance, but labels are clickable.
+/// To be removed (adding gestures to all labels) if we observe any UI shenanigans.
+struct LabelToggleDisclosureGroupStyle: DisclosureGroupStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        VStack {
+            HStack {
+                Button {
+                    withAnimation {
+                        configuration.isExpanded.toggle()
+                    }
+                } label: {
+                    Image(systemName: configuration.isExpanded ? "chevron.down" : "chevron.right").frame(width:8, height: 8)
+                }.buttonStyle(.plain).font(.footnote).fontWeight(.semibold).foregroundColor(.gray)
+                configuration.label.onTapGesture {
+                    withAnimation {
+                        configuration.isExpanded.toggle()
+                    }
+                }
+                Spacer()
+            }
+            if configuration.isExpanded {
+                configuration.content
+            }
+        }
+    }
+}
 
 struct ControlsView: View {
     @EnvironmentObject var generation: GenerationContext
@@ -111,11 +113,7 @@ struct ControlsView: View {
                             modelDidChange(model: model)
                         }
                     } label: {
-                        Label("Model from Hub", systemImage: "cpu").foregroundColor(.secondary).onTapGesture {
-                            withAnimation {
-                                disclosedModel.toggle()
-                            }
-                        }
+                        Label("Model from Hub", systemImage: "cpu").foregroundColor(.secondary)
                     }
                     
                     Divider()
@@ -131,11 +129,7 @@ struct ControlsView: View {
                                 .textFieldStyle(.squareBorder)
                         }.padding(.leading, 10)
                     } label: {
-                        Label("Prompts", systemImage: "text.quote").foregroundColor(.secondary).onTapGesture {
-                            withAnimation {
-                                disclosedPrompt.toggle()
-                            }
-                        }
+                        Label("Prompts", systemImage: "text.quote").foregroundColor(.secondary)
                     }
                     
                     Divider()
@@ -147,11 +141,7 @@ struct ControlsView: View {
                             Text("\(Int(generation.steps))")
                         }.padding(.leading, 10)
                     } label: {
-                        Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary).onTapGesture {
-                            withAnimation {
-                                disclosedSteps.toggle()
-                            }
-                        }
+                        Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary)
                     }
                     Divider()
                     
@@ -174,14 +164,11 @@ struct ControlsView: View {
                             Text("\(Int(generation.seed))")
                         }.padding(.leading, 10)
                     } label: {
-                        Label("Seed", systemImage: "leaf").foregroundColor(.secondary).onTapGesture {
-                            withAnimation {
-                                disclosedSeed.toggle()
-                            }
-                        }
+                        Label("Seed", systemImage: "leaf").foregroundColor(.secondary)
                     }
                 }
             }
+            .disclosureGroupStyle(LabelToggleDisclosureGroupStyle())
             
             StatusView(pipelineState: $pipelineState)
         }
