@@ -163,19 +163,8 @@ struct ControlsView: View {
                         Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary)
                     }
                     Divider()
-                    
-//                    DisclosureGroup() {
-//                        CompactSlider(value: $generation.numImages, in: 0...10, step: 1) {
-//                            Text("Number of Images")
-//                            Spacer()
-//                            Text("\(Int(generation.numImages))")
-//                        }.padding(.leading, 10)
-//                    } label: {
-//                        Label("Number of images", systemImage: "photo.stack").foregroundColor(.secondary)
-//                    }
-//                    Divider()
-                    
-                        DisclosureGroup(isExpanded: $disclosedSeed) {
+                                        
+                    DisclosureGroup(isExpanded: $disclosedSeed) {
                         let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
                         CompactSlider(value: $generation.seed, in: -1...1000, step: 1) {
                             Text(sliderLabel)
