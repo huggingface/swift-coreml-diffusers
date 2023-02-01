@@ -44,13 +44,23 @@ class GenerationContext: ObservableObject {
     @Published var steps = 25.0
     @Published var numImages = 1.0
     @Published var seed = -1.0
+    @Published var guidanceScale = 7.5
+    @Published var disableSafety = false
 
     private var progressSubscriber: Cancellable?
 
     func generate() async -> (CGImage, TimeInterval)? {
         guard let pipeline = pipeline else { return nil }
         let seed = self.seed >= 0 ? UInt32(self.seed) : nil
-        return try? pipeline.generate(prompt: positivePrompt, negativePrompt: negativePrompt, scheduler: scheduler, numInferenceSteps: Int(steps), seed: seed)
+        return try? pipeline.generate(
+            prompt: positivePrompt,
+            negativePrompt: negativePrompt,
+            scheduler: scheduler,
+            numInferenceSteps: Int(steps),
+            seed: seed,
+            guidanceScale: Float(guidanceScale),
+            disableSafety: disableSafety
+        )
     }
 }
 

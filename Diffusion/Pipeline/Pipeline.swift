@@ -29,7 +29,15 @@ class Pipeline {
         self.pipeline = pipeline
     }
     
-    func generate(prompt: String, negativePrompt: String = "", scheduler: StableDiffusionScheduler, numInferenceSteps stepCount: Int = 50, seed: UInt32? = nil) throws -> (CGImage, TimeInterval) {
+    func generate(
+        prompt: String,
+        negativePrompt: String = "",
+        scheduler: StableDiffusionScheduler,
+        numInferenceSteps stepCount: Int = 50,
+        seed: UInt32? = nil,
+        guidanceScale: Float = 7.5,
+        disableSafety: Bool = false
+    ) throws -> (CGImage, TimeInterval) {
         let beginDate = Date()
         print("Generating...")
         let theSeed = seed ?? UInt32.random(in: 0..<UInt32.max)
@@ -39,6 +47,8 @@ class Pipeline {
             imageCount: 1,
             stepCount: stepCount,
             seed: theSeed,
+            guidanceScale: guidanceScale,
+            disableSafety: disableSafety,
             scheduler: scheduler
         ) { progress in
             handleProgress(progress)
