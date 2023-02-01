@@ -54,6 +54,7 @@ struct ControlsView: View {
     @State private var model = Settings.shared.currentModel.modelVersion
     @State private var disclosedModel = true
     @State private var disclosedPrompt = true
+    @State private var disclosedGuidance = false
     @State private var disclosedSteps = false
     @State private var disclosedSeed = false
 
@@ -132,6 +133,17 @@ struct ControlsView: View {
                         Label("Prompts", systemImage: "text.quote").foregroundColor(.secondary)
                     }
                     
+                    Divider()
+
+                    DisclosureGroup(isExpanded: $disclosedGuidance) {
+                        CompactSlider(value: $generation.guidanceScale, in: 0...20, step: 0.5) {
+                            Text("Guidance Scale")
+                            Spacer()
+                            Text(generation.guidanceScale.formatted("%.1f"))
+                        }.padding(.leading, 10)
+                    } label: {
+                        Label("Guidance Scale", systemImage: "scalemass").foregroundColor(.secondary)
+                    }
                     Divider()
 
                     DisclosureGroup(isExpanded: $disclosedSteps) {
