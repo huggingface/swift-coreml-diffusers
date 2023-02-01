@@ -71,11 +71,13 @@ class Settings {
     
     enum Keys: String {
         case model
+        case safetyCheckerDisclaimer
     }
     
     private init() {
         defaults.register(defaults: [
-            Keys.model.rawValue: ModelInfo.v2Base.modelId
+            Keys.model.rawValue: ModelInfo.v2Base.modelId,
+            Keys.safetyCheckerDisclaimer.rawValue: false
         ])
     }
     
@@ -86,6 +88,15 @@ class Settings {
         get {
             guard let modelId = defaults.string(forKey: Keys.model.rawValue) else { return DEFAULT_MODEL }
             return ModelInfo.from(modelId: modelId) ?? DEFAULT_MODEL
+        }
+    }
+    
+    var safetyCheckerDisclaimerShown: Bool {
+        set {
+            defaults.set(newValue, forKey: Keys.safetyCheckerDisclaimer.rawValue)
+        }
+        get {
+            return defaults.bool(forKey: Keys.safetyCheckerDisclaimer.rawValue)
         }
     }
 }

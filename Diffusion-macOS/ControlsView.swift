@@ -62,6 +62,13 @@ struct ControlsView: View {
     @State private var stateSubscriber: Cancellable?
     @State private var pipelineState: PipelineState = .downloading(0)
 
+    // TODO: make this computed, and observable, and easy to read
+    @State private var mustShowSafetyCheckerDisclaimer = false
+    
+    func updateSafetyCheckerState() {
+        mustShowSafetyCheckerDisclaimer = generation.disableSafety && !Settings.shared.safetyCheckerDisclaimerShown
+    }
+    
     func modelDidChange(model: ModelInfo) {
         print("Loading model \(model)")
         Settings.shared.currentModel = model
@@ -181,6 +188,32 @@ struct ControlsView: View {
                 }
             }
             .disclosureGroupStyle(LabelToggleDisclosureGroupStyle())
+            
+            Toggle("Disable Safety Checker", isOn: $generation.disableSafety).onChange(of: generation.disableSafety) { value in
+                updateSafetyCheckerState()
+            }
+                .popover(isPresented: $mustShowSafetyCheckerDisclaimer) {
+                        VStack {
+                            Text("You have disabled the safety checker").font(.title).padding(.top)
+                            Text("""
+                                 Please, ensure that you abide \
+                                 by the conditions of the Stable Diffusion license and do not expose \
+                                 unfiltered results to the public.
+                                 """)
+                            .lineLimit(nil)
+                            .padding(.all, 5)
+                            Button {
+                                Settings.shared.safetyCheckerDisclaimerShown = true
+                                updateSafetyCheckerState()
+                            } label: {
+                                Text("I Accept").frame(maxWidth: 200)
+                            }
+                            .padding(.bottom)
+                        }
+                        .frame(minWidth: 400, idealWidth: 400, maxWidth: 400)
+                        .fixedSize()
+                    }
+            Divider()
             
             StatusView(pipelineState: $pipelineState)
         }
