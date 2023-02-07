@@ -23,19 +23,21 @@ class Downloader: NSObject, ObservableObject {
     private(set) lazy var downloadState: CurrentValueSubject<DownloadState, Never> = CurrentValueSubject(.notStarted)
     private var stateSubscriber: Cancellable?
     
+    private var urlSession: URLSession? = nil
+    
     init(from url: URL, to destination: URL) {
         self.destination = destination
         super.init()
         
         // .background allows downloads to proceed in the background
         let config = URLSessionConfiguration.background(withIdentifier: "net.pcuenca.diffusion.download")
-        let urlSession = URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue())
+        urlSession = URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue())
         downloadState.value = .downloading(0)
-        urlSession.getAllTasks { tasks in
+        urlSession?.getAllTasks { tasks in
             // If there's an existing pending background task, let it proceed, otherwise start a new one.
             // TODO: check URL when we support downloading more models.
             if tasks.first == nil {
-                urlSession.downloadTask(with: url).resume()
+                self.urlSession?.downloadTask(with: url).resume()
             }
         }
     }
@@ -58,6 +60,10 @@ class Downloader: NSObject, ObservableObject {
         case .failed(let error):  throw error
         default:                  throw("Should never happen, lol")
         }
+    }
+    
+    func cancel() {
+        urlSession?.invalidateAndCancel()
     }
 }
 

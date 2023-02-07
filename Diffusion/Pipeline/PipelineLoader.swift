@@ -43,7 +43,8 @@ class PipelineLoader {
         }
     }
     private(set) lazy var statePublisher: CurrentValueSubject<PipelinePreparationPhase, Never> = CurrentValueSubject(state)
-        
+    private(set) var downloader: Downloader? = nil
+
     func setInitialState() {
         if ready {
             state = .readyOnDisk
@@ -61,6 +62,10 @@ extension PipelineLoader {
     static func removeAll() {
         try? models.delete()
     }
+}
+
+extension PipelineLoader {
+    func cancel() { downloader?.cancel() }
 }
 
 extension PipelineLoader {
@@ -107,9 +112,9 @@ extension PipelineLoader {
         if ready || downloaded { return downloadedURL }
         
         let downloader = Downloader(from: url, to: downloadedURL)
+        self.downloader = downloader
         downloadSubscriber = downloader.downloadState.sink { state in
             if case .downloading(let progress) = state {
-                print(progress)
                 self.state = .downloading(progress)
             }
         }

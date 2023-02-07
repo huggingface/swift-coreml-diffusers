@@ -61,6 +61,7 @@ struct ControlsView: View {
     // TODO: refactor download with similar code in Loading.swift (iOS)
     @State private var stateSubscriber: Cancellable?
     @State private var pipelineState: PipelineState = .downloading(0)
+    @State private var pipelineLoader: PipelineLoader? = nil
 
     // TODO: make this computed, and observable, and easy to read
     @State private var mustShowSafetyCheckerDisclaimer = false
@@ -73,13 +74,16 @@ struct ControlsView: View {
         print("Loading model \(model)")
         Settings.shared.currentModel = model
         
+        pipelineLoader?.cancel()
         pipelineState = .downloading(0)
         Task.init {
             let loader = PipelineLoader(model: model)
+            self.pipelineLoader = loader
             stateSubscriber = loader.statePublisher.sink { state in
                 DispatchQueue.main.async {
                     switch state {
                     case .downloading(let progress):
+                        print("\(loader.model.modelVersion): \(progress)")
                         pipelineState = .downloading(progress)
                     case .uncompressing:
                         pipelineState = .uncompressing
