@@ -65,6 +65,12 @@ struct ControlsView: View {
     // TODO: make this computed, and observable, and easy to read
     @State private var mustShowSafetyCheckerDisclaimer = false
     
+    @State private var showModelsHelp = false
+    @State private var showPromptsHelp = false
+    @State private var showGuidanceHelp = false
+    @State private var showStepsHelp = false
+    @State private var showSeedHelp = false
+
     func updateSafetyCheckerState() {
         mustShowSafetyCheckerDisclaimer = generation.disableSafety && !Settings.shared.safetyCheckerDisclaimerShown
     }
@@ -110,7 +116,7 @@ struct ControlsView: View {
         let prefix = downloaded ? "● " : "◌ "  //"○ "
         return Text(prefix).foregroundColor(downloaded ? .accentColor : .secondary) + Text(model.modelVersion)
     }
-
+    
     var body: some View {
         VStack(alignment: .leading) {
             
@@ -132,9 +138,23 @@ struct ControlsView: View {
                             modelDidChange(model: model)
                         }
                     } label: {
-                        Label("Model from Hub", systemImage: "cpu").foregroundColor(.secondary)
+                        HStack {
+                            Label("Model from Hub", systemImage: "cpu").foregroundColor(.secondary)
+                            Spacer()
+                            if disclosedModel {
+                                Button {
+                                    showModelsHelp.toggle()
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                }
+                                .buttonStyle(.plain)
+                                // Or maybe use .sheet instead
+                                .sheet(isPresented: $showModelsHelp) {
+                                    modelsHelp($showModelsHelp)
+                                }
+                            }
+                        }.foregroundColor(.secondary)
                     }
-                    
                     Divider()
                     
                     DisclosureGroup(isExpanded: $disclosedPrompt) {
@@ -148,19 +168,51 @@ struct ControlsView: View {
                                 .textFieldStyle(.squareBorder)
                         }.padding(.leading, 10)
                     } label: {
-                        Label("Prompts", systemImage: "text.quote").foregroundColor(.secondary)
+                        HStack {
+                            Label("Prompts", systemImage: "text.quote").foregroundColor(.secondary)
+                            Spacer()
+                            if disclosedPrompt {
+                                Button {
+                                    showPromptsHelp.toggle()
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                }
+                                .buttonStyle(.plain)
+                                // Or maybe use .sheet instead
+                                .popover(isPresented: $showPromptsHelp, arrowEdge: .trailing) {
+                                    promptsHelp($showPromptsHelp)
+                                }
+                            }
+                        }.foregroundColor(.secondary)
                     }
-                    
                     Divider()
 
+                    let guidanceScaleValue = generation.guidanceScale.formatted("%.1f")
                     DisclosureGroup(isExpanded: $disclosedGuidance) {
                         CompactSlider(value: $generation.guidanceScale, in: 0...20, step: 0.5) {
                             Text("Guidance Scale")
                             Spacer()
-                            Text(generation.guidanceScale.formatted("%.1f"))
+                            Text(guidanceScaleValue)
                         }.padding(.leading, 10)
                     } label: {
-                        Label("Guidance Scale", systemImage: "scalemass").foregroundColor(.secondary)
+                        HStack {
+                            Label("Guidance Scale", systemImage: "scalemass").foregroundColor(.secondary)
+                            Spacer()
+                            if disclosedGuidance {
+                                Button {
+                                    showGuidanceHelp.toggle()
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                }
+                                .buttonStyle(.plain)
+                                // Or maybe use .sheet instead
+                                .popover(isPresented: $showGuidanceHelp, arrowEdge: .trailing) {
+                                    guidanceHelp($showGuidanceHelp)
+                                }
+                            } else {
+                                Text(guidanceScaleValue)
+                            }
+                        }.foregroundColor(.secondary)
                     }
                     Divider()
 
@@ -171,7 +223,23 @@ struct ControlsView: View {
                             Text("\(Int(generation.steps))")
                         }.padding(.leading, 10)
                     } label: {
-                        Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary)
+                        HStack {
+                            Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary)
+                            Spacer()
+                            if disclosedSteps {
+                                Button {
+                                    showStepsHelp.toggle()
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                }
+                                .buttonStyle(.plain)
+                                .popover(isPresented: $showStepsHelp, arrowEdge: .trailing) {
+                                    stepsHelp($showStepsHelp)
+                                }
+                            } else {
+                                Text("\(Int(generation.steps))")
+                            }
+                        }.foregroundColor(.secondary)
                     }
                     Divider()
                                         
@@ -183,7 +251,23 @@ struct ControlsView: View {
                             Text("\(Int(generation.seed))")
                         }.padding(.leading, 10)
                     } label: {
-                        Label("Seed", systemImage: "leaf").foregroundColor(.secondary)
+                        HStack {
+                            Label("Seed", systemImage: "leaf").foregroundColor(.secondary)
+                            Spacer()
+                            if disclosedSeed {
+                                Button {
+                                    showSeedHelp.toggle()
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                }
+                                .buttonStyle(.plain)
+                                .popover(isPresented: $showSeedHelp, arrowEdge: .trailing) {
+                                    seedHelp($showSeedHelp)
+                                }
+                            } else {
+                                Text("\(Int(generation.seed))")
+                            }
+                        }.foregroundColor(.secondary)
                     }
                 }
             }
@@ -224,4 +308,3 @@ struct ControlsView: View {
         }
     }
 }
-

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB067F862992E561004D1AD9 /* HelpContent.swift */; };
 		EB33A51D2954D89F00B16357 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB33A51C2954D89F00B16357 /* StableDiffusion */; };
 		EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */; };
 		EBB5BA5829425E17003A2A5B /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = EBB5BA5729425E17003A2A5B /* Path */; };
@@ -61,6 +62,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EB067F862992E561004D1AD9 /* HelpContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpContent.swift; sourceTree = "<group>"; };
 		EB33A51E2954E1BC00B16357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineLoader.swift; sourceTree = "<group>"; };
 		EBB5BA5929426E06003A2A5B /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
@@ -244,6 +246,7 @@
 				EBDD7DBB2977FFB300C1C4B2 /* GeneratedImageView.swift */,
 				F1552030297109C300DC009B /* ControlsView.swift */,
 				F155203329710B3600DC009B /* StatusView.swift */,
+				EB067F862992E561004D1AD9 /* HelpContent.swift */,
 				F155202C2971093400DC009B /* Diffusion_macOS.entitlements */,
 				F15520292971093400DC009B /* Preview Content */,
 			);
@@ -472,6 +475,7 @@
 				EBDD7DAA29731F6C00C1C4B2 /* Pipeline.swift in Sources */,
 				F15520262971093300DC009B /* ContentView.swift in Sources */,
 				EBDD7DB92976AAFE00C1C4B2 /* State.swift in Sources */,
+				EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */,
 				EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */,
 				F1552031297109C300DC009B /* ControlsView.swift in Sources */,
 				EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */,
