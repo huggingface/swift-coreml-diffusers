@@ -12,6 +12,8 @@ struct StatusView: View {
     @EnvironmentObject var generation: GenerationContext
     var pipelineState: Binding<PipelineState>
     
+    @State private var showErrorPopover = false
+    
     func submit() {
         if case .running = generation.state { return }
         Task {
@@ -77,8 +79,31 @@ struct StatusView: View {
                 
                 AnyView(generationStatusView())
             }
-        case .failed:
-            Text("Pipeline loading error")
+        case .failed(let error):
+            HStack {
+                Text("Pipeline loading error")
+                Spacer()
+                Button {
+                    showErrorPopover.toggle()
+                } label: {
+                    Image(systemName: "info.circle")
+                }.buttonStyle(.plain)
+                .popover(isPresented: $showErrorPopover) {
+                    VStack {
+                        Text(verbatim: "\(error)")
+                        .lineLimit(nil)
+                        .padding(.all, 5)
+                        Button {
+                            showErrorPopover.toggle()
+                        } label: {
+                            Text("Dismiss").frame(maxWidth: 200)
+                        }
+                        .padding(.bottom)
+                    }
+                    .frame(minWidth: 400, idealWidth: 400, maxWidth: 400)
+                    .fixedSize()
+                }
+            }
         }
     }
 }

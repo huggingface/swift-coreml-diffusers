@@ -89,6 +89,8 @@ struct ControlsView: View {
                         pipelineState = .uncompressing
                     case .readyOnDisk:
                         pipelineState = .loading
+                    case .failed(let error):
+                        pipelineState = .failed(error)
                     default:
                         break
                     }
