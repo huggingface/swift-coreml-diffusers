@@ -49,7 +49,6 @@ struct ControlsView: View {
     @EnvironmentObject var generation: GenerationContext
 
     static let models = ModelInfo.MODELS
-    static let modelNames = models.map { $0.modelVersion }
     
     @State private var model = Settings.shared.currentModel.modelVersion
     @State private var disclosedModel = true
@@ -106,6 +105,12 @@ struct ControlsView: View {
         }
     }
     
+    func modelLabel(_ model: ModelInfo) -> Text {
+        let downloaded = PipelineLoader(model: model).ready
+        let prefix = downloaded ? "● " : "◌ "  //"○ "
+        return Text(prefix).foregroundColor(downloaded ? .accentColor : .secondary) + Text(model.modelVersion)
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
             
@@ -118,8 +123,8 @@ struct ControlsView: View {
                 Group {
                     DisclosureGroup(isExpanded: $disclosedModel) {
                         Picker("", selection: $model) {
-                            ForEach(Self.modelNames, id: \.self) {
-                                Text($0)
+                            ForEach(Self.models, id: \.modelVersion) {
+                                modelLabel($0)
                             }
                         }
                         .onChange(of: model) { theModel in
