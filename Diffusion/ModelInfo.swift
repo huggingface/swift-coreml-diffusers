@@ -100,3 +100,7 @@ extension ModelInfo {
         ModelInfo.MODELS.first(where: {$0.modelId == modelId})
     }
 }
+
+extension ModelInfo : Equatable {
+    static func ==(lhs: ModelInfo, rhs: ModelInfo) -> Bool { lhs.modelId == rhs.modelId }
+}
