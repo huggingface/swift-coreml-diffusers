@@ -34,11 +34,13 @@ class Downloader: NSObject, ObservableObject {
         urlSession = URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue())
         downloadState.value = .downloading(0)
         urlSession?.getAllTasks { tasks in
-            // If there's an existing pending background task, let it proceed, otherwise start a new one.
-            // TODO: check URL when we support downloading more models.
-            if tasks.first == nil {
-                self.urlSession?.downloadTask(with: url).resume()
+            // If there's an existing pending background task with the same URL, let it proceed.
+            guard tasks.filter({ $0.originalRequest?.url == url }).isEmpty else {
+                print("Already downloading \(url)")
+                return
             }
+            print("Starting download of \(url)")
+            self.urlSession?.downloadTask(with: url).resume()
         }
     }
     
