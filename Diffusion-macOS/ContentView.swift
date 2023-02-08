@@ -66,7 +66,8 @@ struct ContentView: View {
     @StateObject var generation = GenerationContext()
 
     func toolbar() -> any View {
-        if case .complete(let prompt, let cgImage, let seed, _) = generation.state, let cgImage = cgImage {
+        if case .complete(let prompt, let cgImage, _, _) = generation.state, let cgImage = cgImage {
+            // TODO: share seed too
             return ShareButtons(image: cgImage, name: prompt)
         } else {
             let prompt = DEFAULT_PROMPT

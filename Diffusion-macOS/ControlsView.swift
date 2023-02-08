@@ -70,6 +70,9 @@ struct ControlsView: View {
     @State private var showGuidanceHelp = false
     @State private var showStepsHelp = false
     @State private var showSeedHelp = false
+    
+    // Reasonable range for the slider
+    let maxSeed: UInt32 = 1000
 
     func updateSafetyCheckerState() {
         mustShowSafetyCheckerDisclaimer = generation.disableSafety && !Settings.shared.safetyCheckerDisclaimerShown
@@ -82,7 +85,7 @@ struct ControlsView: View {
         pipelineLoader?.cancel()
         pipelineState = .downloading(0)
         Task.init {
-            let loader = PipelineLoader(model: model)
+            let loader = PipelineLoader(model: model, maxSeed: maxSeed)
             self.pipelineLoader = loader
             stateSubscriber = loader.statePublisher.sink { state in
                 DispatchQueue.main.async {
@@ -245,7 +248,7 @@ struct ControlsView: View {
                                         
                     DisclosureGroup(isExpanded: $disclosedSeed) {
                         let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
-                        CompactSlider(value: $generation.seed, in: -1...1000, step: 1) {
+                        CompactSlider(value: $generation.seed, in: -1...Double(maxSeed), step: 1) {
                             Text(sliderLabel)
                             Spacer()
                             Text("\(Int(generation.seed))")

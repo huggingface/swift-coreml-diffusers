@@ -22,6 +22,7 @@ struct GenerationResult {
 
 class Pipeline {
     let pipeline: StableDiffusionPipeline
+    let maxSeed: UInt32
     
     var progress: StableDiffusionProgress? = nil {
         didSet {
@@ -31,8 +32,9 @@ class Pipeline {
     lazy private(set) var progressPublisher: CurrentValueSubject<StableDiffusionProgress?, Never> = CurrentValueSubject(progress)
 
 
-    init(_ pipeline: StableDiffusionPipeline) {
+    init(_ pipeline: StableDiffusionPipeline, maxSeed: UInt32 = UInt32.max) {
         self.pipeline = pipeline
+        self.maxSeed = maxSeed
     }
     
     func generate(
@@ -46,7 +48,7 @@ class Pipeline {
     ) throws -> GenerationResult {
         let beginDate = Date()
         print("Generating...")
-        let theSeed = seed ?? UInt32.random(in: 0..<UInt32.max)
+        let theSeed = seed ?? UInt32.random(in: 0...maxSeed)
         let images = try pipeline.generateImages(
             prompt: prompt,
             negativePrompt: negativePrompt,

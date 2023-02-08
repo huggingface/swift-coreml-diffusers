@@ -18,10 +18,13 @@ class PipelineLoader {
     static let models = Path.applicationSupport / "hf-diffusion-models"
     
     let model: ModelInfo
+    let maxSeed: UInt32
+    
     private var downloadSubscriber: Cancellable?
 
-    init(model: ModelInfo) {
+    init(model: ModelInfo, maxSeed: UInt32 = UInt32.max) {
         self.model = model
+        self.maxSeed = maxSeed
         state = .undetermined
         setInitialState()
     }
@@ -100,7 +103,7 @@ extension PipelineLoader {
             try await download()
             try await unzip()
             let pipeline = try await load(url: compiledPath.url)
-            return Pipeline(pipeline)
+            return Pipeline(pipeline, maxSeed: maxSeed)
         } catch {
             state = .failed(error)
             throw error

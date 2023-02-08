@@ -83,6 +83,12 @@ struct StatusView: View {
                 let intervalString = String(format: "Time: %.1fs", interval ?? 0)
                 Text(intervalString)
                 Spacer()
+                if generation.seed != Double(lastSeed) {
+                    Text("Seed: \(lastSeed)")
+                    Button("Set") {
+                        generation.seed = Double(lastSeed)
+                    }
+                }
             }.frame(maxHeight: 25)
         case .failed(let error):
             return errorWithDetails("Generation error", error: error)
