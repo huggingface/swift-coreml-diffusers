@@ -99,7 +99,7 @@ struct TextToImage: View {
             generation.state = .running(nil)
             let interval: TimeInterval?
             let image: CGImage?
-            (image, interval) = await generation.generate() ?? (nil, nil)
+            let result = await generation.generate()
             generation.state = .complete(generation.positivePrompt, image, interval)
         }
     }

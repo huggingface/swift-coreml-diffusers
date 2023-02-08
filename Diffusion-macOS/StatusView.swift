@@ -18,13 +18,42 @@ struct StatusView: View {
         if case .running = generation.state { return }
         Task {
             generation.state = .running(nil)
-            let interval: TimeInterval?
-            let image: CGImage?
-            (image, interval) = await generation.generate() ?? (nil, nil)
-            generation.state = .complete(generation.positivePrompt, image, interval)
+            do {
+                let result = try await generation.generate()
+                generation.state = .complete(generation.positivePrompt, result.image, result.lastSeed, result.interval)
+            } catch {
+                generation.state = .failed(error)
+            }
         }
     }
-    
+
+    func errorWithDetails(_ message: String, error: Error) -> any View {
+        HStack {
+            Text(message)
+            Spacer()
+            Button {
+                showErrorPopover.toggle()
+            } label: {
+                Image(systemName: "info.circle")
+            }.buttonStyle(.plain)
+            .popover(isPresented: $showErrorPopover) {
+                VStack {
+                    Text(verbatim: "\(error)")
+                    .lineLimit(nil)
+                    .padding(.all, 5)
+                    Button {
+                        showErrorPopover.toggle()
+                    } label: {
+                        Text("Dismiss").frame(maxWidth: 200)
+                    }
+                    .padding(.bottom)
+                }
+                .frame(minWidth: 400, idealWidth: 400, maxWidth: 400)
+                .fixedSize()
+            }
+        }
+    }
+
     func generationStatusView() -> any View {
         switch generation.state {
         case .startup: return EmptyView()
@@ -42,7 +71,7 @@ struct StatusView: View {
                 Text("Generating \(Int(round(100*fraction)))%")
                 Spacer()
             }
-        case .complete(_, let image, let interval):
+        case .complete(_, let image, let lastSeed, let interval):
             guard let _ = image else {
                 return HStack {
                     Text("Safety checker triggered, please try a different prompt or seed")
@@ -55,9 +84,11 @@ struct StatusView: View {
                 Text(intervalString)
                 Spacer()
             }.frame(maxHeight: 25)
+        case .failed(let error):
+            return errorWithDetails("Generation error", error: error)
         }
     }
-
+    
     var body: some View {
         switch pipelineState.wrappedValue {
         case .downloading(let progress):
@@ -80,30 +111,7 @@ struct StatusView: View {
                 AnyView(generationStatusView())
             }
         case .failed(let error):
-            HStack {
-                Text("Pipeline loading error")
-                Spacer()
-                Button {
-                    showErrorPopover.toggle()
-                } label: {
-                    Image(systemName: "info.circle")
-                }.buttonStyle(.plain)
-                .popover(isPresented: $showErrorPopover) {
-                    VStack {
-                        Text(verbatim: "\(error)")
-                        .lineLimit(nil)
-                        .padding(.all, 5)
-                        Button {
-                            showErrorPopover.toggle()
-                        } label: {
-                            Text("Dismiss").frame(maxWidth: 200)
-                        }
-                        .padding(.bottom)
-                    }
-                    .frame(minWidth: 400, idealWidth: 400, maxWidth: 400)
-                    .fixedSize()
-                }
-            }
+            AnyView(errorWithDetails("Pipeline loading error", error: error))
         }
     }
 }

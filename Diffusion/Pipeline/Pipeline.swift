@@ -14,6 +14,12 @@ import StableDiffusion
 
 typealias StableDiffusionProgress = StableDiffusionPipeline.Progress
 
+struct GenerationResult {
+    var image: CGImage?
+    var lastSeed: UInt32
+    var interval: TimeInterval?
+}
+
 class Pipeline {
     let pipeline: StableDiffusionPipeline
     
@@ -37,7 +43,7 @@ class Pipeline {
         seed: UInt32? = nil,
         guidanceScale: Float = 7.5,
         disableSafety: Bool = false
-    ) throws -> (CGImage, TimeInterval) {
+    ) throws -> GenerationResult {
         let beginDate = Date()
         print("Generating...")
         let theSeed = seed ?? UInt32.random(in: 0..<UInt32.max)
@@ -59,7 +65,7 @@ class Pipeline {
         
         // unwrap the 1 image we asked for
         guard let image = images.compactMap({ $0 }).first else { throw "Generation failed" }
-        return (image, interval)
+        return GenerationResult(image: image, lastSeed: theSeed, interval: interval)
     }
 
     func handleProgress(_ progress: StableDiffusionPipeline.Progress) {

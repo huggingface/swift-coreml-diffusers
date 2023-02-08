@@ -23,7 +23,7 @@ struct GeneratedImageView: View {
             let fraction = Double(step) / Double(progress.stepCount)
             let label = "Step \(step) of \(progress.stepCount)"
             return AnyView(ProgressView(label, value: fraction, total: 1).padding())
-        case .complete(_, let image, _):
+        case .complete(_, let image, _, _):
             guard let theImage = image else {
                 return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
             }
@@ -32,6 +32,8 @@ struct GeneratedImageView: View {
                 .resizable()
                 .clipShape(RoundedRectangle(cornerRadius: 20))
             )
+        case .failed(_):
+            return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
         }
     }
 }

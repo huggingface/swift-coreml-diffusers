@@ -16,7 +16,8 @@ let DEFAULT_PROMPT = "Labrador in the style of Vermeer"
 enum GenerationState {
     case startup
     case running(StableDiffusionProgress?)
-    case complete(String, CGImage?, TimeInterval?)
+    case complete(String, CGImage?, UInt32, TimeInterval?)
+    case failed(Error)
 }
 
 class GenerationContext: ObservableObject {
@@ -49,10 +50,10 @@ class GenerationContext: ObservableObject {
 
     private var progressSubscriber: Cancellable?
 
-    func generate() async -> (CGImage, TimeInterval)? {
-        guard let pipeline = pipeline else { return nil }
+    func generate() async throws -> GenerationResult {
+        guard let pipeline = pipeline else { throw "No pipeline" }
         let seed = self.seed >= 0 ? UInt32(self.seed) : nil
-        return try? pipeline.generate(
+        return try pipeline.generate(
             prompt: positivePrompt,
             negativePrompt: negativePrompt,
             scheduler: scheduler,
