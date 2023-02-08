@@ -65,8 +65,8 @@ class Pipeline {
         let interval = Date().timeIntervalSince(beginDate)
         print("Got images: \(images) in \(interval)")
         
-        // unwrap the 1 image we asked for
-        guard let image = images.compactMap({ $0 }).first else { throw "Generation failed" }
+        // Unwrap the 1 image we asked for, nil means safety checker triggered
+        let image = images.compactMap({ $0 }).first
         return GenerationResult(image: image, lastSeed: theSeed, interval: interval)
     }
 

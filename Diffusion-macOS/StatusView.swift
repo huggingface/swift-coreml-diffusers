@@ -74,7 +74,7 @@ struct StatusView: View {
         case .complete(_, let image, let lastSeed, let interval):
             guard let _ = image else {
                 return HStack {
-                    Text("Safety checker triggered, please try a different prompt or seed")
+                    Text("Safety checker triggered, please try a different prompt or seed.")
                     Spacer()
                 }
             }
