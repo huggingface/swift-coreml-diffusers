@@ -42,23 +42,23 @@ func modelsHelp(_ showing: Binding<Bool>) -> some View {
         """
         Diffusers launches with a set of 5 models that can be downloaded from the Hugging Face Hub:
         
-        **Stable Diffusion 1.4**
+        **[Stable Diffusion 1.4](https://huggingface.co/CompVis/stable-diffusion-v1-4)**
           
-        This is the original Stable Diffusion model that changed the landscape of AI image generation.
+        This is the original Stable Diffusion model that changed the landscape of AI image generation. For more details, visit the [model card](https://huggingface.co/CompVis/stable-diffusion-v1-4) or click on the title above.
         
-        **Stable Diffusion 1.5**
+        **[Stable Diffusion 1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5)**
         
         Same architecture as 1.4, but trained on additional images with a focus on aesthetics.
         
-        **Stable Diffusion 2**
+        **[Stable Diffusion 2](https://huggingface.co/StabilityAI/stable-diffusion-2-base)**
         
-        Improved model, heavily retrained on millions of additional images.
+        Improved model, heavily retrained on millions of additional images. This version corresponds to the [`stable-diffusion-2-base`](https://huggingface.co/StabilityAI/stable-diffusion-2-base) version of the model (trained on 512 x 512 images).
         
-        **Stable Diffusion 2.1**
+        **[Stable Diffusion 2.1](https://huggingface.co/stabilityai/stable-diffusion-2-1-base)**
         
         The last reference in the Stable Diffusion family. Works great with _negative prompts_.
         
-        OFA small v0
+        **[OFA small v0](https://huggingface.co/OFA-Sys/small-stable-diffusion-v0)**
         
         This is a special so-called _distilled_ model, half the size of the others. It runs faster and requires less RAM, try it out if you find generation slow!
         
