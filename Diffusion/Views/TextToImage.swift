@@ -66,7 +66,7 @@ struct ImageWithPlaceholder: View {
             let fraction = Double(step) / Double(progress.stepCount)
             let label = "Step \(step) of \(progress.stepCount)"
             return AnyView(ProgressView(label, value: fraction, total: 1).padding())
-        case .complete(let lastPrompt, let image, let interval):
+        case .complete(let lastPrompt, let image, _, let interval):
             guard let theImage = image else {
                 return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
             }
@@ -86,6 +86,8 @@ struct ImageWithPlaceholder: View {
                         )
                     }.frame(maxHeight: 25)
             })
+        case .failed(_):
+            return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
         }
     }
 }
@@ -97,10 +99,12 @@ struct TextToImage: View {
         if case .running = generation.state { return }
         Task {
             generation.state = .running(nil)
-            let interval: TimeInterval?
-            let image: CGImage?
-            let result = await generation.generate()
-            generation.state = .complete(generation.positivePrompt, image, interval)
+            do {
+                let result = try await generation.generate()
+                generation.state = .complete(generation.positivePrompt, result.image, result.lastSeed, result.interval)
+            } catch {
+                generation.state = .failed(error)
+            }
         }
     }
     
