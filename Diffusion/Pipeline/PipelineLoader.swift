@@ -18,12 +18,14 @@ class PipelineLoader {
     static let models = Path.applicationSupport / "hf-diffusion-models"
     
     let model: ModelInfo
+    let variant: AttentionVariant
     let maxSeed: UInt32
     
     private var downloadSubscriber: Cancellable?
 
-    init(model: ModelInfo, maxSeed: UInt32 = UInt32.max) {
+    init(model: ModelInfo, variant: AttentionVariant? = nil, maxSeed: UInt32 = UInt32.max) {
         self.model = model
+        self.variant = variant ?? model.bestAttention
         self.maxSeed = maxSeed
         state = .undetermined
         setInitialState()
@@ -73,7 +75,7 @@ extension PipelineLoader {
 
 extension PipelineLoader {
     var url: URL {
-        return model.bestURL
+        return model.modelURL(for: variant)
     }
     
     var filename: String {

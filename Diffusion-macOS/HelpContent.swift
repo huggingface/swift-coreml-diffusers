@@ -123,3 +123,17 @@ func seedHelp(_ showing: Binding<Bool>) -> some View {
          """
     return helpContent(title: "Generation Seed", description: description, showing: showing)
 }
+
+func advancedHelp(_ showing: Binding<Bool>) -> some View {
+    let description =
+         """
+         This section allows you to try different optimization settings.
+         
+         Diffusers will try to select the best configuration for you, but it may not always be optimal \
+         for your computer. You can experiment with these settings to verify the combination that works faster \
+         in your system.
+         
+         Please, note that these settings may trigger downloads of additional model variants.
+         """
+    return helpContent(title: "Advanced Model Settings", description: description, showing: showing)
+}

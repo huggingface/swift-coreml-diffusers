@@ -56,6 +56,8 @@ struct ControlsView: View {
     @State private var disclosedGuidance = false
     @State private var disclosedSteps = false
     @State private var disclosedSeed = false
+    @State private var disclosedAdvanced = false
+    @State private var useANE = false
 
     // TODO: refactor download with similar code in Loading.swift (iOS)
     @State private var stateSubscriber: Cancellable?
@@ -70,7 +72,8 @@ struct ControlsView: View {
     @State private var showGuidanceHelp = false
     @State private var showStepsHelp = false
     @State private var showSeedHelp = false
-    
+    @State private var showAdvancedHelp = false
+
     // Reasonable range for the slider
     let maxSeed: UInt32 = 1000
 
@@ -85,7 +88,7 @@ struct ControlsView: View {
         pipelineLoader?.cancel()
         pipelineState = .downloading(0)
         Task.init {
-            let loader = PipelineLoader(model: model, maxSeed: maxSeed)
+            let loader = PipelineLoader(model: model, variant: Settings.shared.userSelectedAttentionVariant, maxSeed: maxSeed)
             self.pipelineLoader = loader
             stateSubscriber = loader.statePublisher.sink { state in
                 DispatchQueue.main.async {
@@ -114,8 +117,12 @@ struct ControlsView: View {
         }
     }
     
+    func isModelDownloaded(_ model: ModelInfo) -> Bool {
+        PipelineLoader(model: model, variant: Settings.shared.userSelectedAttentionVariant).ready
+    }
+    
     func modelLabel(_ model: ModelInfo) -> Text {
-        let downloaded = PipelineLoader(model: model).ready
+        let downloaded = isModelDownloaded(model)
         let prefix = downloaded ? "● " : "◌ "  //"○ "
         return Text(prefix).foregroundColor(downloaded ? .accentColor : .secondary) + Text(model.modelVersion)
     }
@@ -123,7 +130,7 @@ struct ControlsView: View {
     var body: some View {
         VStack(alignment: .leading) {
             
-            Label("Adjustments", systemImage: "gearshape.2")
+            Label("Generation Options", systemImage: "gearshape.2")
                 .font(.headline)
                 .fontWeight(.bold)
             Divider()
@@ -217,7 +224,6 @@ struct ControlsView: View {
                             }
                         }.foregroundColor(.secondary)
                     }
-                    Divider()
 
                     DisclosureGroup(isExpanded: $disclosedSteps) {
                         CompactSlider(value: $generation.steps, in: 0...150, step: 5) {
@@ -244,7 +250,6 @@ struct ControlsView: View {
                             }
                         }.foregroundColor(.secondary)
                     }
-                    Divider()
                                         
                     DisclosureGroup(isExpanded: $disclosedSeed) {
                         let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
@@ -269,6 +274,32 @@ struct ControlsView: View {
                                 }
                             } else {
                                 Text("\(Int(generation.seed))")
+                            }
+                        }.foregroundColor(.secondary)
+                    }
+                    Divider()
+                    
+                    DisclosureGroup(isExpanded: $disclosedAdvanced) {
+                        HStack {
+                            Toggle("Use Neural Engine", isOn: $useANE).onChange(of: useANE) { value in
+                                print(value)
+                            }.padding(.leading, 10)
+                            Spacer()
+                        }
+                    } label: {
+                        HStack {
+                            Label("Advanced", systemImage: "terminal").foregroundColor(.secondary)
+                            Spacer()
+                            if disclosedAdvanced {
+                                Button {
+                                    showAdvancedHelp.toggle()
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                }
+                                .buttonStyle(.plain)
+                                .popover(isPresented: $showAdvancedHelp, arrowEdge: .trailing) {
+                                    advancedHelp($showAdvancedHelp)
+                                }
                             }
                         }.foregroundColor(.secondary)
                     }

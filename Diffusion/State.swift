@@ -73,12 +73,14 @@ class Settings {
     enum Keys: String {
         case model
         case safetyCheckerDisclaimer
+        case variant
     }
     
     private init() {
         defaults.register(defaults: [
             Keys.model.rawValue: ModelInfo.v2Base.modelId,
-            Keys.safetyCheckerDisclaimer.rawValue: false
+            Keys.safetyCheckerDisclaimer.rawValue: false,
+            Keys.variant.rawValue: "- default -"
         ])
     }
     
@@ -98,6 +100,19 @@ class Settings {
         }
         get {
             return defaults.bool(forKey: Keys.safetyCheckerDisclaimer.rawValue)
+        }
+    }
+    
+    /// Returns the option selected by the user, if overridden
+    /// `nil` means: guess best for this {model, device}
+    var userSelectedAttentionVariant: AttentionVariant? {
+        set {
+            // Any String other than the supported ones would cause `get` to return `nil`
+            defaults.set(newValue?.rawValue ?? "- default -", forKey: Keys.variant.rawValue)
+        }
+        get {
+            let current = defaults.string(forKey: Keys.variant.rawValue)
+            return AttentionVariant(rawValue: current ?? "")
         }
     }
 }
