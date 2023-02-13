@@ -39,8 +39,13 @@ struct ModelInfo {
 }
 
 extension ModelInfo {
-    var bestAttention: AttentionVariant {
+    static var defaultAttention: AttentionVariant {
         return runningOnMac ? .original : .splitEinsum
+    }
+    
+    // TODO: heuristics per {model, device}
+    var bestAttention: AttentionVariant {
+        return ModelInfo.defaultAttention
     }
     
     func modelURL(for variant: AttentionVariant) -> URL {
@@ -57,15 +62,7 @@ extension ModelInfo {
     /// Best variant for the current platform.
     /// Currently using `split_einsum` for iOS and `original` for macOS, but could vary depending on model.
     var bestURL: URL { modelURL(for: bestAttention) }
-    
-    /// Best units for current platform.
-    /// Currently using `cpuAndNeuralEngine` for iOS and `cpuAndGPU` for macOS, but could vary depending on model.
-    /// .all works for v1.4, but not for v1.5.
-    // TODO: measure performance on different devices.
-    var bestComputeUnits: MLComputeUnits {
-        return runningOnMac ? .cpuAndGPU : .cpuAndNeuralEngine
-    }
-    
+        
     var reduceMemory: Bool {
         return !runningOnMac
     }

@@ -97,6 +97,11 @@ extension PipelineLoader {
     var ready: Bool {
         return compiledPath.exists
     }
+    
+    // TODO: measure performance on different devices, disassociate from variant
+    var computeUnits: MLComputeUnits {
+        variant == .original ? .cpuAndGPU : .cpuAndNeuralEngine
+    }
         
     // TODO: maybe receive Progress to add another progress as child
     func prepare() async throws -> Pipeline {
@@ -144,7 +149,7 @@ extension PipelineLoader {
     func load(url: URL) async throws -> StableDiffusionPipeline {
         let beginDate = Date()
         let configuration = MLModelConfiguration()
-        configuration.computeUnits = model.bestComputeUnits
+        configuration.computeUnits = computeUnits
         let pipeline = try StableDiffusionPipeline(resourcesAt: url,
                                                    configuration: configuration,
                                                    disableSafety: false,

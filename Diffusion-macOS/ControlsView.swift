@@ -57,7 +57,7 @@ struct ControlsView: View {
     @State private var disclosedSteps = false
     @State private var disclosedSeed = false
     @State private var disclosedAdvanced = false
-    @State private var useANE = false
+    @State private var useANE = (Settings.shared.userSelectedAttentionVariant ?? ModelInfo.defaultAttention) == .splitEinsum
 
     // TODO: refactor download with similar code in Loading.swift (iOS)
     @State private var stateSubscriber: Cancellable?
@@ -66,7 +66,8 @@ struct ControlsView: View {
 
     // TODO: make this computed, and observable, and easy to read
     @State private var mustShowSafetyCheckerDisclaimer = false
-    
+    @State private var mustShowModelDownloadDisclaimer = false      // When changing advanced settings
+
     @State private var showModelsHelp = false
     @State private var showPromptsHelp = false
     @State private var showGuidanceHelp = false
@@ -79,6 +80,11 @@ struct ControlsView: View {
 
     func updateSafetyCheckerState() {
         mustShowSafetyCheckerDisclaimer = generation.disableSafety && !Settings.shared.safetyCheckerDisclaimerShown
+    }
+    
+    func updateANEState() {
+        Settings.shared.userSelectedAttentionVariant = useANE ? .splitEinsum : .original
+        modelDidChange(model: Settings.shared.currentModel)
     }
     
     func modelDidChange(model: ModelInfo) {
@@ -117,8 +123,8 @@ struct ControlsView: View {
         }
     }
     
-    func isModelDownloaded(_ model: ModelInfo) -> Bool {
-        PipelineLoader(model: model, variant: Settings.shared.userSelectedAttentionVariant).ready
+    func isModelDownloaded(_ model: ModelInfo, variant: AttentionVariant? = nil) -> Bool {
+        PipelineLoader(model: model, variant: variant ?? Settings.shared.userSelectedAttentionVariant).ready
     }
     
     func modelLabel(_ model: ModelInfo) -> Text {
@@ -282,10 +288,23 @@ struct ControlsView: View {
                     DisclosureGroup(isExpanded: $disclosedAdvanced) {
                         HStack {
                             Toggle("Use Neural Engine", isOn: $useANE).onChange(of: useANE) { value in
-                                print(value)
-                            }.padding(.leading, 10)
+                                guard let currentModel = ModelInfo.from(modelVersion: model) else { return }
+                                let variantDownloaded = isModelDownloaded(currentModel, variant: useANE ? .splitEinsum : .original)
+                                if variantDownloaded {
+                                    updateANEState()
+                                } else {
+                                    mustShowModelDownloadDisclaimer.toggle()
+                                }
+                            }
+                            .padding(.leading, 10)
                             Spacer()
                         }
+                        .alert("Download Required", isPresented: $mustShowModelDownloadDisclaimer, actions: {
+                            Button("Cancel", role: .destructive) { useANE.toggle() }
+                            Button("Download", role: .cancel) { updateANEState() }
+                        }, message: {
+                            Text("This setting requires a new version of the selected model.")
+                        })
                     } label: {
                         HStack {
                             Label("Advanced", systemImage: "terminal").foregroundColor(.secondary)
