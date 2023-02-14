@@ -283,44 +283,46 @@ struct ControlsView: View {
                             }
                         }.foregroundColor(.secondary)
                     }
-                    Divider()
                     
-                    DisclosureGroup(isExpanded: $disclosedAdvanced) {
-                        HStack {
-                            Toggle("Use Neural Engine", isOn: $useANE).onChange(of: useANE) { value in
-                                guard let currentModel = ModelInfo.from(modelVersion: model) else { return }
-                                let variantDownloaded = isModelDownloaded(currentModel, variant: useANE ? .splitEinsum : .original)
-                                if variantDownloaded {
-                                    updateANEState()
-                                } else {
-                                    mustShowModelDownloadDisclaimer.toggle()
+                    if hasANE {
+                        Divider()
+                        DisclosureGroup(isExpanded: $disclosedAdvanced) {
+                            HStack {
+                                Toggle("Use Neural Engine", isOn: $useANE).onChange(of: useANE) { value in
+                                    guard let currentModel = ModelInfo.from(modelVersion: model) else { return }
+                                    let variantDownloaded = isModelDownloaded(currentModel, variant: useANE ? .splitEinsum : .original)
+                                    if variantDownloaded {
+                                        updateANEState()
+                                    } else {
+                                        mustShowModelDownloadDisclaimer.toggle()
+                                    }
                                 }
+                                .padding(.leading, 10)
+                                Spacer()
                             }
-                            .padding(.leading, 10)
-                            Spacer()
+                            .alert("Download Required", isPresented: $mustShowModelDownloadDisclaimer, actions: {
+                                Button("Cancel", role: .destructive) { useANE.toggle() }
+                                Button("Download", role: .cancel) { updateANEState() }
+                            }, message: {
+                                Text("This setting requires a new version of the selected model.")
+                            })
+                        } label: {
+                            HStack {
+                                Label("Advanced", systemImage: "terminal").foregroundColor(.secondary)
+                                Spacer()
+                                if disclosedAdvanced {
+                                    Button {
+                                        showAdvancedHelp.toggle()
+                                    } label: {
+                                        Image(systemName: "info.circle")
+                                    }
+                                    .buttonStyle(.plain)
+                                    .popover(isPresented: $showAdvancedHelp, arrowEdge: .trailing) {
+                                        advancedHelp($showAdvancedHelp)
+                                    }
+                                }
+                            }.foregroundColor(.secondary)
                         }
-                        .alert("Download Required", isPresented: $mustShowModelDownloadDisclaimer, actions: {
-                            Button("Cancel", role: .destructive) { useANE.toggle() }
-                            Button("Download", role: .cancel) { updateANEState() }
-                        }, message: {
-                            Text("This setting requires a new version of the selected model.")
-                        })
-                    } label: {
-                        HStack {
-                            Label("Advanced", systemImage: "terminal").foregroundColor(.secondary)
-                            Spacer()
-                            if disclosedAdvanced {
-                                Button {
-                                    showAdvancedHelp.toggle()
-                                } label: {
-                                    Image(systemName: "info.circle")
-                                }
-                                .buttonStyle(.plain)
-                                .popover(isPresented: $showAdvancedHelp, arrowEdge: .trailing) {
-                                    advancedHelp($showAdvancedHelp)
-                                }
-                            }
-                        }.foregroundColor(.secondary)
                     }
                 }
             }
