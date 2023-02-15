@@ -8,6 +8,11 @@
 
 import CoreML
 
+enum AttentionVariant: String {
+    case original
+    case splitEinsum
+}
+
 struct ModelInfo {
     /// Hugging Face model Id that contains .zip archives with compiled Core ML models
     let modelId: String
@@ -19,38 +24,45 @@ struct ModelInfo {
     let originalAttentionSuffix: String
 
     /// Suffix of the archive containing the SPLIT_EINSUM attention variant. Usually something like "split_einsum_compiled"
-    let splitAttentionName: String
+    let splitAttentionSuffix: String
     
     /// Whether the archive contains the VAE Encoder (for image to image tasks). Not yet in use.
     let supportsEncoder: Bool
         
-    init(modelId: String, modelVersion: String, originalAttentionSuffix: String = "original_compiled", splitAttentionName: String = "split_einsum_compiled", supportsEncoder: Bool = false) {
+    init(modelId: String, modelVersion: String, originalAttentionSuffix: String = "original_compiled", splitAttentionSuffix: String = "split_einsum_compiled", supportsEncoder: Bool = false) {
         self.modelId = modelId
         self.modelVersion = modelVersion
         self.originalAttentionSuffix = originalAttentionSuffix
-        self.splitAttentionName = splitAttentionName
+        self.splitAttentionSuffix = splitAttentionSuffix
         self.supportsEncoder = supportsEncoder
     }
 }
 
 extension ModelInfo {
-    /// Best variant for the current platform.
-    /// Currently using `split_einsum` for iOS and `original` for macOS, but could vary depending on model.
-    var bestURL: URL {
+    static var defaultAttention: AttentionVariant {
+        return runningOnMac ? .original : .splitEinsum
+    }
+    
+    // TODO: heuristics per {model, device}
+    var bestAttention: AttentionVariant {
+        return ModelInfo.defaultAttention
+    }
+    
+    func modelURL(for variant: AttentionVariant) -> URL {
         // Pattern: https://huggingface.co/pcuenq/coreml-stable-diffusion/resolve/main/coreml-stable-diffusion-v1-5_original_compiled.zip
-        let suffix = runningOnMac ? originalAttentionSuffix : splitAttentionName
+        let suffix: String
+        switch variant {
+        case .original: suffix = originalAttentionSuffix
+        case .splitEinsum: suffix = splitAttentionSuffix
+        }
         let repo = modelId.split(separator: "/").last!
         return URL(string: "https://huggingface.co/\(modelId)/resolve/main/\(repo)_\(suffix).zip")!
     }
     
-    /// Best units for current platform.
-    /// Currently using `cpuAndNeuralEngine` for iOS and `cpuAndGPU` for macOS, but could vary depending on model.
-    /// .all works for v1.4, but not for v1.5.
-    // TODO: measure performance on different devices.
-    var bestComputeUnits: MLComputeUnits {
-        return runningOnMac ? .cpuAndGPU : .cpuAndNeuralEngine
-    }
-    
+    /// Best variant for the current platform.
+    /// Currently using `split_einsum` for iOS and `original` for macOS, but could vary depending on model.
+    var bestURL: URL { modelURL(for: bestAttention) }
+        
     var reduceMemory: Bool {
         return !runningOnMac
     }

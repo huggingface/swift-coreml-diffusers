@@ -56,6 +56,8 @@ struct ControlsView: View {
     @State private var disclosedGuidance = false
     @State private var disclosedSteps = false
     @State private var disclosedSeed = false
+    @State private var disclosedAdvanced = false
+    @State private var useANE = (Settings.shared.userSelectedAttentionVariant ?? ModelInfo.defaultAttention) == .splitEinsum
 
     // TODO: refactor download with similar code in Loading.swift (iOS)
     @State private var stateSubscriber: Cancellable?
@@ -64,18 +66,25 @@ struct ControlsView: View {
 
     // TODO: make this computed, and observable, and easy to read
     @State private var mustShowSafetyCheckerDisclaimer = false
-    
+    @State private var mustShowModelDownloadDisclaimer = false      // When changing advanced settings
+
     @State private var showModelsHelp = false
     @State private var showPromptsHelp = false
     @State private var showGuidanceHelp = false
     @State private var showStepsHelp = false
     @State private var showSeedHelp = false
-    
+    @State private var showAdvancedHelp = false
+
     // Reasonable range for the slider
     let maxSeed: UInt32 = 1000
 
     func updateSafetyCheckerState() {
         mustShowSafetyCheckerDisclaimer = generation.disableSafety && !Settings.shared.safetyCheckerDisclaimerShown
+    }
+    
+    func updateANEState() {
+        Settings.shared.userSelectedAttentionVariant = useANE ? .splitEinsum : .original
+        modelDidChange(model: Settings.shared.currentModel)
     }
     
     func modelDidChange(model: ModelInfo) {
@@ -85,7 +94,7 @@ struct ControlsView: View {
         pipelineLoader?.cancel()
         pipelineState = .downloading(0)
         Task.init {
-            let loader = PipelineLoader(model: model, maxSeed: maxSeed)
+            let loader = PipelineLoader(model: model, variant: Settings.shared.userSelectedAttentionVariant, maxSeed: maxSeed)
             self.pipelineLoader = loader
             stateSubscriber = loader.statePublisher.sink { state in
                 DispatchQueue.main.async {
@@ -114,8 +123,12 @@ struct ControlsView: View {
         }
     }
     
+    func isModelDownloaded(_ model: ModelInfo, variant: AttentionVariant? = nil) -> Bool {
+        PipelineLoader(model: model, variant: variant ?? Settings.shared.userSelectedAttentionVariant).ready
+    }
+    
     func modelLabel(_ model: ModelInfo) -> Text {
-        let downloaded = PipelineLoader(model: model).ready
+        let downloaded = isModelDownloaded(model)
         let prefix = downloaded ? "● " : "◌ "  //"○ "
         return Text(prefix).foregroundColor(downloaded ? .accentColor : .secondary) + Text(model.modelVersion)
     }
@@ -123,7 +136,7 @@ struct ControlsView: View {
     var body: some View {
         VStack(alignment: .leading) {
             
-            Label("Adjustments", systemImage: "gearshape.2")
+            Label("Generation Options", systemImage: "gearshape.2")
                 .font(.headline)
                 .fontWeight(.bold)
             Divider()
@@ -217,7 +230,6 @@ struct ControlsView: View {
                             }
                         }.foregroundColor(.secondary)
                     }
-                    Divider()
 
                     DisclosureGroup(isExpanded: $disclosedSteps) {
                         CompactSlider(value: $generation.steps, in: 0...150, step: 5) {
@@ -244,7 +256,6 @@ struct ControlsView: View {
                             }
                         }.foregroundColor(.secondary)
                     }
-                    Divider()
                                         
                     DisclosureGroup(isExpanded: $disclosedSeed) {
                         let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
@@ -271,6 +282,47 @@ struct ControlsView: View {
                                 Text("\(Int(generation.seed))")
                             }
                         }.foregroundColor(.secondary)
+                    }
+                    
+                    if hasANE {
+                        Divider()
+                        DisclosureGroup(isExpanded: $disclosedAdvanced) {
+                            HStack {
+                                Toggle("Use Neural Engine", isOn: $useANE).onChange(of: useANE) { value in
+                                    guard let currentModel = ModelInfo.from(modelVersion: model) else { return }
+                                    let variantDownloaded = isModelDownloaded(currentModel, variant: useANE ? .splitEinsum : .original)
+                                    if variantDownloaded {
+                                        updateANEState()
+                                    } else {
+                                        mustShowModelDownloadDisclaimer.toggle()
+                                    }
+                                }
+                                .padding(.leading, 10)
+                                Spacer()
+                            }
+                            .alert("Download Required", isPresented: $mustShowModelDownloadDisclaimer, actions: {
+                                Button("Cancel", role: .destructive) { useANE.toggle() }
+                                Button("Download", role: .cancel) { updateANEState() }
+                            }, message: {
+                                Text("This setting requires a new version of the selected model.")
+                            })
+                        } label: {
+                            HStack {
+                                Label("Advanced", systemImage: "terminal").foregroundColor(.secondary)
+                                Spacer()
+                                if disclosedAdvanced {
+                                    Button {
+                                        showAdvancedHelp.toggle()
+                                    } label: {
+                                        Image(systemName: "info.circle")
+                                    }
+                                    .buttonStyle(.plain)
+                                    .popover(isPresented: $showAdvancedHelp, arrowEdge: .trailing) {
+                                        advancedHelp($showAdvancedHelp)
+                                    }
+                                }
+                            }.foregroundColor(.secondary)
+                        }
                     }
                 }
             }

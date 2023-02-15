@@ -18,12 +18,14 @@ class PipelineLoader {
     static let models = Path.applicationSupport / "hf-diffusion-models"
     
     let model: ModelInfo
+    let variant: AttentionVariant
     let maxSeed: UInt32
     
     private var downloadSubscriber: Cancellable?
 
-    init(model: ModelInfo, maxSeed: UInt32 = UInt32.max) {
+    init(model: ModelInfo, variant: AttentionVariant? = nil, maxSeed: UInt32 = UInt32.max) {
         self.model = model
+        self.variant = variant ?? model.bestAttention
         self.maxSeed = maxSeed
         state = .undetermined
         setInitialState()
@@ -73,7 +75,7 @@ extension PipelineLoader {
 
 extension PipelineLoader {
     var url: URL {
-        return model.bestURL
+        return model.modelURL(for: variant)
     }
     
     var filename: String {
@@ -94,6 +96,11 @@ extension PipelineLoader {
     
     var ready: Bool {
         return compiledPath.exists
+    }
+    
+    // TODO: measure performance on different devices, disassociate from variant
+    var computeUnits: MLComputeUnits {
+        variant == .original ? .cpuAndGPU : .cpuAndNeuralEngine
     }
         
     // TODO: maybe receive Progress to add another progress as child
@@ -142,7 +149,7 @@ extension PipelineLoader {
     func load(url: URL) async throws -> StableDiffusionPipeline {
         let beginDate = Date()
         let configuration = MLModelConfiguration()
-        configuration.computeUnits = model.bestComputeUnits
+        configuration.computeUnits = computeUnits
         let pipeline = try StableDiffusionPipeline(resourcesAt: url,
                                                    configuration: configuration,
                                                    disableSafety: false,
