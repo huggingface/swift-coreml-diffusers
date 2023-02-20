@@ -17,6 +17,7 @@ enum GenerationState {
     case startup
     case running(StableDiffusionProgress?)
     case complete(String, CGImage?, UInt32, TimeInterval?)
+    case userCanceled
     case failed(Error)
 }
 
@@ -62,6 +63,10 @@ class GenerationContext: ObservableObject {
             guidanceScale: Float(guidanceScale),
             disableSafety: disableSafety
         )
+    }
+    
+    func cancelGeneration() {
+        pipeline?.setCancelled()
     }
 }
 

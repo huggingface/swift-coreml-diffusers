@@ -18,6 +18,7 @@ struct GenerationResult {
     var image: CGImage?
     var lastSeed: UInt32
     var interval: TimeInterval?
+    var userCanceled: Bool
 }
 
 class Pipeline {
@@ -30,7 +31,8 @@ class Pipeline {
         }
     }
     lazy private(set) var progressPublisher: CurrentValueSubject<StableDiffusionProgress?, Never> = CurrentValueSubject(progress)
-
+    
+    private var canceled = false
 
     init(_ pipeline: StableDiffusionPipeline, maxSeed: UInt32 = UInt32.max) {
         self.pipeline = pipeline
@@ -47,6 +49,7 @@ class Pipeline {
         disableSafety: Bool = false
     ) throws -> GenerationResult {
         let beginDate = Date()
+        canceled = false
         print("Generating...")
         let theSeed = seed ?? UInt32.random(in: 0...maxSeed)
         let images = try pipeline.generateImages(
@@ -60,17 +63,21 @@ class Pipeline {
             scheduler: scheduler
         ) { progress in
             handleProgress(progress)
-            return true
+            return !canceled
         }
         let interval = Date().timeIntervalSince(beginDate)
         print("Got images: \(images) in \(interval)")
         
         // Unwrap the 1 image we asked for, nil means safety checker triggered
         let image = images.compactMap({ $0 }).first
-        return GenerationResult(image: image, lastSeed: theSeed, interval: interval)
+        return GenerationResult(image: image, lastSeed: theSeed, interval: interval, userCanceled: canceled)
     }
 
     func handleProgress(_ progress: StableDiffusionPipeline.Progress) {
         self.progress = progress
+    }
+    
+    func setCancelled() {
+        canceled = true
     }
 }

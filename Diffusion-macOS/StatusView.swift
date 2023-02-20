@@ -20,7 +20,11 @@ struct StatusView: View {
             generation.state = .running(nil)
             do {
                 let result = try await generation.generate()
-                generation.state = .complete(generation.positivePrompt, result.image, result.lastSeed, result.interval)
+                if result.userCanceled {
+                    generation.state = .userCanceled
+                } else {
+                    generation.state = .complete(generation.positivePrompt, result.image, result.lastSeed, result.interval)
+                }
             } catch {
                 generation.state = .failed(error)
             }
@@ -92,6 +96,11 @@ struct StatusView: View {
             }.frame(maxHeight: 25)
         case .failed(let error):
             return errorWithDetails("Generation error", error: error)
+        case .userCanceled:
+            return HStack {
+                Text("Generation canceled.")
+                Spacer()
+            }
         }
     }
     
