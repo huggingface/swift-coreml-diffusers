@@ -41,8 +41,12 @@ struct ModelInfo {
 extension ModelInfo {
     static var defaultAttention: AttentionVariant {
         guard runningOnMac else { return .splitEinsum }
+        #if os(macOS)
         guard Capabilities.hasANE else { return .original }
         return Capabilities.performanceCores >= 8 ? .original : .splitEinsum
+        #else
+        return .splitEinsum
+        #endif
     }
     
     var bestAttention: AttentionVariant {
