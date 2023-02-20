@@ -284,7 +284,7 @@ struct ControlsView: View {
                         }.foregroundColor(.secondary)
                     }
                     
-                    if hasANE {
+                    if Capabilities.hasANE {
                         Divider()
                         DisclosureGroup(isExpanded: $disclosedAdvanced) {
                             HStack {

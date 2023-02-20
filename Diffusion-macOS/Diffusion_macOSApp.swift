@@ -16,12 +16,3 @@ struct Diffusion_macOSApp: App {
         }
     }
 }
-
-let runningOnMac = true
-
-#if canImport(MLCompute)
-import MLCompute
-let hasANE = MLCDevice.ane() != nil
-#else
-let hasANE = false
-#endif

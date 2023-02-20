@@ -40,10 +40,11 @@ struct ModelInfo {
 
 extension ModelInfo {
     static var defaultAttention: AttentionVariant {
-        return runningOnMac ? .original : .splitEinsum
+        guard runningOnMac else { return .splitEinsum }
+        guard Capabilities.hasANE else { return .original }
+        return Capabilities.performanceCores >= 8 ? .original : .splitEinsum
     }
     
-    // TODO: heuristics per {model, device}
     var bestAttention: AttentionVariant {
         return ModelInfo.defaultAttention
     }
@@ -60,7 +61,7 @@ extension ModelInfo {
     }
     
     /// Best variant for the current platform.
-    /// Currently using `split_einsum` for iOS and `original` for macOS, but could vary depending on model.
+    /// Currently using `split_einsum` for iOS and simple performance heuristics for macOS.
     var bestURL: URL { modelURL(for: bestAttention) }
         
     var reduceMemory: Bool {
