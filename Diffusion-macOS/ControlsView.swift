@@ -88,9 +88,11 @@ struct ControlsView: View {
     }
     
     func modelDidChange(model: ModelInfo) {
+        guard pipelineLoader?.model != model else { return }
+
         print("Loading model \(model)")
         Settings.shared.currentModel = model
-        
+
         pipelineLoader?.cancel()
         pipelineState = .downloading(0)
         Task.init {
@@ -144,13 +146,21 @@ struct ControlsView: View {
             ScrollView {
                 Group {
                     DisclosureGroup(isExpanded: $disclosedModel) {
+                        let revealOption = "-- reveal --"
                         Picker("", selection: $model) {
                             ForEach(Self.models, id: \.modelVersion) {
                                 modelLabel($0)
                             }
+                            Text("Reveal in Finder…").tag(revealOption)
                         }
-                        .onChange(of: model) { theModel in
-                            guard let model = ModelInfo.from(modelVersion: theModel) else { return }
+                        .onChange(of: model) { selection in
+                            guard selection != revealOption else {
+                                let selected = pipelineLoader?.compiledPath
+                                NSWorkspace.shared.selectFile(selected?.string, inFileViewerRootedAtPath: PipelineLoader.models.string)
+                                model = Settings.shared.currentModel.modelVersion
+                                return
+                            }
+                            guard let model = ModelInfo.from(modelVersion: selection) else { return }
                             modelDidChange(model: model)
                         }
                     } label: {
