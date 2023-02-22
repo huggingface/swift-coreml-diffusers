@@ -102,7 +102,7 @@ struct ControlsView: View {
         pipelineLoader?.cancel()
         pipelineState = .downloading(0)
         Task.init {
-            let loader = PipelineLoader(model: model, computeUnits: generation.computeUnits /* Or read from settings */, maxSeed: maxSeed)
+            let loader = PipelineLoader(model: model, computeUnits: generation.computeUnits, maxSeed: maxSeed)
             self.pipelineLoader = loader
             stateSubscriber = loader.statePublisher.sink { state in
                 DispatchQueue.main.async {
@@ -132,7 +132,7 @@ struct ControlsView: View {
     }
     
     func isModelDownloaded(_ model: ModelInfo, computeUnits: ComputeUnits? = nil) -> Bool {
-        PipelineLoader(model: model, computeUnits: computeUnits ?? generation.computeUnits /*Settings.shared.userSelectedAttentionVariant*/).ready
+        PipelineLoader(model: model, computeUnits: computeUnits ?? generation.computeUnits).ready
     }
     
     func modelLabel(_ model: ModelInfo) -> Text {
