@@ -304,9 +304,9 @@ struct ControlsView: View {
                         Divider()
                         DisclosureGroup(isExpanded: $disclosedAdvanced) {
                             Picker(selection: $generation.computeUnits, label: Text("Use")) {
-                                Text("CPU and GPU").tag(ComputeUnits.cpuAndGPU)
-                                Text("CPU and Neural Engine").tag(ComputeUnits.cpuAndNeuralEngine)
-                                Text("CPU, GPU and NE").tag(ComputeUnits.all)
+                                Text("GPU").tag(ComputeUnits.cpuAndGPU)
+                                Text("Neural Engine").tag(ComputeUnits.cpuAndNeuralEngine)
+                                Text("GPU and Neural Engine").tag(ComputeUnits.all)
                             }
                             .pickerStyle(.radioGroup)
                             .onChange(of: generation.computeUnits) { units in
