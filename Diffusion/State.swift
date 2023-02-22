@@ -9,6 +9,7 @@
 import Combine
 import SwiftUI
 import StableDiffusion
+import CoreML
 
 let DEFAULT_MODEL = ModelInfo.v2Base
 let DEFAULT_PROMPT = "Labrador in the style of Vermeer"
@@ -20,6 +21,8 @@ enum GenerationState {
     case userCanceled
     case failed(Error)
 }
+
+typealias ComputeUnits = MLComputeUnits
 
 class GenerationContext: ObservableObject {
     let scheduler = StableDiffusionScheduler.dpmSolverMultistepScheduler
@@ -48,6 +51,8 @@ class GenerationContext: ObservableObject {
     @Published var seed = -1.0
     @Published var guidanceScale = 7.5
     @Published var disableSafety = false
+    
+    @Published var computeUnits: ComputeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
 
     private var progressSubscriber: Cancellable?
 
@@ -78,14 +83,14 @@ class Settings {
     enum Keys: String {
         case model
         case safetyCheckerDisclaimer
-        case variant
+        case computeUnits
     }
     
     private init() {
         defaults.register(defaults: [
             Keys.model.rawValue: ModelInfo.v2Base.modelId,
             Keys.safetyCheckerDisclaimer.rawValue: false,
-            Keys.variant.rawValue: "- default -"
+            Keys.computeUnits.rawValue: -1      // Use default
         ])
     }
     
@@ -109,15 +114,16 @@ class Settings {
     }
     
     /// Returns the option selected by the user, if overridden
-    /// `nil` means: guess best for this {model, device}
-    var userSelectedAttentionVariant: AttentionVariant? {
+    /// `nil` means: guess best
+    var userSelectedComputeUnits: ComputeUnits? {
         set {
-            // Any String other than the supported ones would cause `get` to return `nil`
-            defaults.set(newValue?.rawValue ?? "- default -", forKey: Keys.variant.rawValue)
+            // Any value other than the supported ones would cause `get` to return `nil`
+            defaults.set(newValue?.rawValue ?? -1, forKey: Keys.computeUnits.rawValue)
         }
         get {
-            let current = defaults.string(forKey: Keys.variant.rawValue)
-            return AttentionVariant(rawValue: current ?? "")
+            let current = defaults.integer(forKey: Keys.computeUnits.rawValue)
+            guard current != -1 else { return nil }
+            return ComputeUnits(rawValue: current)
         }
     }
 }

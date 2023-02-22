@@ -13,6 +13,10 @@ enum AttentionVariant: String {
     case splitEinsum
 }
 
+extension AttentionVariant {
+    var defaultComputeUnits: MLComputeUnits { self == .original ? .cpuAndGPU : .cpuAndNeuralEngine }
+}
+
 struct ModelInfo {
     /// Hugging Face model Id that contains .zip archives with compiled Core ML models
     let modelId: String
@@ -39,6 +43,7 @@ struct ModelInfo {
 }
 
 extension ModelInfo {
+    //TODO: set compute units instead and derive variant from it
     static var defaultAttention: AttentionVariant {
         guard runningOnMac else { return .splitEinsum }
         #if os(macOS)
@@ -49,9 +54,10 @@ extension ModelInfo {
         #endif
     }
     
-    var bestAttention: AttentionVariant {
-        return ModelInfo.defaultAttention
-    }
+    static var defaultComputeUnits: MLComputeUnits { defaultAttention.defaultComputeUnits }
+    
+    var bestAttention: AttentionVariant { ModelInfo.defaultAttention }
+    var defaultComputeUnits: MLComputeUnits { bestAttention.defaultComputeUnits }
     
     func modelURL(for variant: AttentionVariant) -> URL {
         // Pattern: https://huggingface.co/pcuenq/coreml-stable-diffusion/resolve/main/coreml-stable-diffusion-v1-5_original_compiled.zip

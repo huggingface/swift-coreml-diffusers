@@ -18,14 +18,14 @@ class PipelineLoader {
     static let models = Path.applicationSupport / "hf-diffusion-models"
     
     let model: ModelInfo
-    let variant: AttentionVariant
+    let computeUnits: ComputeUnits
     let maxSeed: UInt32
     
     private var downloadSubscriber: Cancellable?
 
-    init(model: ModelInfo, variant: AttentionVariant? = nil, maxSeed: UInt32 = UInt32.max) {
+    init(model: ModelInfo, computeUnits: ComputeUnits? = nil, maxSeed: UInt32 = UInt32.max) {
         self.model = model
-        self.variant = variant ?? model.bestAttention
+        self.computeUnits = computeUnits ?? model.defaultComputeUnits
         self.maxSeed = maxSeed
         state = .undetermined
         setInitialState()
@@ -98,11 +98,17 @@ extension PipelineLoader {
         return compiledPath.exists
     }
     
-    // TODO: measure performance on different devices, disassociate from variant
-    var computeUnits: MLComputeUnits {
-        variant == .original ? .cpuAndGPU : .cpuAndNeuralEngine
+    var variant: AttentionVariant {
+        switch computeUnits {
+        case .cpuOnly           : return .original          // Not supported yet
+        case .cpuAndGPU         : return .original
+        case .cpuAndNeuralEngine: return .splitEinsum
+        case .all               : return .splitEinsum
+        @unknown default:
+            fatalError("Unknown MLComputeUnits")
+        }
     }
-        
+    
     // TODO: maybe receive Progress to add another progress as child
     func prepare() async throws -> Pipeline {
         do {
