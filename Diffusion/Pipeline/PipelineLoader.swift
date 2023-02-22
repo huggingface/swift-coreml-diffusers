@@ -104,6 +104,8 @@ extension PipelineLoader {
         case .cpuAndGPU         : return .original
         case .cpuAndNeuralEngine: return .splitEinsum
         case .all               : return .splitEinsum
+        @unknown default:
+            fatalError("Unknown MLComputeUnits")
         }
     }
     
