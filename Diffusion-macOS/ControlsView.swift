@@ -88,7 +88,10 @@ struct ControlsView: View {
     }
     
     func modelDidChange(model: ModelInfo) {
-        guard pipelineLoader?.model != model else { return }
+        guard pipelineLoader?.model != model || pipelineLoader?.variant != Settings.shared.userSelectedAttentionVariant else {
+            print("Reusing same model \(model) with attention \(String(describing: Settings.shared.userSelectedAttentionVariant))")
+            return
+        }
 
         print("Loading model \(model)")
         Settings.shared.currentModel = model
