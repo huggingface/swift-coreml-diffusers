@@ -57,7 +57,6 @@ struct ControlsView: View {
     @State private var disclosedSteps = false
     @State private var disclosedSeed = false
     @State private var disclosedAdvanced = false
-    @State private var useANE = (Settings.shared.userSelectedAttentionVariant ?? ModelInfo.defaultAttention) == .splitEinsum
 
     // TODO: refactor download with similar code in Loading.swift (iOS)
     @State private var stateSubscriber: Cancellable?
@@ -82,13 +81,17 @@ struct ControlsView: View {
         mustShowSafetyCheckerDisclaimer = generation.disableSafety && !Settings.shared.safetyCheckerDisclaimerShown
     }
     
-    func updateANEState() {
-        Settings.shared.userSelectedAttentionVariant = useANE ? .splitEinsum : .original
+    func updateComputeUnitsState() {
+        Settings.shared.userSelectedComputeUnits = generation.computeUnits
         modelDidChange(model: Settings.shared.currentModel)
     }
     
+    func resetComputeUnitsState() {
+        generation.computeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
+    }
+    
     func modelDidChange(model: ModelInfo) {
-        guard pipelineLoader?.model != model else { return }
+        guard pipelineLoader?.model != model && pipelineLoader?.computeUnits != generation.computeUnits else { return }
 
         print("Loading model \(model)")
         Settings.shared.currentModel = model
@@ -96,7 +99,7 @@ struct ControlsView: View {
         pipelineLoader?.cancel()
         pipelineState = .downloading(0)
         Task.init {
-            let loader = PipelineLoader(model: model, variant: Settings.shared.userSelectedAttentionVariant, maxSeed: maxSeed)
+            let loader = PipelineLoader(model: model, computeUnits: generation.computeUnits /* Or read from settings */, maxSeed: maxSeed)
             self.pipelineLoader = loader
             stateSubscriber = loader.statePublisher.sink { state in
                 DispatchQueue.main.async {
@@ -125,8 +128,8 @@ struct ControlsView: View {
         }
     }
     
-    func isModelDownloaded(_ model: ModelInfo, variant: AttentionVariant? = nil) -> Bool {
-        PipelineLoader(model: model, variant: variant ?? Settings.shared.userSelectedAttentionVariant).ready
+    func isModelDownloaded(_ model: ModelInfo, computeUnits: ComputeUnits? = nil) -> Bool {
+        PipelineLoader(model: model, computeUnits: computeUnits ?? generation.computeUnits /*Settings.shared.userSelectedAttentionVariant*/).ready
     }
     
     func modelLabel(_ model: ModelInfo) -> Text {
@@ -297,22 +300,38 @@ struct ControlsView: View {
                     if Capabilities.hasANE {
                         Divider()
                         DisclosureGroup(isExpanded: $disclosedAdvanced) {
-                            HStack {
-                                Toggle("Use Neural Engine", isOn: $useANE).onChange(of: useANE) { value in
-                                    guard let currentModel = ModelInfo.from(modelVersion: model) else { return }
-                                    let variantDownloaded = isModelDownloaded(currentModel, variant: useANE ? .splitEinsum : .original)
-                                    if variantDownloaded {
-                                        updateANEState()
-                                    } else {
-                                        mustShowModelDownloadDisclaimer.toggle()
-                                    }
-                                }
-                                .padding(.leading, 10)
-                                Spacer()
+                            Picker(selection: $generation.computeUnits, label: Text("Use")) {
+                                Text("CPU and GPU").tag(ComputeUnits.cpuAndGPU)
+                                Text("CPU and Neural Engine").tag(ComputeUnits.cpuAndNeuralEngine)
+                                Text("CPU, GPU and NE").tag(ComputeUnits.all)
                             }
+                            .pickerStyle(.radioGroup)
+                            .onChange(of: generation.computeUnits) { units in
+                                guard let currentModel = ModelInfo.from(modelVersion: model) else { return }
+                                let variantDownloaded = isModelDownloaded(currentModel, computeUnits: units)
+                                if variantDownloaded {
+                                    updateComputeUnitsState()
+                                } else {
+                                    mustShowModelDownloadDisclaimer.toggle()
+                                }
+                            }
+//                            HStack {
+//                                Toggle("Use GPU and Neural Engine", isOn: $useANE).onChange(of: useANE) { value in
+//                                    guard let currentModel = ModelInfo.from(modelVersion: model) else { return }
+//                                    let variantDownloaded = isModelDownloaded(currentModel, variant: useANE ? .splitEinsum : .original)
+//                                    if variantDownloaded {
+//                                        updateANEState()
+//                                    } else {
+//                                        mustShowModelDownloadDisclaimer.toggle()
+//                                    }
+//                                }
+//                                .padding(.leading, 10)
+//                                Spacer()
+//                            }
                             .alert("Download Required", isPresented: $mustShowModelDownloadDisclaimer, actions: {
-                                Button("Cancel", role: .destructive) { useANE.toggle() }
-                                Button("Download", role: .cancel) { updateANEState() }
+                                //TODO: FIXME
+                                Button("Cancel", role: .destructive) { resetComputeUnitsState() }
+                                Button("Download", role: .cancel) { updateComputeUnitsState() }
                             }, message: {
                                 Text("This setting requires a new version of the selected model.")
                             })
