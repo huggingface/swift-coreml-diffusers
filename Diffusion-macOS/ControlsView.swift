@@ -91,7 +91,10 @@ struct ControlsView: View {
     }
     
     func modelDidChange(model: ModelInfo) {
-        guard pipelineLoader?.model != model && pipelineLoader?.computeUnits != generation.computeUnits else { return }
+        guard pipelineLoader?.model != model || pipelineLoader?.computeUnits != generation.computeUnits else {
+            print("Reusing same model \(model) with units \(generation.computeUnits)")
+            return
+        }
 
         print("Loading model \(model)")
         Settings.shared.currentModel = model
