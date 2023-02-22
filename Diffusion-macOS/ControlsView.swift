@@ -303,12 +303,14 @@ struct ControlsView: View {
                     if Capabilities.hasANE {
                         Divider()
                         DisclosureGroup(isExpanded: $disclosedAdvanced) {
-                            Picker(selection: $generation.computeUnits, label: Text("Use")) {
-                                Text("GPU").tag(ComputeUnits.cpuAndGPU)
-                                Text("Neural Engine").tag(ComputeUnits.cpuAndNeuralEngine)
-                                Text("GPU and Neural Engine").tag(ComputeUnits.all)
+                            HStack {
+                                Picker(selection: $generation.computeUnits, label: Text("Use")) {
+                                    Text("GPU").tag(ComputeUnits.cpuAndGPU)
+                                    Text("Neural Engine").tag(ComputeUnits.cpuAndNeuralEngine)
+                                    Text("GPU and Neural Engine").tag(ComputeUnits.all)
+                                }.pickerStyle(.radioGroup).padding(.leading)
+                                Spacer()
                             }
-                            .pickerStyle(.radioGroup)
                             .onChange(of: generation.computeUnits) { units in
                                 guard let currentModel = ModelInfo.from(modelVersion: model) else { return }
                                 let variantDownloaded = isModelDownloaded(currentModel, computeUnits: units)
