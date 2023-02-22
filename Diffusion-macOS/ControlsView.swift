@@ -318,21 +318,7 @@ struct ControlsView: View {
                                     mustShowModelDownloadDisclaimer.toggle()
                                 }
                             }
-//                            HStack {
-//                                Toggle("Use GPU and Neural Engine", isOn: $useANE).onChange(of: useANE) { value in
-//                                    guard let currentModel = ModelInfo.from(modelVersion: model) else { return }
-//                                    let variantDownloaded = isModelDownloaded(currentModel, variant: useANE ? .splitEinsum : .original)
-//                                    if variantDownloaded {
-//                                        updateANEState()
-//                                    } else {
-//                                        mustShowModelDownloadDisclaimer.toggle()
-//                                    }
-//                                }
-//                                .padding(.leading, 10)
-//                                Spacer()
-//                            }
                             .alert("Download Required", isPresented: $mustShowModelDownloadDisclaimer, actions: {
-                                //TODO: FIXME
                                 Button("Cancel", role: .destructive) { resetComputeUnitsState() }
                                 Button("Download", role: .cancel) { updateComputeUnitsState() }
                             }, message: {
