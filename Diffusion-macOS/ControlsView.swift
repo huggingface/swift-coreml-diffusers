@@ -141,6 +141,13 @@ struct ControlsView: View {
         return Text(prefix).foregroundColor(downloaded ? .accentColor : .secondary) + Text(model.modelVersion)
     }
     
+    var modelFilename: String? {
+        guard let pipelineLoader = pipelineLoader else { return nil }
+        let selectedPath = pipelineLoader.compiledPath
+        guard selectedPath.exists else { return nil }
+        return selectedPath.string
+    }
+    
     var body: some View {
         VStack(alignment: .leading) {
             
@@ -161,8 +168,7 @@ struct ControlsView: View {
                         }
                         .onChange(of: model) { selection in
                             guard selection != revealOption else {
-                                let selected = pipelineLoader?.compiledPath
-                                NSWorkspace.shared.selectFile(selected?.string, inFileViewerRootedAtPath: PipelineLoader.models.string)
+                                NSWorkspace.shared.selectFile(modelFilename, inFileViewerRootedAtPath: PipelineLoader.models.string)
                                 model = Settings.shared.currentModel.modelVersion
                                 return
                             }
