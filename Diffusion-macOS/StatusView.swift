@@ -20,6 +20,7 @@ struct StatusView: View {
             generation.state = .running(nil)
             do {
                 let result = try await generation.generate()
+                generation.storeGenerationInputs(result: result)
                 if result.userCanceled {
                     generation.state = .userCanceled
                 } else {

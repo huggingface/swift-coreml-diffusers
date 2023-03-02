@@ -53,6 +53,8 @@ class GenerationContext: ObservableObject {
     @Published var disableSafety = false
     
     @Published var computeUnits: ComputeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
+    
+    @Published var dataStore = HistoryStore()
 
     private var progressSubscriber: Cancellable?
 
@@ -72,6 +74,18 @@ class GenerationContext: ObservableObject {
     
     func cancelGeneration() {
         pipeline?.setCancelled()
+    }
+    
+    func storeGenerationInputs(result: GenerationResult) {
+        self.dataStore.historyItems.append(
+            HistoryItem(
+                prompt: positivePrompt,
+                negativePrompt: negativePrompt,
+                guidance: Float(guidanceScale),
+                steps: Float(steps),
+                seed: Float(result.lastSeed),
+                computeUnits: self.computeUnits.rawValue,
+                timing: Float(result.interval ?? -1.0 )))
     }
 }
 
@@ -125,5 +139,47 @@ class Settings {
             guard current != -1 else { return nil }
             return ComputeUnits(rawValue: current)
         }
+    }
+}
+
+
+struct HistoryItem: Identifiable, Codable {
+    var id = UUID()
+    let prompt: String
+    let negativePrompt: String
+    let guidance: Float
+    let steps: Float
+    let seed: Float
+    let computeUnits: Int
+    let timing: Float
+}
+
+class HistoryStore: ObservableObject {
+    @Published var historyItems: [HistoryItem] {
+        didSet {
+            saveItems()
+        }
+    }
+    
+    init() {
+        self.historyItems = HistoryStore.loadItems()
+    }
+    
+    private static let key = "historyItems"
+    
+    private func saveItems() {
+        print(historyItems)
+        if let encoded = try? JSONEncoder().encode(historyItems) {
+            UserDefaults.standard.set(encoded, forKey: Self.key)
+        }
+    }
+    
+    private static func loadItems() -> [HistoryItem] {
+        guard let encodedItems = UserDefaults.standard.data(forKey: Self.key),
+              let items = try? JSONDecoder().decode([HistoryItem].self, from: encodedItems)
+        else {
+            return []
+        }
+        return items
     }
 }
