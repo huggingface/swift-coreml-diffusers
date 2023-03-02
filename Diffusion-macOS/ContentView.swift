@@ -80,6 +80,8 @@ struct ContentView: View {
         NavigationSplitView {
             ControlsView()
                 .navigationSplitViewColumnWidth(min: 250, ideal: 300)
+            Divider()
+            HistoryView()
         } detail: {
             GeneratedImageView()
                 .aspectRatio(contentMode: .fit)

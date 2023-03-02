@@ -101,6 +101,11 @@ extension ModelInfo {
         modelVersion: "stabilityai/stable-diffusion-2-1-base",
         supportsEncoder: true
     )
+
+    static let ojV2Base = ModelInfo(
+        modelId: "dcolish/coreml-openjourney-v2",
+        modelVersion: "prompthero/openjourney-v2"
+    )
     
     static let ofaSmall = ModelInfo(
         modelId: "pcuenq/coreml-small-stable-diffusion-v0",
@@ -112,7 +117,8 @@ extension ModelInfo {
         ModelInfo.v15Base,
         ModelInfo.v2Base,
         ModelInfo.v21Base,
-        ModelInfo.ofaSmall
+        ModelInfo.ofaSmall,
+        ModelInfo.ojV2Base
     ]
     
     static func from(modelVersion: String) -> ModelInfo? {
