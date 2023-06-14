@@ -19,6 +19,7 @@ struct GenerationResult {
     var lastSeed: UInt32
     var interval: TimeInterval?
     var userCanceled: Bool
+    var itsPerSecond: Double?
 }
 
 class Pipeline {
@@ -52,17 +53,23 @@ class Pipeline {
         canceled = false
         print("Generating...")
         let theSeed = seed ?? UInt32.random(in: 0...maxSeed)
-        let images = try pipeline.generateImages(
-            prompt: prompt,
-            negativePrompt: negativePrompt,
-            imageCount: 1,
-            stepCount: stepCount,
-            seed: theSeed,
-            guidanceScale: guidanceScale,
-            disableSafety: disableSafety,
-            scheduler: scheduler
-        ) { progress in
-            handleProgress(progress)
+        let sampleTimer = SampleTimer()
+        sampleTimer.start()
+        
+        var config = StableDiffusionPipeline.Configuration(prompt: prompt)
+        config.negativePrompt = negativePrompt
+        config.stepCount = stepCount
+        config.seed = theSeed
+        config.guidanceScale = guidanceScale
+        config.disableSafety = disableSafety
+        config.schedulerType = scheduler
+        
+        let images = try pipeline.generateImages(configuration: config) { progress in
+            sampleTimer.stop()
+            handleProgress(progress, sampleTimer: sampleTimer)
+            if progress.stepCount != progress.step {
+                sampleTimer.start()
+            }
             return !canceled
         }
         let interval = Date().timeIntervalSince(beginDate)
@@ -70,13 +77,13 @@ class Pipeline {
         
         // Unwrap the 1 image we asked for, nil means safety checker triggered
         let image = images.compactMap({ $0 }).first
-        return GenerationResult(image: image, lastSeed: theSeed, interval: interval, userCanceled: canceled)
+        return GenerationResult(image: image, lastSeed: theSeed, interval: interval, userCanceled: canceled, itsPerSecond: 1.0/sampleTimer.median)
     }
 
-    func handleProgress(_ progress: StableDiffusionPipeline.Progress) {
+    func handleProgress(_ progress: StableDiffusionPipeline.Progress, sampleTimer: SampleTimer) {
         self.progress = progress
     }
-    
+        
     func setCancelled() {
         canceled = true
     }

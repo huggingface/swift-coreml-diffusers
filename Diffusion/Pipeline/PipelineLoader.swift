@@ -102,7 +102,7 @@ extension PipelineLoader {
         switch computeUnits {
         case .cpuOnly           : return .original          // Not supported yet
         case .cpuAndGPU         : return .original
-        case .cpuAndNeuralEngine: return .splitEinsum
+        case .cpuAndNeuralEngine: return model.supportsAttentionV2 ? .splitEinsumV2 : .splitEinsum
         case .all               : return .splitEinsum
         @unknown default:
             fatalError("Unknown MLComputeUnits")
@@ -157,9 +157,11 @@ extension PipelineLoader {
         let configuration = MLModelConfiguration()
         configuration.computeUnits = computeUnits
         let pipeline = try StableDiffusionPipeline(resourcesAt: url,
+                                                   controlNet: [],
                                                    configuration: configuration,
                                                    disableSafety: false,
                                                    reduceMemory: model.reduceMemory)
+        try pipeline.loadResources()
         print("Pipeline loaded in \(Date().timeIntervalSince(beginDate))")
         state = .loaded
         return pipeline

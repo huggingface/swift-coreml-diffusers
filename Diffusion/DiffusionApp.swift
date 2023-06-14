@@ -18,3 +18,12 @@ struct DiffusionApp: App {
 }
 
 let runningOnMac = ProcessInfo.processInfo.isMacCatalystApp
+let deviceHas6GBOrMore = ProcessInfo.processInfo.physicalMemory > 5924000000   // Different devices report different amounts, so approximate
+
+let deviceSupportsQuantization = {
+    if #available(iOS 17, *) {
+        true
+    } else {
+        false
+    }
+}()
