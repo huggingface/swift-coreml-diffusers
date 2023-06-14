@@ -112,7 +112,7 @@ extension ModelInfo {
     )
 
     static let v14Palettized = ModelInfo(
-        modelId: "pcuenq/coreml-stable-diffusion-1-4-palettized",
+        modelId: "apple/coreml-stable-diffusion-1-4-palettized",
         modelVersion: "CompVis SD 1.4 [6 bit]",
         supportsEncoder: true,
         supportsAttentionV2: true,
@@ -125,7 +125,7 @@ extension ModelInfo {
     )
     
     static let v15Palettized = ModelInfo(
-        modelId: "pcuenq/coreml-stable-diffusion-v1-5-palettized",
+        modelId: "apple/coreml-stable-diffusion-v1-5-palettized",
         modelVersion: "RunwayML SD 1.5 [6 bit]",
         supportsEncoder: true,
         supportsAttentionV2: true,
@@ -139,7 +139,7 @@ extension ModelInfo {
     )
     
     static let v2Palettized = ModelInfo(
-        modelId: "pcuenq/coreml-stable-diffusion-2-base-palettized",
+        modelId: "apple/coreml-stable-diffusion-2-base-palettized",
         modelVersion: "StabilityAI SD 2.0 [6 bit]",
         supportsEncoder: true,
         supportsAttentionV2: true,
@@ -153,7 +153,7 @@ extension ModelInfo {
     )
     
     static let v21Palettized = ModelInfo(
-        modelId: "pcuenq/coreml-stable-diffusion-2-1-base-palettized",
+        modelId: "apple/coreml-stable-diffusion-2-1-base-palettized",
         modelVersion: "StabilityAI SD 2.1 [6 bit]",
         supportsEncoder: true,
         supportsAttentionV2: true,
