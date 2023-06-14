@@ -25,7 +25,7 @@ class Downloader: NSObject, ObservableObject {
     
     private var urlSession: URLSession? = nil
     
-    init(from url: URL, to destination: URL) {
+    init(from url: URL, to destination: URL, using authToken: String? = nil) {
         self.destination = destination
         super.init()
         
@@ -40,7 +40,13 @@ class Downloader: NSObject, ObservableObject {
                 return
             }
             print("Starting download of \(url)")
-            self.urlSession?.downloadTask(with: url).resume()
+            
+            var request = URLRequest(url: url)
+            if let authToken = authToken {
+                request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+            }
+
+            self.urlSession?.downloadTask(with: request).resume()
         }
     }
     
@@ -91,9 +97,13 @@ extension Downloader: URLSessionDelegate, URLSessionDownloadDelegate {
         }
     }
 
-    func urlSession(_: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let error = error {
             downloadState.value = .failed(error)
+        } else if let response = task.response as? HTTPURLResponse {
+            print("HTTP response status code: \(response.statusCode)")
+//            let headers = response.allHeaderFields
+//            print("HTTP response headers: \(headers)")
         }
     }
 }
