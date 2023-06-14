@@ -11,6 +11,15 @@ import Foundation
 let runningOnMac = true
 let deviceHas6GBOrMore = true
 
+let deviceSupportsQuantization = {
+    if #available(macOS 14, *) {
+        true
+    } else {
+        false
+    }
+}()
+
+
 #if canImport(MLCompute)
 import MLCompute
 let _hasANE = MLCDevice.ane() != nil

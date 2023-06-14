@@ -165,17 +165,29 @@ extension ModelInfo {
         modelVersion: "OFA-Sys/small-stable-diffusion-v0"
     )
     
-    static let MODELS = [
-        ModelInfo.v14Base,
-        ModelInfo.v14Palettized,
-        ModelInfo.v15Base,
-        ModelInfo.v15Palettized,
-        ModelInfo.v2Base,
-        ModelInfo.v2Palettized,
-        ModelInfo.v21Base,
-        ModelInfo.v21Palettized,
-        ModelInfo.ofaSmall
-    ]
+    static let MODELS: [ModelInfo] = {
+        if deviceSupportsQuantization {
+            return [
+                ModelInfo.v14Base,
+                ModelInfo.v14Palettized,
+                ModelInfo.v15Base,
+                ModelInfo.v15Palettized,
+                ModelInfo.v2Base,
+                ModelInfo.v2Palettized,
+                ModelInfo.v21Base,
+                ModelInfo.v21Palettized,
+                ModelInfo.ofaSmall
+            ]
+        } else {
+            return [
+                ModelInfo.v14Base,
+                ModelInfo.v15Base,
+                ModelInfo.v2Base,
+                ModelInfo.v21Base,
+                ModelInfo.ofaSmall
+            ]
+        }
+    }()
     
     static func from(modelVersion: String) -> ModelInfo? {
         ModelInfo.MODELS.first(where: {$0.modelVersion == modelVersion})
