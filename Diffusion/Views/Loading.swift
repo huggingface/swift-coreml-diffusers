@@ -9,7 +9,7 @@
 import SwiftUI
 import Combine
 
-let model = ModelInfo.v2Base
+let model = ModelInfo.v21Palettized
 
 struct LoadingView: View {
     @StateObject var generation = GenerationContext()
