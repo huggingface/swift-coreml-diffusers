@@ -9,6 +9,7 @@
 import Foundation
 
 let runningOnMac = true
+let deviceHas6GBOrMore = true
 
 #if canImport(MLCompute)
 import MLCompute

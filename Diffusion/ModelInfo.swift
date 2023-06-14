@@ -100,9 +100,8 @@ extension ModelInfo {
     
     var reduceMemory: Bool {
         // Enable on iOS devices, except when using quantization
-        // TODO: also enable on low-RAM devices such as iPhone 12 mini or less
         if runningOnMac { return false }
-        return !quantized
+        return !(quantized && deviceHas6GBOrMore)
     }
 }
 
@@ -116,7 +115,8 @@ extension ModelInfo {
         modelId: "pcuenq/coreml-stable-diffusion-1-4-palettized",
         modelVersion: "CompVis SD 1.4 [6 bit]",
         supportsEncoder: true,
-        supportsAttentionV2: true
+        supportsAttentionV2: true,
+        quantized: true
     )
 
     static let v15Base = ModelInfo(
@@ -128,7 +128,8 @@ extension ModelInfo {
         modelId: "pcuenq/coreml-stable-diffusion-v1-5-palettized",
         modelVersion: "RunwayML SD 1.5 [6 bit]",
         supportsEncoder: true,
-        supportsAttentionV2: true
+        supportsAttentionV2: true,
+        quantized: true
     )
     
     static let v2Base = ModelInfo(
@@ -141,7 +142,8 @@ extension ModelInfo {
         modelId: "pcuenq/coreml-stable-diffusion-2-base-palettized",
         modelVersion: "StabilityAI SD 2.0 [6 bit]",
         supportsEncoder: true,
-        supportsAttentionV2: true
+        supportsAttentionV2: true,
+        quantized: true
     )
 
     static let v21Base = ModelInfo(
@@ -154,7 +156,8 @@ extension ModelInfo {
         modelId: "pcuenq/coreml-stable-diffusion-2-1-base-palettized",
         modelVersion: "StabilityAI SD 2.1 [6 bit]",
         supportsEncoder: true,
-        supportsAttentionV2: true
+        supportsAttentionV2: true,
+        quantized: true
     )
         
     static let ofaSmall = ModelInfo(
