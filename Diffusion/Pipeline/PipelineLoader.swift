@@ -157,9 +157,11 @@ extension PipelineLoader {
         let configuration = MLModelConfiguration()
         configuration.computeUnits = computeUnits
         let pipeline = try StableDiffusionPipeline(resourcesAt: url,
+                                                   controlNet: [],
                                                    configuration: configuration,
                                                    disableSafety: false,
                                                    reduceMemory: model.reduceMemory)
+        try pipeline.loadResources()
         print("Pipeline loaded in \(Date().timeIntervalSince(beginDate))")
         state = .loaded
         return pipeline
