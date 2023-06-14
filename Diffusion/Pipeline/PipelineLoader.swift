@@ -102,7 +102,7 @@ extension PipelineLoader {
         switch computeUnits {
         case .cpuOnly           : return .original          // Not supported yet
         case .cpuAndGPU         : return .original
-        case .cpuAndNeuralEngine: return .splitEinsum
+        case .cpuAndNeuralEngine: return model.supportsAttentionV2 ? .splitEinsumV2 : .splitEinsum
         case .all               : return .splitEinsum
         @unknown default:
             fatalError("Unknown MLComputeUnits")
