@@ -9,6 +9,8 @@ On first launch, the application downloads a zipped archive with a Core ML versi
 
 For faster inference, we use a very fast scheduler: [DPM-Solver++](https://github.com/LuChengTHU/dpm-solver), that we ported to Swift from our [diffusers DPMSolverMultistepScheduler implementation](https://github.com/huggingface/diffusers/blob/main/src/diffusers/schedulers/scheduling_dpmsolver_multistep.py).
 
+The app supports models quantized with `coremltools` version 7 or better. This requires macOS 14 or iOS/iPadOS 17.
+
 ## Compatibility and Performance
 
 - macOS Ventura 13.1, iOS/iPadOS 16.2, Xcode 14.2.
@@ -17,6 +19,8 @@ For faster inference, we use a very fast scheduler: [DPM-Solver++](https://githu
   * 23 ~ 30s on iPhone 13 Pro. Model: Stable Diffusion v2-base, SPLIT_EINSUM attention, CPU + Neural Engine, memory reduction enabled.
 
 See [this post](https://huggingface.co/blog/fast-mac-diffusers) and [this issue](https://github.com/huggingface/swift-coreml-diffusers/issues/31) for additional performance figures.
+
+Quantized models run faster, but they require macOS Ventura 14, or iOS/iPadOS 17.
 
 The application will try to guess the best hardware to run models on. You can override this setting using the `Advanced` section in the controls sidebar.
 
