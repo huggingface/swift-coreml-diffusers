@@ -11,14 +11,13 @@ import Foundation
 let runningOnMac = true
 let deviceHas6GBOrMore = true
 
-let deviceSupportsQuantization = {
+let deviceSupportsQuantization: Bool = {
     if #available(macOS 14, *) {
-        true
+        return true
     } else {
-        false
+        return false
     }
 }()
-
 
 #if canImport(MLCompute)
 import MLCompute
