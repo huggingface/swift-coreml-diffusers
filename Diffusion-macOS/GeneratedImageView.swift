@@ -36,9 +36,19 @@ struct GeneratedImageView: View {
                 return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
             }
                               
-            return AnyView(Image(theImage, scale: 1, label: Text("generated"))
-                .resizable()
-                .clipShape(RoundedRectangle(cornerRadius: 20))
+            return AnyView(
+                    Image(theImage, scale: 1, label: Text("generated"))
+                    .resizable()
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .contextMenu {
+                        Button {
+                            NSPasteboard.general.clearContents()
+                            let nsimage = NSImage(cgImage: theImage, size: NSSize(width: theImage.width, height: theImage.height))
+                            NSPasteboard.general.writeObjects([nsimage])
+                        } label: {
+                            Text("Copy Photo")
+                        }
+                    }
             )
         case .failed(_):
             return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
