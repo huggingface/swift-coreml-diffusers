@@ -6,27 +6,25 @@
 //  See LICENSE at https://github.com/huggingface/swift-coreml-diffusers/LICENSE
 //
 
-
 import CoreML
 import Combine
-
-import Path
 import ZIPFoundation
 import StableDiffusion
 
 class PipelineLoader {
-    static let models = Path.applicationSupport / "hf-diffusion-models"
     
     let model: ModelInfo
     let computeUnits: ComputeUnits
     let maxSeed: UInt32
+    let modelsViewModel: ModelsViewModel
     
     private var downloadSubscriber: Cancellable?
 
-    init(model: ModelInfo, computeUnits: ComputeUnits? = nil, maxSeed: UInt32 = UInt32.max) {
+    init(model: ModelInfo, computeUnits: ComputeUnits? = nil, maxSeed: UInt32 = UInt32.max, modelsViewModel: ModelsViewModel) {
         self.model = model
         self.computeUnits = computeUnits ?? model.defaultComputeUnits
         self.maxSeed = maxSeed
+        self.modelsViewModel = modelsViewModel
         state = .undetermined
         setInitialState()
     }
@@ -64,12 +62,6 @@ class PipelineLoader {
 }
 
 extension PipelineLoader {
-    static func removeAll() {
-        try? models.delete()
-    }
-}
-
-extension PipelineLoader {
     func cancel() { downloader?.cancel() }
 }
 
@@ -78,24 +70,37 @@ extension PipelineLoader {
         return model.modelURL(for: variant)
     }
     
-    var filename: String {
+    var zipFilename: String {
         return url.lastPathComponent
     }
     
-    var downloadedPath: Path { PipelineLoader.models / filename }
-    var downloadedURL: URL { downloadedPath.url }
+    var downloadedURL: URL {
+//        print("downloadedURL: \(modelsViewModel.modelsFolderURL.appending(path: zipFilename))")
+        return modelsViewModel.modelsFolderURL.appending(path: zipFilename)  }
 
-    var uncompressPath: Path { downloadedPath.parent }
+    var uncompressURL: URL {
+//        print("uncompressURL: \(modelsViewModel.modelsFolderURL)")
+        return modelsViewModel.modelsFolderURL
+        }
     
-    var packagesFilename: String { downloadedPath.basename(dropExtension: true) }
-    var compiledPath: Path { downloadedPath.parent/packagesFilename }
+    var packagesFilename: String {
+//        print("packagesFilename: \(downloadedURL.deletingPathExtension().lastPathComponent)")
+        return downloadedURL.deletingPathExtension().lastPathComponent
+        }
+
+    var compiledURL: URL {
+//        print("compiledURL: \(modelsViewModel.modelsFolderURL.appending(path: packagesFilename))")
+        return modelsViewModel.modelsFolderURL.appending(path: packagesFilename)
+    }
 
     var downloaded: Bool {
-        return downloadedPath.exists
+//        print("file downloaded to \(downloadedURL.path)? \(FileManager.default.fileExists(atPath: downloadedURL.path))")
+        return FileManager.default.fileExists(atPath: downloadedURL.path)
     }
     
     var ready: Bool {
-        return compiledPath.exists
+//        print("file ready at \(compiledURL.path)? \(FileManager.default.fileExists(atPath: compiledURL.path))")
+        return  FileManager.default.fileExists(atPath: compiledURL.path)
     }
     
     var variant: AttentionVariant {
@@ -109,13 +114,12 @@ extension PipelineLoader {
         }
     }
     
-    // TODO: maybe receive Progress to add another progress as child
+    // TODO: maybe receive Progress to add another progress as child -- pcuena
     func prepare() async throws -> Pipeline {
         do {
-            try PipelineLoader.models.mkdir(.p)
             try await download()
             try await unzip()
-            let pipeline = try await load(url: compiledPath.url)
+            let pipeline = try await load(url: compiledURL)
             return Pipeline(pipeline, maxSeed: maxSeed)
         } catch {
             state = .failed(error)
@@ -142,13 +146,13 @@ extension PipelineLoader {
         guard downloaded else { return }
         state = .uncompressing
         do {
-            try FileManager().unzipItem(at: downloadedURL, to: uncompressPath.url)
+            try FileManager().unzipItem(at: downloadedURL, to: uncompressURL)
         } catch {
             // Cleanup if error occurs while unzipping
-            try uncompressPath.delete()
+            try FileManager.default.removeItem(at:(uncompressURL.appending(path: packagesFilename)))
             throw error
         }
-        try downloadedPath.delete()
+        try FileManager.default.removeItem(at: downloadedURL)
         state = .readyOnDisk
     }
     

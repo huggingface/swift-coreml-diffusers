@@ -47,10 +47,11 @@ struct LabelToggleDisclosureGroupStyle: DisclosureGroupStyle {
 
 struct ControlsView: View {
     @EnvironmentObject var generation: GenerationContext
-
-    static let models = ModelInfo.MODELS
+    @ObservedObject var modelsViewModel: ModelsViewModel = ModelsViewModel(settings: Settings.shared)
     
-    @State private var model = Settings.shared.currentModel.modelVersion
+    // models load up from modelsViewModel onAppear()
+    @State var models: [ModelInfo] = []
+    
     @State private var disclosedModel = true
     @State private var disclosedPrompt = true
     @State private var disclosedGuidance = false
@@ -73,6 +74,10 @@ struct ControlsView: View {
     @State private var showStepsHelp = false
     @State private var showSeedHelp = false
     @State private var showAdvancedHelp = false
+    @State private var modelIdString = Settings.shared.currentModel.modelId
+
+    /// When selected by the user, the reveal option opens a new Finder window to the models folder location
+    let revealOptionString = "-- reveal --"
 
     // Reasonable range for the slider
     let maxSeed: UInt32 = 1000
@@ -82,27 +87,27 @@ struct ControlsView: View {
     }
     
     func updateComputeUnitsState() {
-        Settings.shared.userSelectedComputeUnits = generation.computeUnits
+        Settings.shared.currentComputeUnits = generation.computeUnits
         modelDidChange(model: Settings.shared.currentModel)
     }
     
     func resetComputeUnitsState() {
-        generation.computeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
+        generation.computeUnits = Settings.shared.currentComputeUnits ?? ModelInfo.defaultComputeUnits
     }
     
     func modelDidChange(model: ModelInfo) {
         guard pipelineLoader?.model != model || pipelineLoader?.computeUnits != generation.computeUnits else {
-            print("Reusing same model \(model) with units \(generation.computeUnits)")
+            print("Reusing same model \(model) with same compute units \(generation.computeUnits)")
             return
         }
 
-        print("Loading model \(model)")
+//        print("ControlsView.modelDidChange - Loading model \(model)")
         Settings.shared.currentModel = model
 
         pipelineLoader?.cancel()
         pipelineState = .downloading(0)
         Task.init {
-            let loader = PipelineLoader(model: model, computeUnits: generation.computeUnits, maxSeed: maxSeed)
+            let loader = PipelineLoader(model: model, computeUnits: generation.computeUnits, maxSeed: maxSeed, modelsViewModel: modelsViewModel)
             self.pipelineLoader = loader
             stateSubscriber = loader.statePublisher.sink { state in
                 DispatchQueue.main.async {
@@ -132,22 +137,39 @@ struct ControlsView: View {
     }
     
     func isModelDownloaded(_ model: ModelInfo, computeUnits: ComputeUnits? = nil) -> Bool {
-        PipelineLoader(model: model, computeUnits: computeUnits ?? generation.computeUnits).ready
+        PipelineLoader(model: model, computeUnits: computeUnits ?? generation.computeUnits, modelsViewModel: modelsViewModel).ready
     }
-    
-    func modelLabel(_ model: ModelInfo) -> Text {
-        let downloaded = isModelDownloaded(model)
-        let prefix = downloaded ? "● " : "◌ "  //"○ "
-        return Text(prefix).foregroundColor(downloaded ? .accentColor : .secondary) + Text(model.modelVersion)
+
+    func modelLabel(_ model: ModelInfo) -> some View {
+        let exists = model.ready(modelsFolderURL: modelsViewModel.modelsFolderURL)
+        let filledCircle = Image(systemName: "circle.fill")
+            .font(.caption)
+            .foregroundColor(exists ? .accentColor : .secondary)
+        
+        let dottedCircle = Image(systemName: "circle.dotted")
+            .font(.caption)
+            .foregroundColor(exists ? .accentColor : .secondary)
+        
+        let dl = Image(systemName: "arrow.down.circle")
+            .font(.caption)
+            .foregroundColor(.gray)
+        
+//        print("Model name: \(model.humanReadableFileName)")
+//        print("Model exists? \(exists)")
+
+        return HStack {
+            if model.builtin && !exists {
+                dl
+            } else if exists {
+                filledCircle
+            } else {
+                dottedCircle
+            }
+            
+            Text(model.humanReadableFileName)
+        }
     }
-    
-    var modelFilename: String? {
-        guard let pipelineLoader = pipelineLoader else { return nil }
-        let selectedPath = pipelineLoader.compiledPath
-        guard selectedPath.exists else { return nil }
-        return selectedPath.string
-    }
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             
@@ -158,41 +180,34 @@ struct ControlsView: View {
             
             ScrollView {
                 Group {
-                    DisclosureGroup(isExpanded: $disclosedModel) {
-                        let revealOption = "-- reveal --"
-                        Picker("", selection: $model) {
-                            ForEach(Self.models, id: \.modelVersion) {
-                                modelLabel($0)
-                            }
-                            Text("Reveal in Finder…").tag(revealOption)
-                        }
-                        .onChange(of: model) { selection in
-                            guard selection != revealOption else {
-                                NSWorkspace.shared.selectFile(modelFilename, inFileViewerRootedAtPath: PipelineLoader.models.string)
-                                model = Settings.shared.currentModel.modelVersion
-                                return
-                            }
-                            guard let model = ModelInfo.from(modelVersion: selection) else { return }
-                            modelDidChange(model: model)
-                        }
-                    } label: {
-                        HStack {
-                            Label("Model from Hub", systemImage: "cpu").foregroundColor(.secondary)
-                            Spacer()
-                            if disclosedModel {
-                                Button {
-                                    showModelsHelp.toggle()
-                                } label: {
-                                    Image(systemName: "info.circle")
+                    DisclosureGroup(isExpanded: $disclosedModel, content: {
+                        Group {
+                            HStack {
+                                Picker("", selection: $modelIdString) {
+                                    ForEach(models, id: \.modelId) { model in
+                                        modelLabel(model)
+                                    }
+                                    Text("Reveal in Finder…").tag(revealOptionString)
                                 }
-                                .buttonStyle(.plain)
-                                // Or maybe use .sheet instead
-                                .sheet(isPresented: $showModelsHelp) {
-                                    modelsHelp($showModelsHelp)
+                                .pickerStyle(MenuPickerStyle())
+                                .font(.caption)
+                                .onChange(of: modelIdString) { newSelection in
+//                                    print("newSelection in picker: \(newSelection)")
+                                    if newSelection == revealOptionString {
+                                        NSWorkspace.shared.open(modelsViewModel.modelsFolderURL)
+                                    }
+                                    guard let model = ModelInfo.from(modelId: newSelection) else { return }
+                                    modelDidChange(model: model)
                                 }
+                                .disabled(modelsViewModel.builtinModels.isEmpty && modelsViewModel.addonModels.isEmpty)
                             }
-                        }.foregroundColor(.secondary)
-                    }
+                            .padding()
+                        }.padding(.leading, 10)
+
+                    }, label: {
+                        Text("models")
+
+                    })
                     Divider()
                     
                     DisclosureGroup(isExpanded: $disclosedPrompt) {
@@ -318,7 +333,7 @@ struct ControlsView: View {
                                 Spacer()
                             }
                             .onChange(of: generation.computeUnits) { units in
-                                guard let currentModel = ModelInfo.from(modelVersion: model) else { return }
+                                let currentModel = Settings.shared.currentModel
                                 let variantDownloaded = isModelDownloaded(currentModel, computeUnits: units)
                                 if variantDownloaded {
                                     updateComputeUnitsState()
@@ -330,7 +345,7 @@ struct ControlsView: View {
                                 Button("Cancel", role: .destructive) { resetComputeUnitsState() }
                                 Button("Download", role: .cancel) { updateComputeUnitsState() }
                             }, message: {
-                                Text("This setting requires a new version of the selected model.")
+                                Text("This setting requires the \(currentUnitsDescription()) version of the built-in \(Settings.shared.currentModel.humanReadableFileName) model.")
                             })
                         } label: {
                             HStack {
@@ -384,8 +399,10 @@ struct ControlsView: View {
         }
         .padding()
         .onAppear {
-            print(PipelineLoader.models)
-            modelDidChange(model: ModelInfo.from(modelVersion: model) ?? ModelInfo.v2Base)
+//            print(modelsViewModel.builtinModels)
+//            print(modelsViewModel.addonModels)
+            self.models = modelsViewModel.builtinModels + modelsViewModel.addonModels
+            modelDidChange(model: Settings.shared.currentModel)
         }
     }
 }

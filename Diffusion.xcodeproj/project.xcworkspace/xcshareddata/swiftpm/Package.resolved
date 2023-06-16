@@ -19,15 +19,6 @@
       }
     },
     {
-      "identity" : "path.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mxcl/Path.swift.git",
-      "state" : {
-        "revision" : "9c6f807b0a76be0e27aecc908bc6f173400d839e",
-        "version" : "1.4.0"
-      }
-    },
-    {
       "identity" : "swift-argument-parser",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser.git",

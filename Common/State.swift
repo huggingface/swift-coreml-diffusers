@@ -13,6 +13,9 @@ import CoreML
 
 let DEFAULT_MODEL = ModelInfo.v2Base
 let DEFAULT_PROMPT = "Labrador in the style of Vermeer"
+let DEFAULT_MODEL_FOLDER_NAME = "hf-diffusion-models"
+let DEFAULT_MODELS_FOLDER = URL.applicationSupportDirectory.appendingPathComponent(DEFAULT_MODEL_FOLDER_NAME)
+let DEFAULT_COMPUTE_UNITS = ComputeUnits.cpuAndGPU
 
 enum GenerationState {
     case startup
@@ -23,6 +26,24 @@ enum GenerationState {
 }
 
 typealias ComputeUnits = MLComputeUnits
+
+func currentUnitsDescription() -> String {
+    let units = Settings.shared.currentComputeUnits ?? ModelInfo.defaultComputeUnits
+     return {
+        switch units {
+        case .cpuOnly:
+            return "CPU Only"
+        case .cpuAndGPU:
+            return "CPU and GPU"
+        case .all:
+            return "All"
+        case .cpuAndNeuralEngine:
+            return "CPU and Neural Engine"
+        @unknown default:
+            return "Unkown Unit"
+        }
+     }()
+}
 
 class GenerationContext: ObservableObject {
     let scheduler = StableDiffusionScheduler.dpmSolverMultistepScheduler
@@ -52,7 +73,7 @@ class GenerationContext: ObservableObject {
     @Published var guidanceScale = 7.5
     @Published var disableSafety = false
     
-    @Published var computeUnits: ComputeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
+    @Published var computeUnits: ComputeUnits = Settings.shared.currentComputeUnits ?? ModelInfo.defaultComputeUnits
 
     private var progressSubscriber: Cancellable?
 
@@ -82,15 +103,17 @@ class Settings {
     
     enum Keys: String {
         case model
-        case safetyCheckerDisclaimer
         case computeUnits
+        case safetyCheckerDisclaimer
+        case modelsFolderURL
     }
     
     private init() {
         defaults.register(defaults: [
             Keys.model.rawValue: ModelInfo.v2Base.modelId,
             Keys.safetyCheckerDisclaimer.rawValue: false,
-            Keys.computeUnits.rawValue: -1      // Use default
+            Keys.computeUnits.rawValue: -1,     // Use default
+            Keys.modelsFolderURL.rawValue: DEFAULT_MODELS_FOLDER
         ])
     }
     
@@ -115,7 +138,7 @@ class Settings {
     
     /// Returns the option selected by the user, if overridden
     /// `nil` means: guess best
-    var userSelectedComputeUnits: ComputeUnits? {
+    var currentComputeUnits: ComputeUnits? {
         set {
             // Any value other than the supported ones would cause `get` to return `nil`
             defaults.set(newValue?.rawValue ?? -1, forKey: Keys.computeUnits.rawValue)

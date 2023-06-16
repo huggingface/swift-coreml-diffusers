@@ -5,7 +5,13 @@ This is a native app that shows how to integrate Apple's [Core ML Stable Diffusi
 This is what the app looks like on macOS:
 ![App Screenshot](screenshot.jpg)
 
-On first launch, the application downloads a zipped archive with a Core ML version of Stability AI's Stable Diffusion v2 base, from [this location in the Hugging Face Hub](https://huggingface.co/pcuenq/coreml-stable-diffusion-2-base/tree/main). This process takes a while, as several GB of data have to be downloaded and unarchived.
+On first launch, the application downloads a zipped archive with a Core ML version of Stability AI's Stable Diffusion v2 base, from [this location in the Hugging Face Hub](https://huggingface.co/pcuenq/coreml-stable-diffusion-2-base/tree/main). This process takes a while, as several GB of data have to be downloaded and unarchived. 
+
+The appication provides built-in access to a series of models including coreml-stable-diffusion-1-4, coreml-stable-diffusion-1-4-palettized, coreml-stable-diffusion-v1-5, coreml-stable-diffusion-v1-5-palettized, coreml-stable-diffusion-2-base, coreml-stable-diffusion-2-base-palettized, coreml-stable-diffusion-2-1-base, coreml-stable-diffusion-2-1-base-palettized and coreml-small-stable-diffusion-v0. 
+
+When selecting a built-in model / compute units combination which has not been downloaded yey will prompt for you to download that model.
+
+Advanced users can choose to "Reveal in Finder…" the models folder and move uncompressed CoreML compatible models there.
 
 For faster inference, we use a very fast scheduler: [DPM-Solver++](https://github.com/LuChengTHU/dpm-solver), that we ported to Swift from our [diffusers DPMSolverMultistepScheduler implementation](https://github.com/huggingface/diffusers/blob/main/src/diffusers/schedulers/scheduling_dpmsolver_multistep.py).
 

@@ -9,15 +9,15 @@
 /* Begin PBXBuildFile section */
 		8C82789A2A3B4723009A2E20 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = 8C8278992A3B4723009A2E20 /* StableDiffusion */; };
 		8C82789C2A3B4731009A2E20 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = 8C82789B2A3B4731009A2E20 /* StableDiffusion */; };
+		8CFB91AE2A3BAEDB00BCC614 /* ModelsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CFB91AD2A3BAEDB00BCC614 /* ModelsViewModel.swift */; };
+		8CFB91AF2A3BAEDB00BCC614 /* ModelsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CFB91AD2A3BAEDB00BCC614 /* ModelsViewModel.swift */; };
 		EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB067F862992E561004D1AD9 /* HelpContent.swift */; };
 		EB560F0429A3C20800C0F8B8 /* Capabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB560F0329A3C20800C0F8B8 /* Capabilities.swift */; };
 		EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */; };
-		EBB5BA5829425E17003A2A5B /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = EBB5BA5729425E17003A2A5B /* Path */; };
 		EBB5BA5A29426E06003A2A5B /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5929426E06003A2A5B /* Downloader.swift */; };
 		EBB5BA5D294504DE003A2A5B /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = EBB5BA5C294504DE003A2A5B /* ZIPFoundation */; };
 		EBDD7DAA29731F6C00C1C4B2 /* Pipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE75601293E91E200806B32 /* Pipeline.swift */; };
 		EBDD7DAB29731F7500C1C4B2 /* PipelineLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */; };
-		EBDD7DAD29731FB300C1C4B2 /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = EBDD7DAC29731FB300C1C4B2 /* Path */; };
 		EBDD7DAF29731FB300C1C4B2 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = EBDD7DAE29731FB300C1C4B2 /* ZIPFoundation */; };
 		EBDD7DB32973200200C1C4B2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DB22973200200C1C4B2 /* Utils.swift */; };
 		EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DB22973200200C1C4B2 /* Utils.swift */; };
@@ -63,6 +63,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8CFB91AD2A3BAEDB00BCC614 /* ModelsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelsViewModel.swift; sourceTree = "<group>"; };
 		EB067F862992E561004D1AD9 /* HelpContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpContent.swift; sourceTree = "<group>"; };
 		EB33A51E2954E1BC00B16357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EB560F0329A3C20800C0F8B8 /* Capabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capabilities.swift; sourceTree = "<group>"; };
@@ -104,7 +105,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EBB5BA5829425E17003A2A5B /* Path in Frameworks */,
 				8C82789C2A3B4731009A2E20 /* StableDiffusion in Frameworks */,
 				EBB5BA5D294504DE003A2A5B /* ZIPFoundation in Frameworks */,
 			);
@@ -130,7 +130,6 @@
 			files = (
 				F155203C297118E700DC009B /* CompactSlider in Frameworks */,
 				8C82789A2A3B4723009A2E20 /* StableDiffusion in Frameworks */,
-				EBDD7DAD29731FB300C1C4B2 /* Path in Frameworks */,
 				EBDD7DAF29731FB300C1C4B2 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -138,6 +137,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8CFB91AB2A3BAC4B00BCC614 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				EBE755CC293E37DD00806B32 /* Assets.xcassets */,
+				EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */,
+				EBDD7DB72976AAFE00C1C4B2 /* State.swift */,
+				EBB5BA5929426E06003A2A5B /* Downloader.swift */,
+				EBDD7DB22973200200C1C4B2 /* Utils.swift */,
+				EBB5BA5129425B07003A2A5B /* Pipeline */,
+				8CFB91AC2A3BAC6900BCC614 /* Views */,
+				8CFB91AD2A3BAEDB00BCC614 /* ModelsViewModel.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		8CFB91AC2A3BAC6900BCC614 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		EBB5BA5129425B07003A2A5B /* Pipeline */ = {
 			isa = PBXGroup;
 			children = (
@@ -155,6 +176,7 @@
 				EBE4438729488DCA00CDA605 /* README.md */,
 				EBE443892948953600CDA605 /* LICENSE */,
 				EBE755FF293E910800806B32 /* Packages */,
+				8CFB91AB2A3BAC4B00BCC614 /* Common */,
 				EBE755C7293E37DD00806B32 /* Diffusion */,
 				F15520222971093300DC009B /* Diffusion-macOS */,
 				EBE755D9293E37DE00806B32 /* DiffusionTests */,
@@ -179,14 +201,8 @@
 			isa = PBXGroup;
 			children = (
 				EB33A51E2954E1BC00B16357 /* Info.plist */,
-				EBB5BA5129425B07003A2A5B /* Pipeline */,
 				EBE7560A29411A5E00806B32 /* Views */,
-				EBB5BA5929426E06003A2A5B /* Downloader.swift */,
 				EBE755C8293E37DD00806B32 /* DiffusionApp.swift */,
-				EBDD7DB22973200200C1C4B2 /* Utils.swift */,
-				EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */,
-				EBDD7DB72976AAFE00C1C4B2 /* State.swift */,
-				EBE755CC293E37DD00806B32 /* Assets.xcassets */,
 				EBE755CE293E37DD00806B32 /* Diffusion.entitlements */,
 				EBE755CF293E37DD00806B32 /* Preview Content */,
 			);
@@ -284,7 +300,6 @@
 			);
 			name = Diffusion;
 			packageProductDependencies = (
-				EBB5BA5729425E17003A2A5B /* Path */,
 				EBB5BA5C294504DE003A2A5B /* ZIPFoundation */,
 				8C82789B2A3B4731009A2E20 /* StableDiffusion */,
 			);
@@ -345,7 +360,6 @@
 			name = "Diffusion-macOS";
 			packageProductDependencies = (
 				F155203B297118E700DC009B /* CompactSlider */,
-				EBDD7DAC29731FB300C1C4B2 /* Path */,
 				EBDD7DAE29731FB300C1C4B2 /* ZIPFoundation */,
 				8C8278992A3B4723009A2E20 /* StableDiffusion */,
 			);
@@ -361,7 +375,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1420;
-				LastUpgradeCheck = 1410;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					EBE755C4293E37DD00806B32 = {
 						CreatedOnToolsVersion = 14.1;
@@ -389,7 +403,6 @@
 			);
 			mainGroup = EBE755BC293E37DD00806B32;
 			packageReferences = (
-				EBB5BA5629425E17003A2A5B /* XCRemoteSwiftPackageReference "Path.swift" */,
 				EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				F155203A297118E600DC009B /* XCRemoteSwiftPackageReference "CompactSlider" */,
 				8C8278962A3B470D009A2E20 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
@@ -471,6 +484,7 @@
 				EBE755CB293E37DD00806B32 /* TextToImage.swift in Sources */,
 				EBB5BA5A29426E06003A2A5B /* Downloader.swift in Sources */,
 				EBE3FF4C295E1EFE00E921AA /* ModelInfo.swift in Sources */,
+				8CFB91AE2A3BAEDB00BCC614 /* ModelsViewModel.swift in Sources */,
 				EBE756092941178600806B32 /* Loading.swift in Sources */,
 				EBDD7DB82976AAFE00C1C4B2 /* State.swift in Sources */,
 				EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */,
@@ -504,6 +518,7 @@
 				EBDD7DAA29731F6C00C1C4B2 /* Pipeline.swift in Sources */,
 				F15520262971093300DC009B /* ContentView.swift in Sources */,
 				EBDD7DB92976AAFE00C1C4B2 /* State.swift in Sources */,
+				8CFB91AF2A3BAEDB00BCC614 /* ModelsViewModel.swift in Sources */,
 				EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */,
 				EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */,
 				F1552031297109C300DC009B /* ControlsView.swift in Sources */,
@@ -574,9 +589,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -635,9 +652,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -664,6 +683,7 @@
 				CODE_SIGN_ENTITLEMENTS = Diffusion/Diffusion.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Diffusion/Preview Content\"";
 				DEVELOPMENT_TEAM = DU2U4VGU64;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -704,6 +724,7 @@
 				CODE_SIGN_ENTITLEMENTS = Diffusion/Diffusion.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Diffusion/Preview Content\"";
 				DEVELOPMENT_TEAM = DU2U4VGU64;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -742,6 +763,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = ZWDJQ796RU;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
@@ -765,6 +787,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = ZWDJQ796RU;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
@@ -787,6 +810,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = ZWDJQ796RU;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
@@ -809,6 +833,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = ZWDJQ796RU;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
@@ -836,6 +861,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Diffusion-macOS/Preview Content\"";
 				DEVELOPMENT_TEAM = DU2U4VGU64;
 				ENABLE_PREVIEWS = YES;
@@ -866,6 +892,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Diffusion-macOS/Preview Content\"";
 				DEVELOPMENT_TEAM = DU2U4VGU64;
 				ENABLE_PREVIEWS = YES;
@@ -944,14 +971,6 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		EBB5BA5629425E17003A2A5B /* XCRemoteSwiftPackageReference "Path.swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/mxcl/Path.swift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
@@ -985,20 +1004,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = StableDiffusion;
 		};
-		EBB5BA5729425E17003A2A5B /* Path */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EBB5BA5629425E17003A2A5B /* XCRemoteSwiftPackageReference "Path.swift" */;
-			productName = Path;
-		};
 		EBB5BA5C294504DE003A2A5B /* ZIPFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
 			productName = ZIPFoundation;
-		};
-		EBDD7DAC29731FB300C1C4B2 /* Path */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EBB5BA5629425E17003A2A5B /* XCRemoteSwiftPackageReference "Path.swift" */;
-			productName = Path;
 		};
 		EBDD7DAE29731FB300C1C4B2 /* ZIPFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
