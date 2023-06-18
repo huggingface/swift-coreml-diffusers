@@ -23,21 +23,15 @@ class ModelsViewModel: ObservableObject {
         }
     }
     
-    // track which variant radio button the user has selected
-    // TODO: This is probably best moved to State.swift/Settings -- dolmere
-    var selectedVariant: AttentionVariant = .original {
-        didSet {
-            setSelectedModelFor(variant: selectedVariant)
-            updateFilters()
-        }
-    }
-    
     // Unkown models discovered in the models folder when loadModels() runs.
     @Published var addonModels: [ModelInfo] = [] {
         didSet {
             updateFilters()
         }
     }
+    
+    // Track readiness state of models as they're encountered. Preferred access is through getter and setter `getModelReadiness` and `setModelReadiness`
+    @Published var modelReadinessWrappers: [ModelReadiness] = []
     
     // Known models defined as built-in. Downloadable by the app.
     @Published var builtinModels: [ModelInfo] = ModelInfo.BUILTIN_MODELS
@@ -47,6 +41,8 @@ class ModelsViewModel: ObservableObject {
     
     // Models that are built-in and match the currently selected variant
     @Published var filteredBuiltinModels: [ModelInfo] = []
+    
+    @Published var filteredModels: [ModelInfo] = []
     
     private var folderMonitor: DispatchSourceFileSystemObject?
     
@@ -77,9 +73,54 @@ class ModelsViewModel: ObservableObject {
             }
         }
         
+        startMonitoring()
         // Load all models present in the models folder
         loadModels()
     }
+    
+    func getModelReadiness(_ model: ModelInfo) -> ModelReadiness {
+//        print("PIPELINE GETMODELREADINESS GETTING MODEL READY")
+//        print("Checking for match to \(model.fileSystemFileName)")
+//        print(" --- model readiness wrappers --- \n \(modelReadinessWrappers)")
+//        for debug in modelReadinessWrappers {
+//            print("match?: \(debug.modelInfo.fileSystemFileName) ??  \(debug.modelInfo.fileSystemFileName == model.fileSystemFileName)")
+//        }
+        var mrw: ModelReadinessState = ModelReadinessState.unknown
+        if let modelAlreadyTracked = modelReadinessWrappers.first(where: { $0.modelInfo.fileSystemFileName == model.fileSystemFileName }) {
+//            print("RETURNING MATCH! TRACKED MODEL FOUND!")
+            // If a matching readiness item is found in memory return it
+            return modelAlreadyTracked
+        } else {
+//            print("TRACKED MoDEL missing! CHECKING MODELREADY!")
+            //model not tracked and in an unknown state so
+            let fileExists = modelReady(model: model)
+            if fileExists {
+                mrw = .ready
+            }
+        }
+        // Now create, insert and return unknown or ready state readiness
+        let newModelReadiness = ModelReadiness(modelInfo: model, state: mrw)
+        setModelReadiness(of: model, to: mrw)
+        return newModelReadiness
+    }
+
+    /// Use setReadiness to ensure that UI affecting changes happen on the main thread!
+    func setModelReadiness(of model: ModelInfo, to state: ModelReadinessState) {
+        DispatchQueue.main.async {
+//            print("SET MODEL READINESS WRAPPER for model \(model.fileSystemFileName)")
+            if let matchingReadinessItem = self.modelReadinessWrappers.first(where: { $0.modelInfo.fileSystemFileName == model.fileSystemFileName }) {
+//                print("model already found! \(self.modelReadinessWrappers.count)")
+                // If a matching readiness item is found in memory, update its status
+                matchingReadinessItem.state = state
+            } else {
+//                print("appending new readiness state")
+                // Create a new model readiness item and insert it
+                let newModelReadiness = ModelReadiness(modelInfo: model, state: state)
+                self.modelReadinessWrappers.append(newModelReadiness)
+            }
+        }
+    }
+
     
     /// When the variant changes try to select the model with that variant or sets the model to `nil`
     // TODO: This is probably best moved to State.swift/Settings -- dolmere
@@ -109,6 +150,7 @@ class ModelsViewModel: ObservableObject {
     }
     
     private func folderContentsDidChange() {
+        print("folderContentsDidChange! reloading models.")
         loadModels()
     }
     
@@ -121,46 +163,57 @@ class ModelsViewModel: ObservableObject {
     }
 
     func loadModels() {
+//        print("LOAD MODELS!!!")
         let modelInfoArray = reloadAddonModelInfo(builtinModels: self.builtinModels)
 
         DispatchQueue.main.async {
             self.addonModels = modelInfoArray
         }
-        // stop monitoring the old folder
-        stopMonitoring()
-        // start monitoring the newly set folder
-        startMonitoring()
+        // Now update the filtered array of models
+        updateFilters()
     }
     
-    private func updateFilters() {
-        let newAddonFiltered = addonModels.filter { $0.variant == selectedVariant }
-        filteredAddonModels = newAddonFiltered
-        let newBuiltinFiltered = builtinModels.filter { $0.variant == selectedVariant }
-        filteredBuiltinModels = newBuiltinFiltered
+    public func updateFilters() {
+//        print("UPDATE FILTERS!!!!")
+        DispatchQueue.main.async {
+            let newAddonFiltered = self.addonModels.filter { $0.variant == convertUnitsToVariant(computeUnits: Settings.shared.currentComputeUnits) }
+            self.filteredAddonModels = newAddonFiltered
+            let newBuiltinFiltered = self.builtinModels.filter { $0.variant == convertUnitsToVariant(computeUnits: Settings.shared.currentComputeUnits) }
+            self.filteredBuiltinModels = newBuiltinFiltered
+//            print("Filters updated. Built-in count \(self.filteredBuiltinModels.count) addons count \(self.filteredAddonModels.count)")
+//            print("for computeUnits: \(computeUnitsDescription(units: Settings.shared.currentComputeUnits) ) converted to variant: \(convertUnitsToVariant(computeUnits: Settings.shared.currentComputeUnits) )")
+//            for mdl in self.filteredBuiltinModels {
+//                print("built-in model \(mdl.humanReadableFileName) variant \(mdl.variant)")
+//            }
+//            for mld2 in self.filteredAddonModels {
+//                print("addon model \(mld2.humanReadableFileName) variant \(mld2.variant)")
+//            }
+            self.filteredModels = self.filteredBuiltinModels + self.filteredAddonModels
+        }
     }
 
-    // Utility function used to convert filesystem model name to human readable string
+    // Utility function used to help convert filesystem model name to human readable string
     func replaceUnderscoresAndDashes(string: String) -> String {
         let pattern = "[-_]"
         let replaced = string.replacingOccurrences(of: pattern, with: " ", options: .regularExpression)
         return replaced
     }
 
-    // Utility function used to convert filesystem model name to human readable string
+    // Utility function used to help convert filesystem model name to human readable string
     func replaceVariantInfo(string: String) -> String {
         let pattern = "(compiled)|(original)|(split)|(einsum)"
         let replaced = string.replacingOccurrences(of: pattern, with: "", options: .regularExpression)
         return replaced
     }
 
-    // Utility function used to convert filesystem model name to human readable string
+    // Utility function used to help convert filesystem model name to human readable string
     func removeVersion(from: String) -> String {
         let pattern = "(v).*"
         let replaced = from.replacingOccurrences(of: pattern, with: "", options: .regularExpression)
         return replaced
     }
 
-    // Utility function used to convert filesystem model name to human readable string
+    // Utility function used to help convert filesystem model name to human readable string
     func getVersion(from string: String) -> String? {
         let pattern = "(v).*"
         
@@ -178,7 +231,7 @@ class ModelsViewModel: ObservableObject {
         return matchedSubstring
     }
 
-    // Utility function used to convert filesystem model name to human readable string
+    // Utility function used to help convert filesystem model name to human readable string
     func detectAttentionVariant(from filename: String) -> AttentionVariant {
         if filename.contains("original") {
             return .original
@@ -192,12 +245,14 @@ class ModelsViewModel: ObservableObject {
         }
     }
 
+    // Read through the selected models directory and load any directories that look like valid models
     func reloadAddonModelInfo(builtinModels: [ModelInfo]) -> [ModelInfo] {
         do {
             var modelInfoArray: [ModelInfo] = []
-            let folderContents = try FileManager.default.contentsOfDirectory(at: self.modelsFolderURL, includingPropertiesForKeys: nil, options: [])
+            let folderContents = try FileManager.default.contentsOfDirectory(at: self.modelsFolderURL, includingPropertiesForKeys: nil, options: []) // DirectoryEnumerationOptions.skipsHiddenFiles? -- dolmere
             let visibleFiles = folderContents.filter { fileURL in
                 let fileName = fileURL.lastPathComponent
+                // TODO: Filter out any items which are not folders and that do not contain the paths filename/merges.txt and filename/vocab.json -- dolmere
                 return !fileName.hasPrefix(".")
             }
             let filenames = visibleFiles.map { $0.lastPathComponent }
@@ -225,7 +280,7 @@ class ModelsViewModel: ObservableObject {
                     calculatedFileName = replaceUnderscoresAndDashes(string: compareFileName)
                     variant = detectAttentionVariant(from: compareFileName)
                     calculatedFileName = replaceVariantInfo(string: calculatedFileName)
-                    version = getVersion(from: calculatedFileName) ?? "v0.0"
+                    version = getVersion(from: calculatedFileName)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "v0.0"
                     // take out the version and remove any whitespace characters from the front and back of the string
                     let humanReadableFileName = removeVersion(from: calculatedFileName).trimmingCharacters(in: .whitespacesAndNewlines)
 //          print("making addon modelinfo: \(version) \(variant) human readable - \(humanReadableFileName) - fileSystem - \(compareFileName)")
@@ -244,6 +299,30 @@ class ModelsViewModel: ObservableObject {
         }
         //TODO: better error handling! -- dolmere
         return []
+    }
+    
+    private func modelReady(model: ModelInfo) -> Bool {
+//        print("checking readiness of model: \(model)")
+        var ready = false
+        let appendPath = model.fileSystemFileName
+//print("checking if model exists at path: \(modelsFolderURL.appendingPathComponent(appendPath).path)")
+        /// check that this model's fodler exists in the models folders
+        let fileExists = FileManager.default.fileExists(atPath: modelsFolderURL.appendingPathComponent(appendPath).path)
+        if fileExists {
+//print("Model parent folder exists. Now check if merges.txt exists at path: \(modelsFolderURL.appendingPathComponent(appendPath).appendingPathComponent("merges.txt").path)")
+            /// check that the models folder is indeed a folder and contains a merges.txt key file
+            let mergesExists = FileManager.default.fileExists(atPath: modelsFolderURL.appendingPathComponent(appendPath).appendingPathComponent("merges.txt").path)
+            if mergesExists {
+//print("merges.txt exists. Now check if vocab.json exists at path: \(modelsFolderURL.appendingPathComponent(appendPath).appendingPathComponent("vocab.json").path)")
+                /// check that the models folder is indeed a folder and contains a vocab.txt key file
+                let vocabExists = FileManager.default.fileExists(atPath: modelsFolderURL.appendingPathComponent(appendPath).appendingPathComponent("vocab.json").path)
+                if vocabExists {
+                    ready = true
+                }
+            }
+        }
+//        print("ModelInfo READY?: \(model.humanReadableFileName): \(ready)")
+        return ready
     }
 
 }

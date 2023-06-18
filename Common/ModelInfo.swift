@@ -18,7 +18,31 @@ extension AttentionVariant {
     var defaultComputeUnits: MLComputeUnits { self == .original ? .cpuAndGPU : .cpuAndNeuralEngine }
 }
 
-struct ModelInfo: Hashable {
+/// Track if the model is downloaded and on the filesystem, ready for use.
+enum ModelReadinessState {
+    case unknown
+    case downloading
+    case downloaded
+    case uncompressing
+    case ready
+    case failed
+}
+
+class ModelReadiness: ObservableObject {
+    let modelInfo: ModelInfo
+    @Published var state: ModelReadinessState
+    
+    init(modelInfo: ModelInfo, state: ModelReadinessState) {
+        self.modelInfo = modelInfo
+        self.state = state
+    }
+}
+
+struct ModelInfo: Hashable, Identifiable {
+    
+    // To be Identifiable compliant we need an id: field.
+    let id = UUID()
+
     /// Hugging Face model Id that contains .zip archives with compiled Core ML models
     let modelId: String
     
@@ -37,8 +61,6 @@ struct ModelInfo: Hashable {
     /// The name of the model's parent folder as it sits in the user selected models folder
     var fileSystemFileName: String
     
-    var fileSystemFileNameWithSuffix: String { return fileSystemFileName + "_" + fileSuffix() }
-
     /// Suffix of the archive containing the ORIGINAL attention variant. Usually something like "original_compiled"
     let originalAttentionSuffix: String
 
@@ -75,13 +97,16 @@ struct ModelInfo: Hashable {
         self.builtin = builtin
         self.modelVersion = modelVersion
         self.humanReadableFileName = humanReadableFileName
-        self.fileSystemFileName = fileSystemFileName
         self.originalAttentionSuffix = originalAttentionSuffix
         self.splitAttentionSuffix = splitAttentionSuffix
         self.splitAttentionV2Suffix = splitAttentionV2Suffix
         self.supportsEncoder = supportsEncoder
         self.supportsAttentionV2 = supportsAttentionV2
         self.quantized = quantized
+        self.fileSystemFileName = fileSystemFileName
+        if builtin {
+            self.fileSystemFileName = fileSystemFileName + "_" + fileSuffix()
+        } 
     }
     
     func hash(into hasher: inout Hasher) {
@@ -103,7 +128,6 @@ struct ModelInfo: Hashable {
 
 extension ModelInfo {
     //TODO: set compute units instead and derive variant from it -- pcuenca
-    //TODO: Does this need to be updated to reflect .splitEinsumV2? -- dolmere
     static var defaultAttention: AttentionVariant {
         guard runningOnMac else { return .splitEinsum }
         #if os(macOS)
@@ -258,7 +282,6 @@ extension ModelInfo: Equatable {
     static func ==(lhs: ModelInfo, rhs: ModelInfo) -> Bool { lhs.modelId == rhs.modelId }
 }
 
-
 extension ModelInfo {
     func fileSuffix() -> String {
         let suffix: String
@@ -268,27 +291,5 @@ extension ModelInfo {
         case .splitEinsumV2: suffix = splitAttentionV2Suffix
         }
         return suffix
-    }
-    
-    func ready(modelsFolderURL: URL) -> Bool {
-        var ready = false
-//print("checking if model exists at path: \(modelsFolderURL.appendingPathComponent(fileSystemFileNameWithSuffix).path)")
-        /// check that this model's fodler exists in the models folders
-        let fileExists = FileManager.default.fileExists(atPath: modelsFolderURL.appendingPathComponent(fileSystemFileNameWithSuffix).path)
-        if fileExists {
-//print("Model parent folder exists. Now check if merges.txt exists at path: \(modelsFolderURL.appendingPathComponent(fileSystemFileNameWithSuffix).appendingPathComponent("merges.txt").path)")
-            /// check that the models folder is indeed a folder and contains a merges.txt key file
-            let mergesExists = FileManager.default.fileExists(atPath: modelsFolderURL.appendingPathComponent(fileSystemFileNameWithSuffix).appendingPathComponent("merges.txt").path)
-            if mergesExists {
-//print("merges.txt exists. Now check if vocab.json exists at path: \(modelsFolderURL.appendingPathComponent(fileSystemFileNameWithSuffix).appendingPathComponent("vocab.json").path)")
-                /// check that the models folder is indeed a folder and contains a vocab.txt key file
-                let vocabExists = FileManager.default.fileExists(atPath: modelsFolderURL.appendingPathComponent(fileSystemFileNameWithSuffix).appendingPathComponent("vocab.json").path)
-                if vocabExists {
-                    ready = true
-                }
-            }
-        }
-//        print("returning ready status of: \(ready)")
-        return ready
     }
 }

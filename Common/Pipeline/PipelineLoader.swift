@@ -11,14 +11,16 @@ import Combine
 import ZIPFoundation
 import StableDiffusion
 
-class PipelineLoader {
-    
+//TODO: Separate download from Pipeline completely. Downloading of models should be its own separate concern. -- dolmere
+class PipelineLoader: ObservableObject {
+
     let model: ModelInfo
     let computeUnits: ComputeUnits
     let maxSeed: UInt32
     let modelsViewModel: ModelsViewModel
     
     private var downloadSubscriber: Cancellable?
+
 
     init(model: ModelInfo, computeUnits: ComputeUnits? = nil, maxSeed: UInt32 = UInt32.max, modelsViewModel: ModelsViewModel) {
         self.model = model
@@ -49,15 +51,22 @@ class PipelineLoader {
     private(set) var downloader: Downloader? = nil
 
     func setInitialState() {
-        if ready {
+//        print("PIPLINE SET INITIAL STATE GETTING MODEL.READY")
+        // Downloaded built-in variants and all 3rd party models should be found and set to readyOnDisk
+        if modelsViewModel.getModelReadiness(model).state == ModelReadinessState.ready {
+//            print("model is ready on disk")
             state = .readyOnDisk
             return
         }
+        // Built-in variants that have been downloaded but not uncompressed should be caught here
         if downloaded {
             state = .downloaded
+            modelsViewModel.setModelReadiness(of: model, to: ModelReadinessState.downloaded)
             return
         }
+        // Built-in models that are missing should be caught here
         state = .waitingToDownload
+        modelsViewModel.setModelReadiness(of: model, to: ModelReadinessState.unknown)
     }
 }
 
@@ -67,7 +76,12 @@ extension PipelineLoader {
 
 extension PipelineLoader {
     var url: URL {
-        return model.modelURL(for: variant)
+        // Built-in models have their own URL builder function
+        if model.builtin {
+            return model.modelURL(for: variant)
+        }
+        // 3rd party models are local only
+        return modelsViewModel.modelsFolderURL.appending(path: model.fileSystemFileName)
     }
     
     var zipFilename: String {
@@ -98,11 +112,6 @@ extension PipelineLoader {
         return FileManager.default.fileExists(atPath: downloadedURL.path)
     }
     
-    var ready: Bool {
-//        print("file ready at \(compiledURL.path)? \(FileManager.default.fileExists(atPath: compiledURL.path))")
-        return  FileManager.default.fileExists(atPath: compiledURL.path)
-    }
-    
     var variant: AttentionVariant {
         switch computeUnits {
         case .cpuOnly           : return .original          // Not supported yet
@@ -115,12 +124,23 @@ extension PipelineLoader {
     }
     
     // TODO: maybe receive Progress to add another progress as child -- pcuena
-    func prepare() async throws -> Pipeline {
+    func preparePipeline() async throws -> Pipeline {
+//        print("-----PREPARE PIPELINE--------")
+        do {
+            let pipeline = try await load(url: modelsViewModel.modelsFolderURL.appendingPathComponent(model.fileSystemFileName))
+            return Pipeline(pipeline, maxSeed: maxSeed)
+        } catch {
+            state = .failed(error)
+            throw error
+        }
+    }
+    
+    func prepareDownload() async throws -> Pipeline {
+//        print("-----DOWNLOAD PIPELINE--------")
         do {
             try await download()
             try await unzip()
-            let pipeline = try await load(url: compiledURL)
-            return Pipeline(pipeline, maxSeed: maxSeed)
+            return try await preparePipeline()
         } catch {
             state = .failed(error)
             throw error
@@ -129,13 +149,14 @@ extension PipelineLoader {
     
     @discardableResult
     func download() async throws -> URL {
-        if ready || downloaded { return downloadedURL }
-        
+//        print("PIPELINE LOADER DOWNLOAD GETTING MODEL READY")
+        if modelsViewModel.getModelReadiness(model).state == ModelReadinessState.ready || downloaded { return downloadedURL }
         let downloader = Downloader(from: url, to: downloadedURL)
         self.downloader = downloader
         downloadSubscriber = downloader.downloadState.sink { state in
             if case .downloading(let progress) = state {
                 self.state = .downloading(progress)
+                self.modelsViewModel.setModelReadiness(of: self.model, to: .downloading)
             }
         }
         try downloader.waitUntilDone()
@@ -145,6 +166,7 @@ extension PipelineLoader {
     func unzip() async throws {
         guard downloaded else { return }
         state = .uncompressing
+        modelsViewModel.setModelReadiness(of: model, to: .uncompressing)
         do {
             try FileManager().unzipItem(at: downloadedURL, to: uncompressURL)
         } catch {
@@ -154,6 +176,7 @@ extension PipelineLoader {
         }
         try FileManager.default.removeItem(at: downloadedURL)
         state = .readyOnDisk
+        modelsViewModel.setModelReadiness(of: model, to: .ready)
     }
     
     func load(url: URL) async throws -> StableDiffusionPipeline {
@@ -168,6 +191,7 @@ extension PipelineLoader {
         try pipeline.loadResources()
         print("Pipeline loaded in \(Date().timeIntervalSince(beginDate))")
         state = .loaded
+        modelsViewModel.setModelReadiness(of: model, to: ModelReadinessState.ready)
         return pipeline
     }
 }

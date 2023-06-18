@@ -27,8 +27,8 @@ enum GenerationState {
 
 typealias ComputeUnits = MLComputeUnits
 
-func currentUnitsDescription() -> String {
-    let units = Settings.shared.currentComputeUnits ?? ModelInfo.defaultComputeUnits
+/// Helper function to print compute units to log
+func computeUnitsDescription(units: ComputeUnits) -> String {
      return {
         switch units {
         case .cpuOnly:
@@ -40,9 +40,26 @@ func currentUnitsDescription() -> String {
         case .cpuAndNeuralEngine:
             return "CPU and Neural Engine"
         @unknown default:
-            return "Unkown Unit"
+            return "Unknown Unit"
         }
      }()
+}
+
+/// Helper function to compare compute units to attendionvariants
+func convertUnitsToVariant(computeUnits: ComputeUnits?) -> AttentionVariant {
+    var units: AttentionVariant {
+        switch computeUnits {
+        case .cpuOnly           : return .original          // Not supported yet
+        case .cpuAndGPU         : return .original
+        case .cpuAndNeuralEngine: return .splitEinsum
+        case .all               : return .splitEinsum
+        case .none:
+            return .splitEinsum
+        @unknown default:
+            return .splitEinsum
+        }
+    }
+    return units
 }
 
 class GenerationContext: ObservableObject {
@@ -73,7 +90,7 @@ class GenerationContext: ObservableObject {
     @Published var guidanceScale = 7.5
     @Published var disableSafety = false
     
-    @Published var computeUnits: ComputeUnits = Settings.shared.currentComputeUnits ?? ModelInfo.defaultComputeUnits
+    @Published var computeUnits: ComputeUnits = Settings.shared.currentComputeUnits
 
     private var progressSubscriber: Cancellable?
 
@@ -112,7 +129,7 @@ class Settings {
         defaults.register(defaults: [
             Keys.model.rawValue: ModelInfo.v2Base.modelId,
             Keys.safetyCheckerDisclaimer.rawValue: false,
-            Keys.computeUnits.rawValue: -1,     // Use default
+            Keys.computeUnits.rawValue: -1,  // Use default
             Keys.modelsFolderURL.rawValue: DEFAULT_MODELS_FOLDER
         ])
     }
@@ -136,17 +153,18 @@ class Settings {
         }
     }
     
-    /// Returns the option selected by the user, if overridden
-    /// `nil` means: guess best
-    var currentComputeUnits: ComputeUnits? {
+    /// Returns the compute untils as default or units selected by the user if automatic is overridden.
+    /// Set to `-1` to reset back to automatic selection for the active device
+    var currentComputeUnits: ComputeUnits {
         set {
-            // Any value other than the supported ones would cause `get` to return `nil`
-            defaults.set(newValue?.rawValue ?? -1, forKey: Keys.computeUnits.rawValue)
+            // Any value other than the supported ones would cause `get` to return `ModelInfo.defaultComputeUnits`
+            defaults.set(newValue.rawValue, forKey: Keys.computeUnits.rawValue)
         }
         get {
             let current = defaults.integer(forKey: Keys.computeUnits.rawValue)
-            guard current != -1 else { return nil }
-            return ComputeUnits(rawValue: current)
+            if !(0...3).contains(current) { return ModelInfo.defaultComputeUnits }
+            if let units = ComputeUnits(rawValue: current) { return units }
+            return ModelInfo.defaultComputeUnits
         }
     }
 }

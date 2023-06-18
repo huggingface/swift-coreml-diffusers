@@ -64,6 +64,7 @@ struct ShareButtons: View {
 
 struct ContentView: View {
     @StateObject var generation = GenerationContext()
+    @StateObject var modelsViewModel: ModelsViewModel = ModelsViewModel(settings: Settings.shared)
 
     func toolbar() -> any View {
         if case .complete(let prompt, let cgImage, _, _) = generation.state, let cgImage = cgImage {
@@ -91,6 +92,7 @@ struct ContentView: View {
 
         }
         .environmentObject(generation)
+        .environmentObject(modelsViewModel)
     }
 }
 

@@ -9,9 +9,9 @@ On first launch, the application downloads a zipped archive with a Core ML versi
 
 The appication provides built-in access to a series of models including coreml-stable-diffusion-1-4, coreml-stable-diffusion-1-4-palettized, coreml-stable-diffusion-v1-5, coreml-stable-diffusion-v1-5-palettized, coreml-stable-diffusion-2-base, coreml-stable-diffusion-2-base-palettized, coreml-stable-diffusion-2-1-base, coreml-stable-diffusion-2-1-base-palettized and coreml-small-stable-diffusion-v0. 
 
-When selecting a built-in model / compute units combination which has not been downloaded yey will prompt for you to download that model.
+When selecting a built-in model / compute units combination which has not been downloaded you will be prompted to download that additional model.
 
-Advanced users can choose to "Reveal in Finder…" the models folder and move uncompressed CoreML compatible models there.
+Advanced users can choose to "Reveal in Finder…" and see the models folder. Move your uncompressed CoreML compatible models into this folder to use third party models.
 
 For faster inference, we use a very fast scheduler: [DPM-Solver++](https://github.com/LuChengTHU/dpm-solver), that we ported to Swift from our [diffusers DPMSolverMultistepScheduler implementation](https://github.com/huggingface/diffusers/blob/main/src/diffusers/schedulers/scheduling_dpmsolver_multistep.py).
 

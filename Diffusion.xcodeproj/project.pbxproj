@@ -146,17 +146,9 @@
 				EBB5BA5929426E06003A2A5B /* Downloader.swift */,
 				EBDD7DB22973200200C1C4B2 /* Utils.swift */,
 				EBB5BA5129425B07003A2A5B /* Pipeline */,
-				8CFB91AC2A3BAC6900BCC614 /* Views */,
 				8CFB91AD2A3BAEDB00BCC614 /* ModelsViewModel.swift */,
 			);
 			path = Common;
-			sourceTree = "<group>";
-		};
-		8CFB91AC2A3BAC6900BCC614 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 		EBB5BA5129425B07003A2A5B /* Pipeline */ = {
