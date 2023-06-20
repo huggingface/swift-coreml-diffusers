@@ -9,6 +9,8 @@
 import Combine
 import SwiftUI
 import CompactSlider
+import AppKit
+import StableDiffusion
 
 enum PipelineState: Equatable {
     case unknown
@@ -92,9 +94,192 @@ struct ControlsView: View {
     @State private var showStepsHelp = false
     @State private var showSeedHelp = false
     @State private var showAdvancedHelp = false
-    
+        
     // Reasonable range for the slider
     let maxSeed: UInt32 = 1000
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            
+            Label("Generation Options", systemImage: "gearshape.2")
+                .font(.headline)
+                .fontWeight(.bold)
+            Divider()
+            
+            ScrollView {
+                Group {
+                    DisclosureGroup(isExpanded: $disclosedModel, content: {
+                        Group {
+                            disclosedModelContent()
+                        }.padding(.leading, 10)
+                    }, label: {
+                        Text("models")
+                    })
+                    Divider()
+                    
+                    DisclosureGroup(isExpanded: $disclosedPrompt) {
+                        Group {
+                            disclosedModelLabel()
+                        }.padding(.leading, 10)
+                    } label: {
+                        HStack {
+                            Label("Prompts", systemImage: "text.quote").foregroundColor(.secondary)
+                            Spacer()
+                            if disclosedPrompt {
+                                Button {
+                                    showPromptsHelp.toggle()
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                }
+                                .buttonStyle(.plain)
+                                // Or maybe use .sheet instead --pcuenca
+                                .popover(isPresented: $showPromptsHelp, arrowEdge: .trailing) {
+                                    promptsHelp($showPromptsHelp)
+                                }
+                            }
+                        }.foregroundColor(.secondary)
+                    }
+                    Divider()
+                    
+                    let guidanceScaleValue = generation.guidanceScale.formatted("%.1f")
+                    DisclosureGroup(isExpanded: $disclosedGuidance) {
+                        CompactSlider(value: $generation.guidanceScale, in: 0...20, step: 0.5) {
+                            Text("Guidance Scale")
+                            Spacer()
+                            Text(guidanceScaleValue)
+                        }.padding(.leading, 10)
+                    } label: {
+                        HStack {
+                            Label("Guidance Scale", systemImage: "scalemass").foregroundColor(.secondary)
+                            Spacer()
+                            if disclosedGuidance {
+                                Button {
+                                    showGuidanceHelp.toggle()
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                }
+                                .buttonStyle(.plain)
+                                // Or maybe use .sheet instead
+                                .popover(isPresented: $showGuidanceHelp, arrowEdge: .trailing) {
+                                    guidanceHelp($showGuidanceHelp)
+                                }
+                            } else {
+                                Text(guidanceScaleValue)
+                            }
+                        }.foregroundColor(.secondary)
+                    }
+                    
+                    DisclosureGroup(isExpanded: $disclosedSteps) {
+                        CompactSlider(value: $generation.steps, in: 0...150, step: 5) {
+                            Text("Steps")
+                            Spacer()
+                            Text("\(Int(generation.steps))")
+                        }.padding(.leading, 10)
+                    } label: {
+                        HStack {
+                            Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary)
+                            Spacer()
+                            if disclosedSteps {
+                                Button {
+                                    showStepsHelp.toggle()
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                }
+                                .buttonStyle(.plain)
+                                .popover(isPresented: $showStepsHelp, arrowEdge: .trailing) {
+                                    stepsHelp($showStepsHelp)
+                                }
+                            } else {
+                                Text("\(Int(generation.steps))")
+                            }
+                        }.foregroundColor(.secondary)
+                    }
+                    
+                    DisclosureGroup(isExpanded: $disclosedSeed) {
+                        let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
+                        CompactSlider(value: $generation.seed, in: -1...Double(maxSeed), step: 1) {
+                            Text(sliderLabel)
+                            Spacer()
+                            Text("\(Int(generation.seed))")
+                        }.padding(.leading, 10)
+                    } label: {
+                        HStack {
+                            Label("Seed", systemImage: "leaf").foregroundColor(.secondary)
+                            Spacer()
+                            if disclosedSeed {
+                                Button {
+                                    showSeedHelp.toggle()
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                }
+                                .buttonStyle(.plain)
+                                .popover(isPresented: $showSeedHelp, arrowEdge: .trailing) {
+                                    seedHelp($showSeedHelp)
+                                }
+                            } else {
+                                Text("\(Int(generation.seed))")
+                            }
+                        }.foregroundColor(.secondary)
+                    }
+                    
+                    if Capabilities.hasANE {
+                        Divider()
+                        DisclosureGroup(isExpanded: $disclosedAdvanced) {
+                            advancedContentGroup()
+                        } label: {
+                            advancedContentLabel()
+                        }
+                    }
+                }
+            }
+            .disclosureGroupStyle(LabelToggleDisclosureGroupStyle())
+            
+            Toggle("Disable Safety Checker", isOn: $generation.disableSafety).onChange(of: generation.disableSafety) { value in
+                updateSafetyCheckerState()
+            }
+            .popover(isPresented: $mustShowSafetyCheckerDisclaimer) {
+                VStack {
+                    Text("You have disabled the safety checker").font(.title).padding(.top)
+                    Text("""
+                                 Please, ensure that you abide \
+                                 by the conditions of the Stable Diffusion license and do not expose \
+                                 unfiltered results to the public.
+                                 """)
+                    .lineLimit(nil)
+                    .padding(.all, 5)
+                    Button {
+                        Settings.shared.safetyCheckerDisclaimerShown = true
+                        updateSafetyCheckerState()
+                    } label: {
+                        Text("I Accept").frame(maxWidth: 200)
+                    }
+                    .padding(.bottom)
+                }
+                .frame(minWidth: 400, idealWidth: 400, maxWidth: 400)
+                .fixedSize()
+            }
+            Divider()
+            
+            StatusView(pipelineState: $pipelineState, modelsViewModel: modelsViewModel, selectedModelIndex: $selectedModelIndex, downloadButtonAction: { downloadButtonAction() })
+        }
+        .padding()
+        .onChange(of: modelsViewModel.filteredModels) { models in
+            if let firstIndex = modelsViewModel.filteredModels.firstIndex(where: { $0 == Settings.shared.currentModel }) {
+                selectedModelIndex = firstIndex
+            }
+            validateModelAndUnits()
+        }
+        .onAppear {
+            if let firstIndex = modelsViewModel.filteredModels.firstIndex(where: { $0 == Settings.shared.currentModel }) {
+                selectedModelIndex = firstIndex
+            }
+            selectedComputeUnits = Settings.shared.currentComputeUnits
+            // Validate initial values
+            validateModelAndUnits()
+        }
+    }
+    
+    // -- Helper Function --
     
     func updateSafetyCheckerState() {
         mustShowSafetyCheckerDisclaimer = generation.disableSafety && !Settings.shared.safetyCheckerDisclaimerShown
@@ -128,13 +313,13 @@ struct ControlsView: View {
             // update the list of models associated with this model/variant combination
             modelsViewModel.updateFilters()
             
-            print("CONTROL VIEW validateModelAndUnits GETTING MODEL READY")
+            //            print("CONTROL VIEW validateModelAndUnits GETTING MODEL READY")
             // Check if the model/variant combination are present in the models folder
             let isDownloadedCombination = modelsViewModel.getModelReadiness(model).state == ModelReadinessState.ready
             Settings.shared.currentModel = model
             Settings.shared.currentComputeUnits = selectedComputeUnits
-
-            print("is model downloaded in this combination? \(isDownloadedCombination)")
+            
+            //            print("is model downloaded in this combination? \(isDownloadedCombination)")
             pipelineState = .unknown
             if isDownloadedCombination  {
                 // The model for this variant is already downloaded. Load it up.
@@ -171,257 +356,68 @@ struct ControlsView: View {
                     }
                 }
             }
-            }
         }
-        
-        func modelLabel(_ model: ModelInfo) -> some View {
-//            print("CONTROLS VIEW MODEL LABEL GETTING MODEL.READY")
-            let exists = modelsViewModel.getModelReadiness(model).state == ModelReadinessState.ready
-            
-//            print("Model name: \(model.humanReadableFileName) variant: \(model.variant)")
-//            print("Model exists? \(exists)")
-            
-            let filledCircle = Image(systemName: "circle.fill")
-                .font(.caption)
-                .foregroundColor(exists ? .accentColor : .secondary)
-            
-            let dottedCircle = Image(systemName: "circle.dotted")
-                .font(.caption)
-                .foregroundColor(exists ? .accentColor : .secondary)
-            
-            let dl = Image(systemName: "arrow.down.circle")
-                .font(.caption)
-                .foregroundColor(.gray)
-            
-            
-            return HStack {
-                if model.builtin && !exists {
-                    dl
-                } else if exists {
-                    filledCircle
-                } else {
-                    dottedCircle
+    }
+    
+    // --VIEWS --
+    //When the main body becomes too long off compiler errors can start to emerge.
+    //Extracting some views can assist the compiler in making sense of the heirarchy.
+    
+    func disclosedModelContent() -> some View {
+        return HStack {
+            Picker("", selection: $selectedModelIndex) {
+                ForEach(0 ..< $modelsViewModel.filteredModels.count, id: \.self) { modelIndex in
+                    modelLabel(modelsViewModel.filteredModels[modelIndex]).tag(modelIndex)
                 }
-                
-                Text(model.humanReadableFileName)
             }
-        }
-        
-        var body: some View {
-            VStack(alignment: .leading) {
-                
-                Label("Generation Options", systemImage: "gearshape.2")
-                    .font(.headline)
-                    .fontWeight(.bold)
-                Divider()
-                
-                ScrollView {
-                    Group {
-                        DisclosureGroup(isExpanded: $disclosedModel, content: {
-                            Group {
-                                disclosedModelContent()
-                            }.padding(.leading, 10)
-                        }, label: {
-                            Text("models")
-                        })
-                        Divider()
-                        
-                        DisclosureGroup(isExpanded: $disclosedPrompt) {
-                            Group {
-                                disclosedModelLabel()
-                            }.padding(.leading, 10)
-                        } label: {
-                            HStack {
-                                Label("Prompts", systemImage: "text.quote").foregroundColor(.secondary)
-                                Spacer()
-                                if disclosedPrompt {
-                                    Button {
-                                        showPromptsHelp.toggle()
-                                    } label: {
-                                        Image(systemName: "info.circle")
-                                    }
-                                    .buttonStyle(.plain)
-                                    // Or maybe use .sheet instead --pcuenca
-                                    .popover(isPresented: $showPromptsHelp, arrowEdge: .trailing) {
-                                        promptsHelp($showPromptsHelp)
-                                    }
-                                }
-                            }.foregroundColor(.secondary)
-                        }
-                        Divider()
-                        
-                        let guidanceScaleValue = generation.guidanceScale.formatted("%.1f")
-                        DisclosureGroup(isExpanded: $disclosedGuidance) {
-                            CompactSlider(value: $generation.guidanceScale, in: 0...20, step: 0.5) {
-                                Text("Guidance Scale")
-                                Spacer()
-                                Text(guidanceScaleValue)
-                            }.padding(.leading, 10)
-                        } label: {
-                            HStack {
-                                Label("Guidance Scale", systemImage: "scalemass").foregroundColor(.secondary)
-                                Spacer()
-                                if disclosedGuidance {
-                                    Button {
-                                        showGuidanceHelp.toggle()
-                                    } label: {
-                                        Image(systemName: "info.circle")
-                                    }
-                                    .buttonStyle(.plain)
-                                    // Or maybe use .sheet instead
-                                    .popover(isPresented: $showGuidanceHelp, arrowEdge: .trailing) {
-                                        guidanceHelp($showGuidanceHelp)
-                                    }
-                                } else {
-                                    Text(guidanceScaleValue)
-                                }
-                            }.foregroundColor(.secondary)
-                        }
-                        
-                        DisclosureGroup(isExpanded: $disclosedSteps) {
-                            CompactSlider(value: $generation.steps, in: 0...150, step: 5) {
-                                Text("Steps")
-                                Spacer()
-                                Text("\(Int(generation.steps))")
-                            }.padding(.leading, 10)
-                        } label: {
-                            HStack {
-                                Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary)
-                                Spacer()
-                                if disclosedSteps {
-                                    Button {
-                                        showStepsHelp.toggle()
-                                    } label: {
-                                        Image(systemName: "info.circle")
-                                    }
-                                    .buttonStyle(.plain)
-                                    .popover(isPresented: $showStepsHelp, arrowEdge: .trailing) {
-                                        stepsHelp($showStepsHelp)
-                                    }
-                                } else {
-                                    Text("\(Int(generation.steps))")
-                                }
-                            }.foregroundColor(.secondary)
-                        }
-                        
-                        DisclosureGroup(isExpanded: $disclosedSeed) {
-                            let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
-                            CompactSlider(value: $generation.seed, in: -1...Double(maxSeed), step: 1) {
-                                Text(sliderLabel)
-                                Spacer()
-                                Text("\(Int(generation.seed))")
-                            }.padding(.leading, 10)
-                        } label: {
-                            HStack {
-                                Label("Seed", systemImage: "leaf").foregroundColor(.secondary)
-                                Spacer()
-                                if disclosedSeed {
-                                    Button {
-                                        showSeedHelp.toggle()
-                                    } label: {
-                                        Image(systemName: "info.circle")
-                                    }
-                                    .buttonStyle(.plain)
-                                    .popover(isPresented: $showSeedHelp, arrowEdge: .trailing) {
-                                        seedHelp($showSeedHelp)
-                                    }
-                                } else {
-                                    Text("\(Int(generation.seed))")
-                                }
-                            }.foregroundColor(.secondary)
-                        }
-                        
-                        if Capabilities.hasANE {
-                            Divider()
-                            DisclosureGroup(isExpanded: $disclosedAdvanced) {
-                                advancedContentGroup()
-                            } label: {
-                                advancedContentLabel()
-                            }
-                        }
-                    }
-                }
-                .disclosureGroupStyle(LabelToggleDisclosureGroupStyle())
-                
-                Toggle("Disable Safety Checker", isOn: $generation.disableSafety).onChange(of: generation.disableSafety) { value in
-                    updateSafetyCheckerState()
-                }
-                .popover(isPresented: $mustShowSafetyCheckerDisclaimer) {
-                    VStack {
-                        Text("You have disabled the safety checker").font(.title).padding(.top)
-                        Text("""
-                                 Please, ensure that you abide \
-                                 by the conditions of the Stable Diffusion license and do not expose \
-                                 unfiltered results to the public.
-                                 """)
-                        .lineLimit(nil)
-                        .padding(.all, 5)
-                        Button {
-                            Settings.shared.safetyCheckerDisclaimerShown = true
-                            updateSafetyCheckerState()
-                        } label: {
-                            Text("I Accept").frame(maxWidth: 200)
-                        }
-                        .padding(.bottom)
-                    }
-                    .frame(minWidth: 400, idealWidth: 400, maxWidth: 400)
-                    .fixedSize()
-                }
-                Divider()
-                
-                StatusView(pipelineState: $pipelineState, modelsViewModel: modelsViewModel, selectedModelIndex: $selectedModelIndex, downloadButtonAction: { downloadButtonAction() })
-            }
-            .padding()
-            .onChange(of: modelsViewModel.filteredModels) { models in
-                if let firstIndex = modelsViewModel.filteredModels.firstIndex(where: { $0 == Settings.shared.currentModel }) {
-                    selectedModelIndex = firstIndex
-                }
+            .id(UUID())
+            .pickerStyle(MenuPickerStyle())
+            .font(.caption)
+            .onChange(of: selectedModelIndex) { _ in
                 validateModelAndUnits()
             }
-            .onAppear {
-                if let firstIndex = modelsViewModel.filteredModels.firstIndex(where: { $0 == Settings.shared.currentModel }) {
-                    selectedModelIndex = firstIndex
-                }
-                selectedComputeUnits = Settings.shared.currentComputeUnits
-                // Validate initial values
-                validateModelAndUnits()
-            }
-        }
-        
-        // Views - When the main body becomes too long off compiler errors can start to emerge.
-        //Extracting some views can assist the compiler in making sense of the heirarchy.
-        
-        func disclosedModelContent() -> some View {
-            return HStack {
-                Button {
-                    NSWorkspace.shared.open(modelsViewModel.modelsFolderURL)
-                } label: {
-                    Image(systemName: "folder.fill")
-                }
-                .buttonStyle(.plain)
-                
-                Picker("", selection: $selectedModelIndex) {
-                    ForEach(0 ..< $modelsViewModel.filteredModels.count, id: \.self) { modelIndex in
-                        modelLabel(modelsViewModel.filteredModels[modelIndex]).tag(modelIndex)
-                    }
-                }
-                .id(UUID())
-                .pickerStyle(MenuPickerStyle())
-                .font(.caption)
-                .onChange(of: selectedModelIndex) { _ in
-                    validateModelAndUnits()
-                }
-                .disabled(modelsViewModel.filteredBuiltinModels.isEmpty && modelsViewModel.filteredAddonModels.isEmpty)
-            }
-            .padding()
-        }
+            .disabled(modelsViewModel.filteredBuiltinModels.isEmpty && modelsViewModel.filteredAddonModels.isEmpty)
 
+            Button {
+                NSWorkspace.shared.open(modelsViewModel.modelsFolderURL)
+            } label: {
+                Image(systemName: "folder").foregroundColor(.gray)
+            }
+            .font(.caption)
+
+            Button {
+                // Set the central singleton instance to ensure that the info panel state can be updated from anywhere in the app
+                Settings.shared.isShowingImportPanel = true
+            } label: {
+                Image(systemName: "plus").foregroundColor(.gray)
+            }
+            .font(.caption)
+            .modifier(ImportModelBehavior(modelsViewModel: modelsViewModel))
+            .onAppear {
+                NSApp.keyWindow?.standardWindowButton(.closeButton)?.isHidden = true
+                NSApp.keyWindow?.standardWindowButton(.miniaturizeButton)?.isHidden = true
+                NSApp.keyWindow?.standardWindowButton(.zoomButton)?.isHidden = true
+            }
+            .onDisappear {
+                NSApp.keyWindow?.standardWindowButton(.closeButton)?.isHidden = false
+                NSApp.keyWindow?.standardWindowButton(.miniaturizeButton)?.isHidden = false
+                NSApp.keyWindow?.standardWindowButton(.zoomButton)?.isHidden = false
+            }
+            .keyboardShortcut("I", modifiers: [.command, .shift])
+        }
+        //            .padding()
+    }
+    
+    
     func disclosedModelLabel() -> some View {
         return VStack {
+
             TextField("Positive prompt", text: $generation.positivePrompt,
-                      axis: .vertical).lineLimit(5)
+                      axis: .vertical)
+                .lineLimit(5)
                 .textFieldStyle(.squareBorder)
                 .listRowInsets(EdgeInsets(top: 0, leading: -20, bottom: 0, trailing: 20))
+            
             TextField("Negative prompt", text: $generation.negativePrompt,
                       axis: .vertical).lineLimit(5)
                 .textFieldStyle(.squareBorder)
@@ -429,19 +425,19 @@ struct ControlsView: View {
     }
     
     func advancedContentGroup() -> some View {
-            return HStack {
-                Picker(selection: $selectedComputeUnits, label: Text("Use")) {
-                    Text(computeUnitsLabel(ComputeUnits.cpuAndGPU)).tag(ComputeUnits.cpuAndGPU)
-                    Text(computeUnitsLabel(ComputeUnits.cpuAndNeuralEngine)).tag(ComputeUnits.cpuAndNeuralEngine)
-                    Text(computeUnitsLabel(ComputeUnits.all)).tag(ComputeUnits.all)
-                }.pickerStyle(.radioGroup).padding(.leading)
-                Spacer()
-            }
-            .onChange(of: selectedComputeUnits) { units in
-                validateModelAndUnits()
-            }
+        return HStack {
+            Picker(selection: $selectedComputeUnits, label: Text("Use")) {
+                Text(computeUnitsLabel(ComputeUnits.cpuAndGPU)).tag(ComputeUnits.cpuAndGPU)
+                Text(computeUnitsLabel(ComputeUnits.cpuAndNeuralEngine)).tag(ComputeUnits.cpuAndNeuralEngine)
+                Text(computeUnitsLabel(ComputeUnits.all)).tag(ComputeUnits.all)
+            }.pickerStyle(.radioGroup).padding(.leading)
+            Spacer()
         }
-
+        .onChange(of: selectedComputeUnits) { units in
+            validateModelAndUnits()
+        }
+    }
+    
     func advancedContentLabel() -> some View {
         return HStack {
             Label("Advanced", systemImage: "terminal").foregroundColor(.secondary)
@@ -459,11 +455,45 @@ struct ControlsView: View {
             }
         }.foregroundColor(.secondary)
     }
-
+    
     // When the download button is pressed start downloading the selected model/variant combination
     func downloadButtonAction() {
         print("download button action pressed")
         pipelineState = .downloading(0.0)
         pipelineLoader?.state = .downloading(0.0)
     }
+
+    func modelLabel(_ model: ModelInfo) -> some View {
+//            print("CONTROLS VIEW MODEL LABEL GETTING MODEL.READY")
+        let exists = modelsViewModel.getModelReadiness(model).state == ModelReadinessState.ready
+        
+//            print("Model name: \(model.humanReadableFileName) variant: \(model.variant)")
+//            print("Model exists? \(exists)")
+        
+        let filledCircle = Image(systemName: "circle.fill")
+            .font(.caption)
+            .foregroundColor(exists ? .accentColor : .secondary)
+        
+        let dottedCircle = Image(systemName: "circle.dotted")
+            .font(.caption)
+            .foregroundColor(exists ? .accentColor : .secondary)
+        
+        let dl = Image(systemName: "arrow.down.circle")
+            .font(.caption)
+            .foregroundColor(.gray)
+        
+        
+        return HStack {
+            if model.builtin && !exists {
+                dl
+            } else if exists {
+                filledCircle
+            } else {
+                dottedCircle
+            }
+            
+            Text(model.humanReadableFileName)
+        }
+    }
+
 }

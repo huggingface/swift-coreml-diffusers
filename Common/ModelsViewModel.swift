@@ -3,6 +3,7 @@
 //  Diffusion
 //
 //  Created by Dolmere on 15/06/2023.
+//  See LICENSE at https://github.com/huggingface/swift-coreml-diffusers/LICENSE
 //
 // Allows for the selection of the folder on the file system where the user will download and store their .mlmodlc folders
 // The selected folder will be tracked for changes allowing for the dynamic updates of installed models in the UI
@@ -79,19 +80,11 @@ class ModelsViewModel: ObservableObject {
     }
     
     func getModelReadiness(_ model: ModelInfo) -> ModelReadiness {
-//        print("PIPELINE GETMODELREADINESS GETTING MODEL READY")
-//        print("Checking for match to \(model.fileSystemFileName)")
-//        print(" --- model readiness wrappers --- \n \(modelReadinessWrappers)")
-//        for debug in modelReadinessWrappers {
-//            print("match?: \(debug.modelInfo.fileSystemFileName) ??  \(debug.modelInfo.fileSystemFileName == model.fileSystemFileName)")
-//        }
         var mrw: ModelReadinessState = ModelReadinessState.unknown
         if let modelAlreadyTracked = modelReadinessWrappers.first(where: { $0.modelInfo.fileSystemFileName == model.fileSystemFileName }) {
-//            print("RETURNING MATCH! TRACKED MODEL FOUND!")
             // If a matching readiness item is found in memory return it
             return modelAlreadyTracked
         } else {
-//            print("TRACKED MoDEL missing! CHECKING MODELREADY!")
             //model not tracked and in an unknown state so
             let fileExists = modelReady(model: model)
             if fileExists {
@@ -107,13 +100,10 @@ class ModelsViewModel: ObservableObject {
     /// Use setReadiness to ensure that UI affecting changes happen on the main thread!
     func setModelReadiness(of model: ModelInfo, to state: ModelReadinessState) {
         DispatchQueue.main.async {
-//            print("SET MODEL READINESS WRAPPER for model \(model.fileSystemFileName)")
             if let matchingReadinessItem = self.modelReadinessWrappers.first(where: { $0.modelInfo.fileSystemFileName == model.fileSystemFileName }) {
-//                print("model already found! \(self.modelReadinessWrappers.count)")
                 // If a matching readiness item is found in memory, update its status
                 matchingReadinessItem.state = state
             } else {
-//                print("appending new readiness state")
                 // Create a new model readiness item and insert it
                 let newModelReadiness = ModelReadiness(modelInfo: model, state: state)
                 self.modelReadinessWrappers.append(newModelReadiness)
@@ -150,7 +140,7 @@ class ModelsViewModel: ObservableObject {
     }
     
     private func folderContentsDidChange() {
-        print("folderContentsDidChange! reloading models.")
+//        print("folderContentsDidChange! reloading models.")
         loadModels()
     }
     
@@ -163,7 +153,6 @@ class ModelsViewModel: ObservableObject {
     }
 
     func loadModels() {
-//        print("LOAD MODELS!!!")
         let modelInfoArray = reloadAddonModelInfo(builtinModels: self.builtinModels)
 
         DispatchQueue.main.async {
@@ -174,20 +163,11 @@ class ModelsViewModel: ObservableObject {
     }
     
     public func updateFilters() {
-//        print("UPDATE FILTERS!!!!")
         DispatchQueue.main.async {
             let newAddonFiltered = self.addonModels.filter { $0.variant == convertUnitsToVariant(computeUnits: Settings.shared.currentComputeUnits) }
             self.filteredAddonModels = newAddonFiltered
             let newBuiltinFiltered = self.builtinModels.filter { $0.variant == convertUnitsToVariant(computeUnits: Settings.shared.currentComputeUnits) }
             self.filteredBuiltinModels = newBuiltinFiltered
-//            print("Filters updated. Built-in count \(self.filteredBuiltinModels.count) addons count \(self.filteredAddonModels.count)")
-//            print("for computeUnits: \(computeUnitsDescription(units: Settings.shared.currentComputeUnits) ) converted to variant: \(convertUnitsToVariant(computeUnits: Settings.shared.currentComputeUnits) )")
-//            for mdl in self.filteredBuiltinModels {
-//                print("built-in model \(mdl.humanReadableFileName) variant \(mdl.variant)")
-//            }
-//            for mld2 in self.filteredAddonModels {
-//                print("addon model \(mld2.humanReadableFileName) variant \(mld2.variant)")
-//            }
             self.filteredModels = self.filteredBuiltinModels + self.filteredAddonModels
         }
     }
@@ -244,6 +224,25 @@ class ModelsViewModel: ObservableObject {
             return .original
         }
     }
+    
+/*
+ // Better API for getting vocab and merges files. Best to put directly into ModelInfo? Or in modelViewModel?
+    var vocabFileInBundleURL: URL {
+        let fileName = "vocab"
+        guard let url = Bundle.module.url(forResource: fileName, withExtension: "json") else {
+            fatalError("BPE tokenizer vocabulary file is missing from bundle")
+        }
+        return url
+    }
+
+    var mergesFileInBundleURL: URL {
+        let fileName = "merges"
+        guard let url = Bundle.module.url(forResource: fileName, withExtension: "txt") else {
+            fatalError("BPE tokenizer merges file is missing from bundle")
+        }
+        return url
+    }
+*/
 
     // Read through the selected models directory and load any directories that look like valid models
     func reloadAddonModelInfo(builtinModels: [ModelInfo]) -> [ModelInfo] {
@@ -260,20 +259,13 @@ class ModelsViewModel: ObservableObject {
                 var calculatedFileName: String = ""
                 var version: String = ""
                 var variant: AttentionVariant = .original
-    //            print("reloadAddonModelInfo - filename: \(fn)")
-                
-//                print("compareFileName checking against builtinModels: \(compareFileName)")
                 if let _ = builtinModels.first(where: { $0.fileSystemFileName == compareFileName }) {
-//                    print("raw compareFileName MATCHES)")
                     // ignore builtin models as they have already been processed above
                 } else if let _ = builtinModels.first(where: { $0.fileSystemFileName + "_original_compiled" == compareFileName }) {
-//                    print("compareFileName + _original_compiled MATCHES)")
                     // ignore builtin models as they have already been processed above
                 } else if let _ = builtinModels.first(where: { $0.fileSystemFileName + "_split_einsum_v2_compiled" == compareFileName }) {
-//                    print("compareFileName + _split_einsum_v2_compiled MATCHES)")
                     // ignore builtin models as they have already been processed above
                 } else if let _ = builtinModels.first(where: { $0.fileSystemFileName + "_split_einsum_compiled" == compareFileName }) {
-//                    print("compareFileName + _split_einsum_compiled  MATCHES)")
                     // ignore builtin models as they have already been processed above
                 } else {
                     // The file found in the models folder is not a built in model! Load it up...
@@ -283,7 +275,6 @@ class ModelsViewModel: ObservableObject {
                     version = getVersion(from: calculatedFileName)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "v0.0"
                     // take out the version and remove any whitespace characters from the front and back of the string
                     let humanReadableFileName = removeVersion(from: calculatedFileName).trimmingCharacters(in: .whitespacesAndNewlines)
-//          print("making addon modelinfo: \(version) \(variant) human readable - \(humanReadableFileName) - fileSystem - \(compareFileName)")
                     let modelInfo = ModelInfo(modelId: UUID().uuidString,
                                               variant: variant,
                                               builtin: false,
@@ -302,18 +293,14 @@ class ModelsViewModel: ObservableObject {
     }
     
     private func modelReady(model: ModelInfo) -> Bool {
-//        print("checking readiness of model: \(model)")
         var ready = false
         let appendPath = model.fileSystemFileName
-//print("checking if model exists at path: \(modelsFolderURL.appendingPathComponent(appendPath).path)")
         /// check that this model's fodler exists in the models folders
         let fileExists = FileManager.default.fileExists(atPath: modelsFolderURL.appendingPathComponent(appendPath).path)
         if fileExists {
-//print("Model parent folder exists. Now check if merges.txt exists at path: \(modelsFolderURL.appendingPathComponent(appendPath).appendingPathComponent("merges.txt").path)")
             /// check that the models folder is indeed a folder and contains a merges.txt key file
             let mergesExists = FileManager.default.fileExists(atPath: modelsFolderURL.appendingPathComponent(appendPath).appendingPathComponent("merges.txt").path)
             if mergesExists {
-//print("merges.txt exists. Now check if vocab.json exists at path: \(modelsFolderURL.appendingPathComponent(appendPath).appendingPathComponent("vocab.json").path)")
                 /// check that the models folder is indeed a folder and contains a vocab.txt key file
                 let vocabExists = FileManager.default.fileExists(atPath: modelsFolderURL.appendingPathComponent(appendPath).appendingPathComponent("vocab.json").path)
                 if vocabExists {
@@ -321,7 +308,6 @@ class ModelsViewModel: ObservableObject {
                 }
             }
         }
-//        print("ModelInfo READY?: \(model.humanReadableFileName): \(ready)")
         return ready
     }
 

@@ -113,11 +113,13 @@ class GenerationContext: ObservableObject {
     }
 }
 
-class Settings {
+class Settings: ObservableObject {
     static let shared = Settings()
     
     let defaults = UserDefaults.standard
     
+    @Published var isShowingImportPanel: Bool = false
+
     enum Keys: String {
         case model
         case computeUnits
@@ -167,4 +169,6 @@ class Settings {
             return ModelInfo.defaultComputeUnits
         }
     }
+
+
 }
