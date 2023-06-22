@@ -138,6 +138,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8CF53E022A44AE0400E6358B /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				EBB5BA5929426E06003A2A5B /* Downloader.swift */,
+				EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */,
+				EBDD7DB72976AAFE00C1C4B2 /* State.swift */,
+				EBDD7DB22973200200C1C4B2 /* Utils.swift */,
+				EBB5BA5129425B07003A2A5B /* Pipeline */,
+			);
+			name = Common;
+			path = Diffusion/Common;
+			sourceTree = "<group>";
+		};
 		EBB5BA5129425B07003A2A5B /* Pipeline */ = {
 			isa = PBXGroup;
 			children = (
@@ -155,6 +168,7 @@
 				EBE4438729488DCA00CDA605 /* README.md */,
 				EBE443892948953600CDA605 /* LICENSE */,
 				EBE755FF293E910800806B32 /* Packages */,
+				8CF53E022A44AE0400E6358B /* Common */,
 				EBE755C7293E37DD00806B32 /* Diffusion */,
 				F15520222971093300DC009B /* Diffusion-macOS */,
 				EBE755D9293E37DE00806B32 /* DiffusionTests */,
@@ -179,13 +193,8 @@
 			isa = PBXGroup;
 			children = (
 				EB33A51E2954E1BC00B16357 /* Info.plist */,
-				EBB5BA5129425B07003A2A5B /* Pipeline */,
 				EBE7560A29411A5E00806B32 /* Views */,
-				EBB5BA5929426E06003A2A5B /* Downloader.swift */,
 				EBE755C8293E37DD00806B32 /* DiffusionApp.swift */,
-				EBDD7DB22973200200C1C4B2 /* Utils.swift */,
-				EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */,
-				EBDD7DB72976AAFE00C1C4B2 /* State.swift */,
 				EBE755CC293E37DD00806B32 /* Assets.xcassets */,
 				EBE755CE293E37DD00806B32 /* Diffusion.entitlements */,
 				EBE755CF293E37DD00806B32 /* Preview Content */,
