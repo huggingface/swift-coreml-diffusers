@@ -62,16 +62,13 @@ class PipelineLoader {
 }
 
 extension PipelineLoader {
-    // Note: this function is currently unused. Marked for deletion. -- dolmere
+    // Unused. Kept for debugging purposes. --pcuenca
     static func removeAll() {
-        let enumerator = FileManager.default.enumerator(at: models, includingPropertiesForKeys: nil)
-
-        while let fileURL = enumerator?.nextObject() as? URL {
-            do {
-                try FileManager.default.removeItem(at: fileURL)
-            } catch {
-                print("Failed to delete: \(fileURL), error: \(error.localizedDescription)")
-            }
+        // Delete the parent models folder as it will be recreated when it's needed again
+        do {
+            try FileManager.default.removeItem(at: models)
+        } catch {
+            print("Failed to delete: \(models), error: \(error.localizedDescription)")
         }
     }
 }
@@ -92,9 +89,9 @@ extension PipelineLoader {
     
     var downloadedURL: URL { PipelineLoader.models.appendingPathComponent(filename) }
 
-    var uncompressURL: URL { PipelineLoader.models.deletingLastPathComponent() }
+    var uncompressURL: URL { PipelineLoader.models }
     
-    var packagesFilename: String { PipelineLoader.models.appendingPathComponent((filename as NSString).deletingPathExtension).path }
+    var packagesFilename: String { (filename as NSString).deletingPathExtension }
     
     var compiledURL: URL { downloadedURL.deletingLastPathComponent().appendingPathComponent(packagesFilename)  }
 
@@ -117,8 +114,17 @@ extension PipelineLoader {
         }
     }
     
-    // TODO: maybe receive Progress to add another progress as child
+    // TODO: maybe receive Progress to add another progress as child --pcuenca
     func prepare() async throws -> Pipeline {
+//        // Check that the constructed locations match the expected locations
+//        print("url: \(url.path)")
+//        print("filename \(filename)")
+//        print("downloadedURL \(downloadedURL.path)")
+//        print("uncompressURL \(uncompressURL.path)")
+//        print("packagesFilename \(packagesFilename)")
+//        print("compiledURL \(compiledURL.path)")
+//        print("downloaded \(downloaded)")
+//        print("ready \(ready)")
         do {
             // Make default models folder if missing
             let fileExists = FileManager.default.fileExists(atPath: PipelineLoader.models.path)

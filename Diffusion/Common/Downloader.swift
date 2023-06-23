@@ -84,10 +84,6 @@ extension Downloader: URLSessionDelegate, URLSessionDownloadDelegate {
             downloadState.value = .failed("Invalid download location received: \(location)")
             return
         }
-        guard FileManager.default.fileExists(atPath: destination.path) else {
-            downloadState.value = .failed("Invalid destination: \(destination)")
-            return
-        }
         do {
             try FileManager.default.moveItem(at: location, to: destination)
             downloadState.value = .completed(destination)
