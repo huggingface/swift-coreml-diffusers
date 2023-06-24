@@ -96,7 +96,6 @@ struct ControlsView: View {
             return
         }
 
-//        print("Loading model \(model)")
         Settings.shared.currentModel = model
 
         pipelineLoader?.cancel()
