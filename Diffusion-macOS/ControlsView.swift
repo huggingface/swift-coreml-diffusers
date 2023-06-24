@@ -56,6 +56,7 @@ struct ControlsView: View {
     @State private var disclosedGuidance = false
     @State private var disclosedSteps = false
     @State private var disclosedSeed = false
+    @State private var disclosedImageCount = false
     @State private var disclosedAdvanced = false
 
     // TODO: refactor download with similar code in Loading.swift (iOS)
@@ -145,6 +146,17 @@ struct ControlsView: View {
         let selectedURL = pipelineLoader.compiledURL
         guard FileManager.default.fileExists(atPath: selectedURL.path) else { return nil }
         return selectedURL.path
+    }
+    
+    func batchImageCount() -> some View {
+        HStack {
+            CompactSlider(value: Binding<Double>(get: { Double(generation.imageCount) }, set: { generation.imageCount = Double($0) }), in: 0...100) {
+                Text("Batch Size")
+                Spacer()
+                Text("\(Int(generation.imageCount))")
+            }
+            Stepper("", value: $generation.imageCount, in: 1...100)
+        }.foregroundColor(.secondary)
     }
     
     var body: some View {
@@ -302,6 +314,15 @@ struct ControlsView: View {
                             } else {
                                 Text("\(Int(generation.seed))")
                             }
+                        }.foregroundColor(.secondary)
+                    }
+                                        
+                    DisclosureGroup(isExpanded: $disclosedImageCount) {
+                        batchImageCount()
+                    } label: {
+                        HStack {
+                            Label("Image Count", systemImage: "photo.stack").foregroundColor(.secondary)
+                            Spacer()
                         }.foregroundColor(.secondary)
                     }
                     

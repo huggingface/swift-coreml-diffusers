@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8CD8A53E2A47807F00BD8A98 /* SingleGeneratedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A53D2A47807F00BD8A98 /* SingleGeneratedImageView.swift */; };
+		8CD8A5402A4780CF00BD8A98 /* ImageViewObservableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A53F2A4780CF00BD8A98 /* ImageViewObservableModel.swift */; };
+		8CD8A5412A4780CF00BD8A98 /* ImageViewObservableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A53F2A4780CF00BD8A98 /* ImageViewObservableModel.swift */; };
+		8CD8A5442A47910600BD8A98 /* MultipleGeneratedImagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A5422A47910600BD8A98 /* MultipleGeneratedImagesView.swift */; };
 		EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB067F862992E561004D1AD9 /* HelpContent.swift */; };
 		EB25B3D62A3A2DC4000E25A1 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB25B3D52A3A2DC4000E25A1 /* StableDiffusion */; };
 		EB25B3D82A3A2DD5000E25A1 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB25B3D72A3A2DD5000E25A1 /* StableDiffusion */; };
@@ -61,6 +65,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8CD8A53D2A47807F00BD8A98 /* SingleGeneratedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleGeneratedImageView.swift; sourceTree = "<group>"; };
+		8CD8A53F2A4780CF00BD8A98 /* ImageViewObservableModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewObservableModel.swift; sourceTree = "<group>"; };
+		8CD8A5422A47910600BD8A98 /* MultipleGeneratedImagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleGeneratedImagesView.swift; sourceTree = "<group>"; };
 		EB067F862992E561004D1AD9 /* HelpContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpContent.swift; sourceTree = "<group>"; };
 		EB33A51E2954E1BC00B16357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EB560F0329A3C20800C0F8B8 /* Capabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capabilities.swift; sourceTree = "<group>"; };
@@ -141,6 +148,7 @@
 				EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */,
 				EBDD7DB72976AAFE00C1C4B2 /* State.swift */,
 				EBDD7DB22973200200C1C4B2 /* Utils.swift */,
+				8CD8A53F2A4780CF00BD8A98 /* ImageViewObservableModel.swift */,
 				EBB5BA5129425B07003A2A5B /* Pipeline */,
 			);
 			name = Common;
@@ -253,6 +261,8 @@
 				F15520232971093300DC009B /* Diffusion_macOSApp.swift */,
 				F15520252971093300DC009B /* ContentView.swift */,
 				EBDD7DBB2977FFB300C1C4B2 /* GeneratedImageView.swift */,
+				8CD8A53D2A47807F00BD8A98 /* SingleGeneratedImageView.swift */,
+				8CD8A5422A47910600BD8A98 /* MultipleGeneratedImagesView.swift */,
 				F1552030297109C300DC009B /* ControlsView.swift */,
 				F155203329710B3600DC009B /* StatusView.swift */,
 				EB067F862992E561004D1AD9 /* HelpContent.swift */,
@@ -476,6 +486,7 @@
 				EBE756092941178600806B32 /* Loading.swift in Sources */,
 				EBDD7DB82976AAFE00C1C4B2 /* State.swift in Sources */,
 				EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */,
+				8CD8A5402A4780CF00BD8A98 /* ImageViewObservableModel.swift in Sources */,
 				EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */,
 				EBDD7DB32973200200C1C4B2 /* Utils.swift in Sources */,
 			);
@@ -510,10 +521,13 @@
 				EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */,
 				F1552031297109C300DC009B /* ControlsView.swift in Sources */,
 				EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */,
+				8CD8A5442A47910600BD8A98 /* MultipleGeneratedImagesView.swift in Sources */,
 				F155203429710B3600DC009B /* StatusView.swift in Sources */,
 				EB560F0429A3C20800C0F8B8 /* Capabilities.swift in Sources */,
 				F15520242971093300DC009B /* Diffusion_macOSApp.swift in Sources */,
 				EBDD7DB52973201800C1C4B2 /* ModelInfo.swift in Sources */,
+				8CD8A5412A4780CF00BD8A98 /* ImageViewObservableModel.swift in Sources */,
+				8CD8A53E2A47807F00BD8A98 /* SingleGeneratedImageView.swift in Sources */,
 				EBDD7DBD2977FFB300C1C4B2 /* GeneratedImageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

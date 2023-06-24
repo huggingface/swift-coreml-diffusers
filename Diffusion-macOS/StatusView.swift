@@ -23,7 +23,7 @@ struct StatusView: View {
                 if result.userCanceled {
                     generation.state = .userCanceled
                 } else {
-                    generation.state = .complete(generation.positivePrompt, result.image, result.lastSeed, result.interval)
+                    generation.state = .complete(generation.positivePrompt, result.images, result.lastSeed, result.interval)
                 }
             } catch {
                 generation.state = .failed(error)
@@ -75,8 +75,8 @@ struct StatusView: View {
                 Text("Generating \(Int(round(100*fraction)))%")
                 Spacer()
             }
-        case .complete(_, let image, let lastSeed, let interval):
-            guard let _ = image else {
+        case .complete(_, let images, let lastSeed, let interval):
+            guard let _ = images.first else {
                 return HStack {
                     Text("Safety checker triggered, please try a different prompt or seed.")
                     Spacer()

@@ -66,11 +66,15 @@ struct ImageWithPlaceholder: View {
             let fraction = Double(step) / Double(progress.stepCount)
             let label = "Step \(step) of \(progress.stepCount)"
             return AnyView(ProgressView(label, value: fraction, total: 1).padding())
-        case .complete(let lastPrompt, let image, _, let interval):
-            guard let theImage = image else {
+        case .complete(let lastPrompt, let images, _, let interval):
+            guard let firstImage = images.first else {
                 return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
             }
-                              
+
+            guard let theImage = firstImage else {
+                return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
+            }
+            
             let imageView = Image(theImage, scale: 1, label: Text("generated"))
             return AnyView(
                 VStack {
@@ -103,7 +107,7 @@ struct TextToImage: View {
             generation.state = .running(nil)
             do {
                 let result = try await generation.generate()
-                generation.state = .complete(generation.positivePrompt, result.image, result.lastSeed, result.interval)
+                generation.state = .complete(generation.positivePrompt, result.images, result.lastSeed, result.interval)
             } catch {
                 generation.state = .failed(error)
             }

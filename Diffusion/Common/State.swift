@@ -17,7 +17,7 @@ let DEFAULT_PROMPT = "Labrador in the style of Vermeer"
 enum GenerationState {
     case startup
     case running(StableDiffusionProgress?)
-    case complete(String, CGImage?, UInt32, TimeInterval?)
+    case complete(String, [CGImage?], UInt32, TimeInterval?)
     case userCanceled
     case failed(Error)
 }
@@ -47,7 +47,7 @@ class GenerationContext: ObservableObject {
     
     // FIXME: Double to support the slider component
     @Published var steps = 25.0
-    @Published var numImages = 1.0
+    @Published var imageCount = 1.0
     @Published var seed = -1.0
     @Published var guidanceScale = 7.5
     @Published var disableSafety = false
@@ -64,6 +64,7 @@ class GenerationContext: ObservableObject {
             negativePrompt: negativePrompt,
             scheduler: scheduler,
             numInferenceSteps: Int(steps),
+            imageCount: imageCount,
             seed: seed,
             guidanceScale: Float(guidanceScale),
             disableSafety: disableSafety
