@@ -8,7 +8,6 @@
 
 import Foundation
 import Combine
-import Path
 
 class Downloader: NSObject, ObservableObject {
     private(set) var destination: URL
@@ -81,16 +80,12 @@ extension Downloader: URLSessionDelegate, URLSessionDownloadDelegate {
     }
 
     func urlSession(_: URLSession, downloadTask _: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        guard let path = Path(url: location) else {
+        guard FileManager.default.fileExists(atPath: location.path) else {
             downloadState.value = .failed("Invalid download location received: \(location)")
             return
         }
-        guard let toPath = Path(url: destination) else {
-            downloadState.value = .failed("Invalid destination: \(destination)")
-            return
-        }
         do {
-            try path.move(to: toPath, overwrite: true)
+            try FileManager.default.moveItem(at: location, to: destination)
             downloadState.value = .completed(destination)
         } catch {
             downloadState.value = .failed(error)

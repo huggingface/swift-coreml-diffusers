@@ -96,7 +96,6 @@ struct ControlsView: View {
             return
         }
 
-        print("Loading model \(model)")
         Settings.shared.currentModel = model
 
         pipelineLoader?.cancel()
@@ -143,9 +142,9 @@ struct ControlsView: View {
     
     var modelFilename: String? {
         guard let pipelineLoader = pipelineLoader else { return nil }
-        let selectedPath = pipelineLoader.compiledPath
-        guard selectedPath.exists else { return nil }
-        return selectedPath.string
+        let selectedURL = pipelineLoader.compiledURL
+        guard FileManager.default.fileExists(atPath: selectedURL.path) else { return nil }
+        return selectedURL.path
     }
     
     var body: some View {
@@ -168,7 +167,7 @@ struct ControlsView: View {
                         }
                         .onChange(of: model) { selection in
                             guard selection != revealOption else {
-                                NSWorkspace.shared.selectFile(modelFilename, inFileViewerRootedAtPath: PipelineLoader.models.string)
+                                NSWorkspace.shared.selectFile(modelFilename, inFileViewerRootedAtPath: PipelineLoader.models.path)
                                 model = Settings.shared.currentModel.modelVersion
                                 return
                             }

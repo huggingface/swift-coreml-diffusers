@@ -10,13 +10,11 @@
 import CoreML
 import Combine
 
-import Path
 import ZIPFoundation
 import StableDiffusion
 
 class PipelineLoader {
-    static let models = Path.applicationSupport / "hf-diffusion-models"
-    
+    static let models = URL.applicationSupportDirectory.appendingPathComponent("hf-diffusion-models")
     let model: ModelInfo
     let computeUnits: ComputeUnits
     let maxSeed: UInt32
@@ -64,10 +62,17 @@ class PipelineLoader {
 }
 
 extension PipelineLoader {
+    // Unused. Kept for debugging purposes. --pcuenca
     static func removeAll() {
-        try? models.delete()
+        // Delete the parent models folder as it will be recreated when it's needed again
+        do {
+            try FileManager.default.removeItem(at: models)
+        } catch {
+            print("Failed to delete: \(models), error: \(error.localizedDescription)")
+        }
     }
 }
+
 
 extension PipelineLoader {
     func cancel() { downloader?.cancel() }
@@ -82,20 +87,20 @@ extension PipelineLoader {
         return url.lastPathComponent
     }
     
-    var downloadedPath: Path { PipelineLoader.models / filename }
-    var downloadedURL: URL { downloadedPath.url }
+    var downloadedURL: URL { PipelineLoader.models.appendingPathComponent(filename) }
 
-    var uncompressPath: Path { downloadedPath.parent }
+    var uncompressURL: URL { PipelineLoader.models }
     
-    var packagesFilename: String { downloadedPath.basename(dropExtension: true) }
-    var compiledPath: Path { downloadedPath.parent/packagesFilename }
+    var packagesFilename: String { (filename as NSString).deletingPathExtension }
+    
+    var compiledURL: URL { downloadedURL.deletingLastPathComponent().appendingPathComponent(packagesFilename)  }
 
     var downloaded: Bool {
-        return downloadedPath.exists
+        return FileManager.default.fileExists(atPath: downloadedURL.path)
     }
     
     var ready: Bool {
-        return compiledPath.exists
+        return FileManager.default.fileExists(atPath: compiledURL.path)
     }
     
     var variant: AttentionVariant {
@@ -109,13 +114,17 @@ extension PipelineLoader {
         }
     }
     
-    // TODO: maybe receive Progress to add another progress as child
     func prepare() async throws -> Pipeline {
         do {
-            try PipelineLoader.models.mkdir(.p)
+            do {
+                try FileManager.default.createDirectory(atPath: PipelineLoader.models.path, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("Error creating PipelineLoader.models path: \(error)")
+            }
+
             try await download()
             try await unzip()
-            let pipeline = try await load(url: compiledPath.url)
+            let pipeline = try await load(url: compiledURL)
             return Pipeline(pipeline, maxSeed: maxSeed)
         } catch {
             state = .failed(error)
@@ -142,13 +151,13 @@ extension PipelineLoader {
         guard downloaded else { return }
         state = .uncompressing
         do {
-            try FileManager().unzipItem(at: downloadedURL, to: uncompressPath.url)
+            try FileManager().unzipItem(at: downloadedURL, to: uncompressURL)
         } catch {
             // Cleanup if error occurs while unzipping
-            try uncompressPath.delete()
+            try FileManager.default.removeItem(at: uncompressURL)
             throw error
         }
-        try downloadedPath.delete()
+        try FileManager.default.removeItem(at: downloadedURL)
         state = .readyOnDisk
     }
     
