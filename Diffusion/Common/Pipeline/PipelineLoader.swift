@@ -116,15 +116,6 @@ extension PipelineLoader {
     
     // TODO: maybe receive Progress to add another progress as child --pcuenca
     func prepare() async throws -> Pipeline {
-//        // Check that the constructed locations match the expected locations
-//        print("url: \(url.path)")
-//        print("filename \(filename)")
-//        print("downloadedURL \(downloadedURL.path)")
-//        print("uncompressURL \(uncompressURL.path)")
-//        print("packagesFilename \(packagesFilename)")
-//        print("compiledURL \(compiledURL.path)")
-//        print("downloaded \(downloaded)")
-//        print("ready \(ready)")
         do {
             // Make default models folder if missing
             let fileExists = FileManager.default.fileExists(atPath: PipelineLoader.models.path)
