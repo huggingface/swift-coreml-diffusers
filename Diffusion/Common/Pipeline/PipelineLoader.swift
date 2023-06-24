@@ -117,14 +117,10 @@ extension PipelineLoader {
     // TODO: maybe receive Progress to add another progress as child --pcuenca
     func prepare() async throws -> Pipeline {
         do {
-            // Make default models folder if missing
-            let fileExists = FileManager.default.fileExists(atPath: PipelineLoader.models.path)
-            if !fileExists {
-                do {
-                    try FileManager.default.createDirectory(atPath: PipelineLoader.models.path, withIntermediateDirectories: true, attributes: nil)
-                } catch {
-                    print("Error creating PipelineLoader.models path: \(error)")
-                }
+            do {
+                try FileManager.default.createDirectory(atPath: PipelineLoader.models.path, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("Error creating PipelineLoader.models path: \(error)")
             }
 
             try await download()
