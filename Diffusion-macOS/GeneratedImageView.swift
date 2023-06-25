@@ -28,6 +28,7 @@ struct GeneratedImageView: View {
                         .aspectRatio(contentMode: .fit)
                         .cornerRadius(15)
                         .environmentObject(imageViewModel)
+                        .environmentObject(generation)
                     )
                 }
                 // DiffusionImage failed to create
@@ -54,6 +55,7 @@ struct GeneratedImageView: View {
                         .aspectRatio(contentMode: .fit)
                         .cornerRadius(15)
                         .environmentObject(imageViewModel)
+                        .environmentObject(generation)
                     )
                 }
             

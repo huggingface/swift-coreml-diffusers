@@ -54,30 +54,16 @@ class ImageViewObservableModel: ObservableObject {
     
     private init() {}
     
-    func getApplicationSupportDirectory() -> URL? {
-        let fileManager = FileManager.default
-        guard let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
-            return nil
-        }
-        
-        let appBundleIdentifier = Bundle.main.bundleIdentifier ?? ""
-        let appDirectoryURL = appSupportURL.appendingPathComponent(appBundleIdentifier)
-        
-        do {
-            // Create the application support directory if it doesn't exist
-            try fileManager.createDirectory(at: appDirectoryURL, withIntermediateDirectories: true, attributes: nil)
-            return appDirectoryURL
-        } catch {
-            print("Error creating application support directory: \(error)")
-            return nil
-        }
-    }
-
     /// clear the cachedImages
     func reset() {
-        //TODO: add save, autosave, etc...
-        // on save write pipeline data into the PNG file
-        currentBuildImages = []
+        currentBuildImages.removeAll()
+        //delete the temp storage directory to clear out cached data on disk
+        let tempStorageURL = Settings.shared.tempStorageURL()
+        do {
+            try FileManager.default.removeItem(at: tempStorageURL)
+        } catch {
+            print("Failed to delete: \(tempStorageURL), error: \(error.localizedDescription)")
+        }
     }
     
     func toggleSelection(for image: DiffusionImage) {
@@ -89,15 +75,14 @@ class ImageViewObservableModel: ObservableObject {
     }
     
     #if os(macOS)
-    func createTempFile(image: NSImage?) -> URL? {
-        // Usage:
-        if let appSupportURL = getApplicationSupportDirectory() {
-
+    func createTempFile(image: NSImage?, filename: String?) -> URL? {
+        let appSupportURL = Settings.shared.tempStorageURL()
+        let fn = filename ?? "diffusion_generated_image"
         let fileURL = appSupportURL
-            .appendingPathComponent("dragged_image")
+            .appendingPathComponent(fn)
             .appendingPathExtension("png")
 
-            // Save the image as a temporary file
+        // Save the image as a temporary file
         if let tiffData = image?.tiffRepresentation,
            let bitmap = NSBitmapImageRep(data: tiffData),
            let pngData = bitmap.representation(using: .png, properties: [:]) {
@@ -109,22 +94,19 @@ class ImageViewObservableModel: ObservableObject {
                 print("Error saving image to temporary file: \(error)")
             }
         }
-        } else {
-            print("Failed to retrieve Application Support Directory.")
-        }
 
         return nil
     }
     #else
-    func createTempFile(image: UIImage?) -> URL? {
+    func createTempFile(image: UIImage?, filename: String?) -> URL? {
         guard let image = image else {
             return nil
         }
-        
-        let fileManager = FileManager.default
-        let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-        let fileURL = temporaryDirectoryURL
-            .appendingPathComponent(UUID().uuidString)
+        let fn = filename ?? "diffusion_generated_image"
+        let appSupportURL = Settings.shared.tempStorageURL()
+
+        let fileURL = appSupportURL
+            .appendingPathComponent(fn)
             .appendingPathExtension("png")
         
         if let imageData = image.pngData() {

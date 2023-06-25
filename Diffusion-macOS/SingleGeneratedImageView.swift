@@ -36,49 +36,33 @@ struct SingleGeneratedImageView: View {
             .aspectRatio(1, contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .onDrag {
-                guard let tiffData = NSImage(cgImage: cgImage, size: CGSize(width: cgImage.width, height: cgImage.height)).tiffRepresentation,
-                      let bitmap = NSBitmapImageRep(data: tiffData),
-                      let pngData = bitmap.representation(using: .png, properties: [:]) else {
-                    return NSItemProvider()
-                }
-                
-                let itemProvider = NSItemProvider()
-                itemProvider.registerDataRepresentation(forTypeIdentifier: UTType.tiff.identifier, visibility: .all) { completion in
-                    completion(tiffData, nil)
-                    return nil
-                }
-                
-                itemProvider.registerDataRepresentation(forTypeIdentifier: UTType.png.identifier, visibility: .all) { completion in
-                    completion(pngData, nil)
-                    return nil
-                }
-                
-                if let fileURL = imageViewModel.createTempFile(image: NSImage(cgImage: cgImage, size: CGSize(width: cgImage.width, height: cgImage.height))) {
-                    let fileURLData = fileURL.absoluteString.data(using: .utf8)
-                    itemProvider.registerDataRepresentation(forTypeIdentifier: NSPasteboard.PasteboardType.fileURL.rawValue, visibility: .all) { completion in
-                        completion(fileURLData, nil)
-                        return nil
+                var provider = NSItemProvider()
+                switch generation.state {
+                case .complete(_, _, let lastSeed, _):
+                    // Register the file URL
+                    let generatedFilename = generation.positivePrompt.first200Safe + "-\(lastSeed)"
+                    let img = NSImage(cgImage: cgImage, size: CGSize(width: cgImage.width, height: cgImage.height))
+                    if let fileURL = imageViewModel.createTempFile(image: img, filename: generatedFilename) {
+                        provider = NSItemProvider(item: fileURL as NSSecureCoding, typeIdentifier: UTType.fileURL.identifier)
+                        provider.suggestedName = fileURL.lastPathComponent
+                        return provider
                     }
-                    return itemProvider
+                    return provider
+                case .startup, .running(_), .userCanceled, .failed(_):
+                    return provider
                 }
-
-                return NSItemProvider()
             }
+
             .onDisappear {
-                for fileURL in imageViewModel.tempFilesCreated {
-                    do {
-                        try FileManager.default.removeItem(at: fileURL)
-                    } catch {
-                        print("Error removing temporary file: \(error)")
-                    }
-                }
-                // empty the tracked temp files array
-                imageViewModel.tempFilesCreated.removeAll()
+                // Clean up our temp files
+                imageViewModel.reset()
             }
             .contextMenu {
                 Button {
                     let pb = NSPasteboard.general
-                    if let fileURL = imageViewModel.createTempFile(image: NSImage(cgImage: cgImage, size: CGSize(width: cgImage.width, height: cgImage.height))) {
+                    let img = NSImage(cgImage: cgImage, size: CGSize(width: cgImage.width, height: cgImage.height))
+                    let filename = generation.positivePrompt.first200Safe + "\(generation.seed)"
+                    if let fileURL = imageViewModel.createTempFile(image: img, filename: filename) {
                         do {
                             let resourceValues = try fileURL.resourceValues(forKeys: [.contentTypeKey])
                             if let contentType = resourceValues.contentType {

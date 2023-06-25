@@ -15,3 +15,16 @@ extension Double {
         return String(format: "\(format)", self)
     }
 }
+
+extension String {
+    var first200Safe: String {
+        let endIndex = index(startIndex, offsetBy: Swift.min(200, count))
+        let substring = String(self[startIndex..<endIndex])
+        
+        // Remove unsafe characters from the substring
+        let safeCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
+        let filteredSubstring = substring.components(separatedBy: safeCharacters.inverted).joined()
+        
+        return filteredSubstring
+    }
+}

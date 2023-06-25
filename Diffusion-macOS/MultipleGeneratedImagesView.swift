@@ -10,7 +10,8 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct MultipleGeneratedImagesView: View {
-    
+    @EnvironmentObject var generation: GenerationContext
+
     @State var generatedImages: [DiffusionImage?]
     @State private var gridColumns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 3)
 
@@ -21,6 +22,7 @@ struct MultipleGeneratedImagesView: View {
                     ForEach(generatedImages, id:\.self) { genImage in
                         if let diffusionImage = genImage {
                             SingleGeneratedImageView(generatedImage: diffusionImage)
+                                .environmentObject(generation)
                         } else {
                             AnyView(Text("Missing image!"))
                         }

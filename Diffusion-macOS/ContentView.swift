@@ -69,8 +69,10 @@ struct ContentView: View {
     func toolbar() -> any View {
         if case .complete(let prompt, let cgImage, _, _) = generation.state {
             // TODO: share seed too
-            if let img = cgImage.first {
-                return ShareButtons(image: img!, name: prompt)
+            if let firstItem = cgImage.first {
+                if let img = firstItem {
+                    return ShareButtons(image: img, name: prompt)
+                }
             }
             return AnyView(EmptyView())
         } else {

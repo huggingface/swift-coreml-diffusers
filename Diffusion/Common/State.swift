@@ -127,4 +127,41 @@ class Settings {
             return ComputeUnits(rawValue: current)
         }
     }
+    
+    public func applicationSupportURL() -> URL {
+        let fileManager = FileManager.default
+        guard let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            // To ensure we don't return an optional - if the user domain application support cannot be accessed use the top level application support directory
+            return URL.applicationSupportDirectory
+        }
+
+        let appBundleIdentifier = Bundle.main.bundleIdentifier ?? ""
+        let appDirectoryURL = appSupportURL.appendingPathComponent(appBundleIdentifier)
+
+        do {
+            // Create the application support directory if it doesn't exist
+            try fileManager.createDirectory(at: appDirectoryURL, withIntermediateDirectories: true, attributes: nil)
+            return appDirectoryURL
+        } catch {
+            print("Error creating application support directory: \(error)")
+            return fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        }
+    }
+
+    // We could use `FileManager.default.temporaryDirectory.appendingPathComponent(filename)`
+    // as demonstrated in `TextToImage.swift` catalyst code
+    // but by controlling our own temp folder we have more control over self cleanup
+    public func tempStorageURL() -> URL {
+        let fileManager = FileManager.default
+        let tmpDirURL = applicationSupportURL().appendingPathComponent("tmp")
+        do {
+            // Create the application support directory if it doesn't exist
+            try fileManager.createDirectory(at: tmpDirURL, withIntermediateDirectories: true, attributes: nil)
+            return tmpDirURL
+        } catch {
+            print("Error creating temp storage directory: \(error)")
+            return fileManager.urls(for: .trashDirectory, in: .userDomainMask).first!
+        }
+    }
+
 }

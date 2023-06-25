@@ -25,6 +25,7 @@ struct ShareButtons: View {
         let imageView = Image(image, scale: 1, label: Text(name))
 
         if runningOnMac {
+            // Mac catalyst - we're running iOS build on a mac
             HStack {
                 ShareLink(item: imageView, preview: SharePreview(name, image: imageView))
                 Button() {
