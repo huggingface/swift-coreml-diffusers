@@ -31,7 +31,7 @@ struct SingleGeneratedImageView: View {
     }
         
     var body: some View {
-        Image(nsImage: NSImage(cgImage: cgImage , size: CGSize(width: cgImage.width, height: cgImage.height)))
+        Image(nsImage: NSImage(cgImage: cgImage, size: CGSize(width: cgImage.width, height: cgImage.height)))
             .resizable()
             .aspectRatio(1, contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 15))
@@ -61,7 +61,7 @@ struct SingleGeneratedImageView: View {
                     }
                     return itemProvider
                 }
-                
+
                 return NSItemProvider()
             }
             .onDisappear {

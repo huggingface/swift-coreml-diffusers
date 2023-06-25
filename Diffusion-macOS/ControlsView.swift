@@ -323,6 +323,7 @@ struct ControlsView: View {
                         HStack {
                             Label("Image Count", systemImage: "photo.stack").foregroundColor(.secondary)
                             Spacer()
+                            Text("\(Int(generation.imageCount))")
                         }.foregroundColor(.secondary)
                     }
                     
