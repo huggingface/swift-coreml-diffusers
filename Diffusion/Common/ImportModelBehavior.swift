@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import ZIPFoundation
 
 // A view modifier to add a .fileImporter import panel into a view
 struct ImportModelBehavior: ViewModifier {
@@ -31,7 +32,7 @@ struct ImportModelBehavior: ViewModifier {
                         let fileManager = FileManager.default
                         let contents = try fileManager.contentsOfDirectory(atPath: url.path)
                         
-                        if contents.contains("merges.txt") && contents.contains("vocab.json") {
+                        if contents.contains(where: { $0.caseInsensitiveCompare("merges.txt") == .orderedSame }) && contents.contains(where: { $0.caseInsensitiveCompare("vocab.json") == .orderedSame }) {
                             // Folder contains the required filenames
                             do {
                                 try fileManager.moveItem(at: url, to: Settings.shared.applicationSupportURL().appendingPathComponent("hf-diffusion-models").appendingPathComponent(url.lastPathComponent))
@@ -44,10 +45,33 @@ struct ImportModelBehavior: ViewModifier {
                             isBadSelectionAlertShown = true
                         }
                     } else if url.pathExtension == "zip" {
-                        do {
-                            try FileManager.default.unzipItem(at: url, to: Settings.shared.applicationSupportURL().appendingPathComponent("hf-diffusion-models"))
-                        } catch {
-                            print("error unzipping selected zip file \(error)")
+                        DispatchQueue.global(qos: .background).async {
+                            do {
+                                let extractedURL = Settings.shared.applicationSupportURL().appendingPathComponent("hf-diffusion-models").appendingPathComponent(url.deletingPathExtension().lastPathComponent)
+                                try FileManager.default.createDirectory(at: extractedURL, withIntermediateDirectories: true, attributes: nil)
+
+                                if let archive = Archive(url: url, accessMode: .read) {
+                                    for entry in archive {
+                                        // Skip hidden and __MACOSX files
+                                        let filename = entry.path.components(separatedBy: "/").last ?? ""
+                                        if !filename.hasPrefix(".") && filename.lowercased() != "__macosx" {
+                                            let destinationURL = extractedURL.appendingPathComponent(entry.path)
+                                            let _ = try archive.extract(entry, to: destinationURL)
+                                        }
+                                    }
+                                }
+
+                                let extractedContents = try FileManager.default.contentsOfDirectory(atPath: extractedURL.path)
+                                if extractedContents.contains(where: { $0.caseInsensitiveCompare("merges.txt") == .orderedSame }) && extractedContents.contains(where: { $0.caseInsensitiveCompare("vocab.json") == .orderedSame }) {
+                                    // Files successfully extracted
+                                } else {
+                                    // Delete the extraction and post an alert that it's not properly formatted
+                                    try? FileManager.default.removeItem(at: extractedURL)
+                                    isBadSelectionAlertShown = true
+                                }
+                            } catch {
+                                print("Error unzipping selected zip file: \(error)")
+                            }
                         }
                     } else {
                         // Invalid selection
@@ -67,7 +91,6 @@ struct ImportModelBehavior: ViewModifier {
                 )
             }
             .onReceive(settings.$isShowingImportPanel) { newValue in
-//                print("Settings.shared.isShowingImportPanel changed to \(newValue)")
                 self.importPanelState = newValue
             }
     }
