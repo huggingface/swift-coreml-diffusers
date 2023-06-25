@@ -107,7 +107,6 @@ struct ControlsView: View {
                 DispatchQueue.main.async {
                     switch state {
                     case .downloading(let progress):
-                        print("\(loader.model.modelVersion): \(progress)")
                         pipelineState = .downloading(progress)
                     case .uncompressing:
                         pipelineState = .uncompressing
@@ -383,7 +382,6 @@ struct ControlsView: View {
         }
         .padding()
         .onAppear {
-            print(PipelineLoader.models)
             modelDidChange(model: ModelInfo.from(modelVersion: model) ?? ModelInfo.v2Base)
         }
     }
