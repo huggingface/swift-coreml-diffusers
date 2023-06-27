@@ -90,7 +90,7 @@ struct ControlsView: View {
     
     func resetComputeUnitsState() {
         generation.computeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
-    }    
+    }
 
     func modelDidChange(model: ModelInfo) {
         guard pipelineLoader?.model != model || pipelineLoader?.computeUnits != generation.computeUnits else {
