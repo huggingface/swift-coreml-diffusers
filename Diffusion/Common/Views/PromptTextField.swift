@@ -51,7 +51,6 @@ struct PromptTextField: View {
         return nil
     }
     
-    
     private var textColor: Color {
         switch tokenCount {
         case 0...65:
@@ -79,32 +78,46 @@ struct PromptTextField: View {
 
     var body: some View {
         VStack {
-            HStack {
-                Spacer()
-                if !textBinding.isEmpty {
-                    Text("\(tokenCount)")
-                        .foregroundColor(textColor)
-                    Text(" / \(maxTokenCount)")
-                }
-            }
-            .onReceive(Just(textBinding)) { text in
-                updateTokenCount(newText: text)
-            }
-            .font(.caption)
             #if os(macOS)
             TextField(isPositivePrompt ? "Positive prompt" : "Negative Prompt", text: $textBinding,
                       axis: .vertical)
                 .lineLimit(20)
                 .textFieldStyle(.squareBorder)
                 .listRowInsets(EdgeInsets(top: 0, leading: -20, bottom: 0, trailing: 20))
-                .foregroundColor(textColor == .green ? .white : textColor)
+                .foregroundColor(textColor == .green ? .primary : textColor)
                 .frame(minHeight: 30)
+            if (modelInfo != nil && tokenizer != nil) {
+                HStack {
+                    Spacer()
+                    if !textBinding.isEmpty {
+                        Text("\(tokenCount)")
+                            .foregroundColor(textColor)
+                        Text(" / \(maxTokenCount)")
+                    }
+                }
+                .onReceive(Just(textBinding)) { text in
+                    updateTokenCount(newText: text)
+                }
+                .font(.caption)
+            }
             #else
             TextField("Prompt", text: $textBinding, axis: .vertical)
                 .lineLimit(20)
                 .listRowInsets(EdgeInsets(top: 0, leading: -20, bottom: 0, trailing: 20))
-                .foregroundColor(textColor == .green ? .white : textColor)
+                .foregroundColor(textColor == .green ? .primary : textColor)
                 .frame(minHeight: 30)
+            HStack {
+                if !textBinding.isEmpty {
+                    Text("\(tokenCount)")
+                        .foregroundColor(textColor)
+                    Text(" / \(maxTokenCount)")
+                }
+                Spacer()
+            }
+            .onReceive(Just(textBinding)) { text in
+                updateTokenCount(newText: text)
+            }
+            .font(.caption)
             #endif
         }
         .onChange(of: model) { model in
@@ -113,10 +126,8 @@ struct PromptTextField: View {
     }
 
     private func updateTokenCount(newText: String) {
-        
         // ensure that the compiled URL exists
         guard let compiledURL = compiledURL else { return }
-
         // Initialize the tokenizer only when it's not created yet or the model changes
         // Check if the model version has changed
         let modelVersion = $model.wrappedValue
