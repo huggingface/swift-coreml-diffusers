@@ -22,7 +22,7 @@ struct PromptTextField: View {
     @Binding var textBinding: String
     @Binding var model: String // the model version as it's stored in Settings
 
-    private let maxTokenCount = 75
+    private let maxTokenCount = 77
 
     private var modelInfo: ModelInfo? {
         ModelInfo.from(modelVersion: $model.wrappedValue)
