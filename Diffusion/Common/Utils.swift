@@ -21,10 +21,24 @@ extension String {
         let endIndex = index(startIndex, offsetBy: Swift.min(200, count))
         let substring = String(self[startIndex..<endIndex])
         
+        // Replace whitespace with underscore or dash
+        let replacedSubstring = substring
+            .replacingOccurrences(of: " ", with: "_")
+            .replacingOccurrences(of: "\t", with: "_")
+            .replacingOccurrences(of: "\n", with: "_")
+
         // Remove unsafe characters from the substring
-        let safeCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
-        let filteredSubstring = substring.components(separatedBy: safeCharacters.inverted).joined()
-        
+        let allowedCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
+        let filteredSubstring = replacedSubstring
+            .components(separatedBy: allowedCharacters.inverted)
+            .joined()
+
         return filteredSubstring
+    }
+}
+
+extension Array {
+    subscript(safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
     }
 }

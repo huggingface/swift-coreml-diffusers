@@ -47,6 +47,7 @@ struct LabelToggleDisclosureGroupStyle: DisclosureGroupStyle {
 
 struct ControlsView: View {
     @EnvironmentObject var generation: GenerationContext
+    @EnvironmentObject var imageViewModel: ImageViewObservableModel
 
     static let models = ModelInfo.MODELS
     
@@ -75,8 +76,10 @@ struct ControlsView: View {
     @State private var showSeedHelp = false
     @State private var showAdvancedHelp = false
 
+    private var textFieldLabelSeed: String { generation.seed < 1 ? "Random Seed" : "Seed" }
+
     // Reasonable range for the slider
-    let maxSeed: UInt32 = 1000
+    let maxSeed: UInt32 = UInt32.max
 
     func updateSafetyCheckerState() {
         mustShowSafetyCheckerDisclaimer = generation.disableSafety && !Settings.shared.safetyCheckerDisclaimerShown
@@ -108,7 +111,7 @@ struct ControlsView: View {
                 DispatchQueue.main.async {
                     switch state {
                     case .downloading(let progress):
-                        print("\(loader.model.modelVersion): \(progress)")
+//                        print("\(loader.model.modelVersion): \(progress)")
                         pipelineState = .downloading(progress)
                     case .uncompressing:
                         pipelineState = .uncompressing
@@ -147,18 +150,19 @@ struct ControlsView: View {
         guard FileManager.default.fileExists(atPath: selectedURL.path) else { return nil }
         return selectedURL.path
     }
-    
+
     func batchImageCount() -> some View {
         HStack {
-            CompactSlider(value: Binding<Double>(get: { Double(generation.imageCount) }, set: { generation.imageCount = Double($0) }), in: 0...100) {
+            CompactSlider(value: Binding<Double>(get: { Double(imageViewModel.imageCount) }, set: { imageViewModel.imageCount = Int($0) }), in: 1...100) {
                 Text("Batch Size")
                 Spacer()
-                Text("\(Int(generation.imageCount))")
+                Text("\(Int(imageViewModel.imageCount))")
             }
-            Stepper("", value: $generation.imageCount, in: 1...100)
-        }.foregroundColor(.secondary)
+            Stepper("", value: $imageViewModel.imageCount, in: 1...100)
+        }
+        .foregroundColor(.secondary)
     }
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             
@@ -269,7 +273,8 @@ struct ControlsView: View {
                             Text("Steps")
                             Spacer()
                             Text("\(Int(generation.steps))")
-                        }.padding(.leading, 10)
+                        }
+                        .padding(.leading, 10)
                     } label: {
                         HStack {
                             Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary)
@@ -291,15 +296,10 @@ struct ControlsView: View {
                     }
                                         
                     DisclosureGroup(isExpanded: $disclosedSeed) {
-                        let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
-                        CompactSlider(value: $generation.seed, in: -1...Double(maxSeed), step: 1) {
-                            Text(sliderLabel)
-                            Spacer()
-                            Text("\(Int(generation.seed))")
-                        }.padding(.leading, 10)
+                        discloseSeedContent()
                     } label: {
                         HStack {
-                            Label("Seed", systemImage: "leaf").foregroundColor(.secondary)
+                            Label(textFieldLabelSeed, systemImage: "leaf").foregroundColor(.secondary)
                             Spacer()
                             if disclosedSeed {
                                 Button {
@@ -323,7 +323,7 @@ struct ControlsView: View {
                         HStack {
                             Label("Image Count", systemImage: "photo.stack").foregroundColor(.secondary)
                             Spacer()
-                            Text("\(Int(generation.imageCount))")
+                            Text("\(Int(imageViewModel.imageCount))")
                         }.foregroundColor(.secondary)
                     }
                     
@@ -402,11 +402,46 @@ struct ControlsView: View {
             Divider()
             
             StatusView(pipelineState: $pipelineState)
+                .environmentObject(imageViewModel)
         }
         .padding()
         .onAppear {
-            print(PipelineLoader.models)
+//            print(PipelineLoader.models)
             modelDidChange(model: ModelInfo.from(modelVersion: model) ?? ModelInfo.v2Base)
+        }
+    }
+    
+    fileprivate func discloseSeedContent() -> some View {
+        let seedBinding = Binding<String>(
+            get: {
+                generation.seed < 1 ? "" : String(generation.seed)
+            },
+            set: { newValue in
+                if let seed = UInt32(newValue) {
+                    generation.seed = seed
+                } else {
+                    generation.seed = 0
+                }
+            }
+        )
+        
+        return HStack {
+            TextField("", text: seedBinding)
+                .multilineTextAlignment(.trailing)
+                .onChange(of: seedBinding.wrappedValue, perform: { newValue in
+                    if let seed = UInt32(newValue) {
+                        generation.seed = seed
+                    } else {
+                        generation.seed = 0
+                    }
+                })
+                .onReceive(Just(seedBinding.wrappedValue)) { newValue in
+                    let filtered = newValue.filter { "0123456789".contains($0) }
+                    if filtered != newValue {
+                        seedBinding.wrappedValue = filtered
+                    }
+                }
+            Stepper("", value: $generation.seed, in: 0...UInt32.max)
         }
     }
 }

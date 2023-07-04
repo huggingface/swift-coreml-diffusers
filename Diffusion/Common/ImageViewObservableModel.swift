@@ -8,118 +8,205 @@
 
 import SwiftUI
 import StableDiffusion
-
-// Model to capture generated image data
-struct DiffusionImage: Identifiable, Hashable, Equatable {
-    let id = UUID()
-    let cgImage: CGImage?
-    let seed: Double
-    let steps: Double
-    let prompt: String
-    let negativePrompt: String
-    let scheduler: StableDiffusionScheduler
-    let guidanceScale: Double
-    let disableSafety: Bool
-
-    // Function to create an array of DiffusionImage from an array of CGImage?
-    static func fromCGImages(_ cgImages: [CGImage?], seed: Double, steps: Double, prompt: String, negativePrompt: String, scheduler: StableDiffusionScheduler, guidanceScale: Double, disableSafety: Bool) -> [DiffusionImage] {
-        var diffusionImages: [DiffusionImage] = []
-        
-        for cgImage in cgImages {
-            if let image = cgImage {
-                let diffusionImage = DiffusionImage(
-                    cgImage: image,
-                    seed: seed,
-                    steps: steps,
-                    prompt: prompt,
-                    negativePrompt: negativePrompt,
-                    scheduler: scheduler,
-                    guidanceScale: guidanceScale,
-                    disableSafety: disableSafety
-                )
-                diffusionImages.append(diffusionImage)
-            }
-        }
-        
-        return diffusionImages
-    }
-}
+import CoreTransferable
+import UniformTypeIdentifiers
 
 class ImageViewObservableModel: ObservableObject {
-    @Published var selectedImages: Set<DiffusionImage> = []
-    @Published var currentBuildImages: [DiffusionImage] = []
-    @Published var tempFilesCreated: [URL] = []
 
+    // Start with a placeholder position for one Diffusion image
+    @MainActor
+    @Published var currentBuildImages: [DiffusionImageWrapper] = [DiffusionImageWrapper(diffusionImageState: .waiting, diffusionImage: nil)]
+
+    @MainActor
+    @Published var imageCount: Int = 1 {
+        didSet {
+            let currentCount = self.currentBuildImages.count
+            let desiredCount = self.imageCount
+            
+            if desiredCount > currentCount {
+                // Append additional array space to match the desired count
+                let placeholders = Array<DiffusionImage?>(repeating: nil, count: desiredCount - currentCount)
+                addDiffusionImages(placeholders)
+            } else if desiredCount < currentCount {
+                // Trim excess images to match the desired count
+                self.currentBuildImages = Array(self.currentBuildImages.prefix(desiredCount))
+            }
+        }
+    }
+    
     static let shared: ImageViewObservableModel = ImageViewObservableModel()
+    @Published var userCanceled = false
+    @Published var isGeneratingBatch = false
     
     private init() {}
     
-    /// clear the cachedImages
-    func reset() {
-        currentBuildImages.removeAll()
-        //delete the temp storage directory to clear out cached data on disk
-        let tempStorageURL = Settings.shared.tempStorageURL()
-        do {
-            try FileManager.default.removeItem(at: tempStorageURL)
-        } catch {
-            print("Failed to delete: \(tempStorageURL), error: \(error.localizedDescription)")
-        }
+    @MainActor
+    fileprivate func makeDiffusionImage(_ generation: GenerationContext, _ img: CGImage, _ result: GenerationResult, _ state: DiffusionImageState) -> DiffusionImage {
+        return DiffusionImage(id: UUID(), cgImage: img, seed: Int32(result.lastSeed), steps: generation.steps, positivePrompt: generation.positivePrompt, negativePrompt: generation.negativePrompt, guidanceScale: generation.guidanceScale, disableSafety: generation.disableSafety)
     }
     
-    func toggleSelection(for image: DiffusionImage) {
-        if selectedImages.contains(image) {
-            selectedImages.remove(image)
-        } else {
-            selectedImages.insert(image)
+    // Function to update the diffusion image state
+    @MainActor
+    func updateDiffusionImageState(atIndex index: Int, newState: DiffusionImageState) {
+        guard index >= 0, index < currentBuildImages.count else {
+            return
         }
+        currentBuildImages[index].diffusionImageState = newState
     }
     
-    #if os(macOS)
-    func createTempFile(image: NSImage?, filename: String?) -> URL? {
-        let appSupportURL = Settings.shared.tempStorageURL()
-        let fn = filename ?? "diffusion_generated_image"
-        let fileURL = appSupportURL
-            .appendingPathComponent(fn)
-            .appendingPathExtension("png")
+    // Function to add a new diffusion image
+    @MainActor
+    func addDiffusionImage(_ image: DiffusionImage) {
+        let tracker = DiffusionImageWrapper(diffusionImage: image)
+        currentBuildImages.append(tracker)
+    }
+    
+    @MainActor
+    func addDiffusionImages(_ images: [DiffusionImage?]) {
+        let placeholders = Array<DiffusionImage?>(repeating: nil, count: images.count)
+        let wrappers = placeholders.map { DiffusionImageWrapper(diffusionImage: $0) }
+        currentBuildImages.append(contentsOf: wrappers)
+    }
 
-        // Save the image as a temporary file
-        if let tiffData = image?.tiffRepresentation,
-           let bitmap = NSBitmapImageRep(data: tiffData),
-           let pngData = bitmap.representation(using: .png, properties: [:]) {
+    
+    // Function to remove a diffusion image
+    @MainActor
+    func removeDiffusionImage(atIndex index: Int) {
+        guard index >= 0, index < currentBuildImages.count else {
+            return
+        }
+        currentBuildImages.remove(at: index)
+    }
+
+    public func cancelBatchGeneration() {
+        userCanceled = true
+        isGeneratingBatch = false
+    }
+
+    // Generate the number of images requested, continue generating until the number of requested images have been created
+    public func generate(generation: GenerationContext) async {
+
+        // If we're already running return
+        if isGeneratingBatch { return }
+
+//        if case .running = generation.state { return }
+
+        DispatchQueue.main.asyncAndWait {
+            self.isGeneratingBatch = true
+            self.userCanceled = false
+        }
+        var currentIndex = 0
+
+        while (isGeneratingBatch && userCanceled == false) {
+
+            switch generation.state {
+            case .userCanceled:
+                DispatchQueue.main.asyncAndWait {
+                    self.userCanceled = true
+                    self.isGeneratingBatch = false
+                }
+            case .startup, .running(_), .complete(_, _, _, _), .failed(_):
+                DispatchQueue.main.asyncAndWait {
+                    generation.state = .running(nil)
+                }
+                await generateOneImage(generation: generation, forIndex: currentIndex)
+                currentIndex += 1
+            }
+            if await currentIndex >= imageCount {
+                DispatchQueue.main.asyncAndWait {
+                    self.isGeneratingBatch = false
+                }
+            }
+                
+        }
+    }
+
+    @MainActor
+    private func generateOneImage(generation: GenerationContext, forIndex index: Int) async {
+        guard index >= 0 && index < currentBuildImages.count else {
+            return
+        }
+        currentBuildImages[index].diffusionImageState = .generating
+
+        var successfulImageGenerated = false
+        while !successfulImageGenerated {
             do {
-                try pngData.write(to: fileURL)
-                self.tempFilesCreated.append(fileURL)
-                return fileURL
+                let result = try await generation.generate()
+                if result.userCanceled {
+                    generation.cancelGeneration()
+                    self.userCanceled = true
+                    self.isGeneratingBatch = false
+                    // reset the image state to waiting after it has cancelled
+                    currentBuildImages[index].diffusionImageState = .waiting
+                    return
+                } else {
+                    if result.images != [nil] {
+                        if let img = result.images.first! {
+                            currentBuildImages[index].diffusionImage = DiffusionImage(id: UUID(), cgImage: img, seed: Int32(result.lastSeed), steps: generation.steps, positivePrompt: generation.positivePrompt, negativePrompt: generation.negativePrompt, guidanceScale: generation.guidanceScale, disableSafety: generation.disableSafety)
+                            currentBuildImages[index].diffusionImageState = .complete
+                            generation.state = .complete(generation.positivePrompt, [img], result.lastSeed, result.interval)
+                            successfulImageGenerated = true
+                            // Success. Increment the seed for the next run if in batch mode.
+                            generation.overrideSeed = UInt32(result.lastSeed + 1)
+                            return
+                        }
+                    } else {
+                        // Safety check catch, increment and try again
+                        generation.overrideSeed = UInt32(result.lastSeed + 1)
+                    }
+                }
             } catch {
-                print("Error saving image to temporary file: \(error)")
+                // image generation failed. Increment the seed and try again.
+                generation.state = .failed(error)
+                generation.overrideSeed = UInt32(generation.seed + 1)
+                return
             }
         }
-
-        return nil
     }
-    #else
-    func createTempFile(image: UIImage?, filename: String?) -> URL? {
-        guard let image = image else {
-            return nil
-        }
-        let fn = filename ?? "diffusion_generated_image"
-        let appSupportURL = Settings.shared.tempStorageURL()
-
-        let fileURL = appSupportURL
-            .appendingPathComponent(fn)
-            .appendingPathExtension("png")
-        
-        if let imageData = image.pngData() {
-            do {
-                try imageData.write(to: fileURL)
-                self.tempFilesCreated.append(fileURL)
-                return fileURL
-            } catch {
-                print("Error saving image to temporary file: \(error)")
-            }
-        }
-        
-        return nil
-    }
-    #endif
 }
+
+#if os(macOS)
+func createTempFile(image: NSImage?, filename: String?) -> URL? {
+    let appSupportURL = Settings.shared.tempStorageURL()
+    let fn = filename ?? "diffusion_generated_image"
+    let fileURL = appSupportURL
+        .appendingPathComponent(fn)
+        .appendingPathExtension("png")
+
+    // Save the image as a temporary file
+    if let tiffData = image?.tiffRepresentation,
+       let bitmap = NSBitmapImageRep(data: tiffData),
+       let pngData = bitmap.representation(using: .png, properties: [:]) {
+        do {
+            try pngData.write(to: fileURL)
+            return fileURL
+        } catch {
+            print("Error saving image to temporary file: \(error)")
+        }
+    }
+    return nil
+}
+#else
+func createTempFile(image: UIImage?, filename: String?) -> URL? {
+    guard let image = image else {
+        return nil
+    }
+    let fn = filename ?? "diffusion_generated_image"
+    let appSupportURL = Settings.shared.tempStorageURL()
+
+    let fileURL = appSupportURL
+        .appendingPathComponent(fn)
+        .appendingPathExtension("png")
+    
+    if let imageData = image.pngData() {
+        do {
+            try imageData.write(to: fileURL)
+            return fileURL
+        } catch {
+            print("Error saving image to temporary file: \(error)")
+        }
+    }
+    
+    return nil
+}
+#endif

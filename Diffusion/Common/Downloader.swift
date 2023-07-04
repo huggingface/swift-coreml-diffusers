@@ -37,9 +37,7 @@ class Downloader: NSObject, ObservableObject {
             guard tasks.filter({ $0.originalRequest?.url == url }).isEmpty else {
                 print("Already downloading \(url)")
                 return
-            }
-            print("Starting download of \(url)")
-            
+            }            
             var request = URLRequest(url: url)
             if let authToken = authToken {
                 request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")

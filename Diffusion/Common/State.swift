@@ -6,10 +6,10 @@
 //  See LICENSE at https://github.com/huggingface/swift-coreml-diffusers/LICENSE
 //
 
-import Combine
 import SwiftUI
 import StableDiffusion
 import CoreML
+import Combine
 
 let DEFAULT_MODEL = ModelInfo.v2Base
 let DEFAULT_PROMPT = "Labrador in the style of Vermeer"
@@ -34,8 +34,10 @@ class GenerationContext: ObservableObject {
                     .progressPublisher
                     .receive(on: DispatchQueue.main)
                     .sink { progress in
-                        guard let progress = progress else { return }
-                        self.state = .running(progress)
+                        DispatchQueue.main.async {
+                            guard let progress = progress else { return }
+                            self.state = .running(progress)
+                        }
                     }
             }
         }
@@ -45,27 +47,29 @@ class GenerationContext: ObservableObject {
     @Published var positivePrompt = DEFAULT_PROMPT
     @Published var negativePrompt = ""
     
-    // FIXME: Double to support the slider component
+    // FIXME: Double to support the slider component -- pcuenca
     @Published var steps = 25.0
-    @Published var imageCount = 1.0
-    @Published var seed = -1.0
+    @Published var imageCount: Int = 1
+    @Published var seed: UInt32 = UInt32(0)
     @Published var guidanceScale = 7.5
     @Published var disableSafety = false
-    
     @Published var computeUnits: ComputeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
+    var overrideSeed: UInt32 = 0
 
     private var progressSubscriber: Cancellable?
 
     func generate() async throws -> GenerationResult {
         guard let pipeline = pipeline else { throw "No pipeline" }
-        let seed = self.seed >= 0 ? UInt32(self.seed) : nil
+
+        let seed = self.seed > 0 ? UInt32(self.seed) : nil
+        
         return try pipeline.generate(
             prompt: positivePrompt,
             negativePrompt: negativePrompt,
             scheduler: scheduler,
             numInferenceSteps: Int(steps),
-            imageCount: imageCount,
-            seed: seed,
+            imageCount: 1, // always process one at a time so that we can better control or inspect the seed from the run
+            seed: overrideSeed > 0 ? overrideSeed : (UInt32(seed ?? 0)),
             guidanceScale: Float(guidanceScale),
             disableSafety: disableSafety
         )
@@ -147,21 +151,22 @@ class Settings {
             return fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         }
     }
-
-    // We could use `FileManager.default.temporaryDirectory.appendingPathComponent(filename)`
-    // as demonstrated in `TextToImage.swift` catalyst code
-    // but by controlling our own temp folder we have more control over self cleanup
-    public func tempStorageURL() -> URL {
-        let fileManager = FileManager.default
-        let tmpDirURL = applicationSupportURL().appendingPathComponent("tmp")
-        do {
-            // Create the application support directory if it doesn't exist
-            try fileManager.createDirectory(at: tmpDirURL, withIntermediateDirectories: true, attributes: nil)
-            return tmpDirURL
-        } catch {
-            print("Error creating temp storage directory: \(error)")
-            return fileManager.urls(for: .trashDirectory, in: .userDomainMask).first!
+    
+    func tempStorageURL() -> URL {
+        
+        let tmpDir = applicationSupportURL().appendingPathComponent("hf-diffusion-tmp")
+        
+        // Create directory if it doesn't exist
+        if !FileManager.default.fileExists(atPath: tmpDir.path) {
+            do {
+                try FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("Failed to create temporary directory: \(error)")
+                return FileManager.default.temporaryDirectory
+            }
         }
+        
+        return tmpDir
     }
 
 }

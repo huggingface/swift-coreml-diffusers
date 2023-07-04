@@ -9,7 +9,6 @@
 import Foundation
 import CoreML
 import Combine
-
 import StableDiffusion
 
 typealias StableDiffusionProgress = StableDiffusionPipeline.Progress
@@ -45,22 +44,21 @@ class Pipeline {
         negativePrompt: String = "",
         scheduler: StableDiffusionScheduler,
         numInferenceSteps stepCount: Int = 50,
-        imageCount: Double,
-        seed: UInt32? = nil,
+        imageCount: Int,
+        seed: UInt32 = 0,
         guidanceScale: Float = 7.5,
         disableSafety: Bool = false
     ) throws -> GenerationResult {
         let beginDate = Date()
         canceled = false
-        print("Generating...")
-        let theSeed = seed ?? UInt32.random(in: 0...maxSeed)
+        let theSeed = seed > 1 ? seed : UInt32.random(in: 1...maxSeed)
         let sampleTimer = SampleTimer()
         sampleTimer.start()
         
         var config = StableDiffusionPipeline.Configuration(prompt: prompt)
         config.negativePrompt = negativePrompt
         config.stepCount = stepCount
-        config.imageCount = Int(imageCount)
+        config.imageCount = 1
         config.seed = theSeed
         config.guidanceScale = guidanceScale
         config.disableSafety = disableSafety
@@ -75,7 +73,7 @@ class Pipeline {
             return !canceled
         }
         let interval = Date().timeIntervalSince(beginDate)
-        print("Got images: \(images) in \(interval)")
+        print("Got images: \(images) in \(interval) for seed \(config.seed)")
         
         // Unwrap the images we asked for, nil means safety checker triggered
         return GenerationResult(images: images, lastSeed: theSeed, interval: interval, userCanceled: canceled, itsPerSecond: 1.0/sampleTimer.median)

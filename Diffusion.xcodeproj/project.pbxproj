@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8CD8A53E2A47807F00BD8A98 /* SingleGeneratedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A53D2A47807F00BD8A98 /* SingleGeneratedImageView.swift */; };
+		8CB41EDF2A5313ED006958D3 /* DiffusionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB41EDE2A5313ED006958D3 /* DiffusionImage.swift */; };
+		8CB41EE02A5313ED006958D3 /* DiffusionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB41EDE2A5313ED006958D3 /* DiffusionImage.swift */; };
+		8CB41EE22A53864F006958D3 /* InfoPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB41EE12A53864F006958D3 /* InfoPanel.swift */; };
+		8CD8A53E2A47807F00BD8A98 /* GeneratedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A53D2A47807F00BD8A98 /* GeneratedImageView.swift */; };
 		8CD8A5402A4780CF00BD8A98 /* ImageViewObservableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A53F2A4780CF00BD8A98 /* ImageViewObservableModel.swift */; };
 		8CD8A5412A4780CF00BD8A98 /* ImageViewObservableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A53F2A4780CF00BD8A98 /* ImageViewObservableModel.swift */; };
-		8CD8A5442A47910600BD8A98 /* MultipleGeneratedImagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A5422A47910600BD8A98 /* MultipleGeneratedImagesView.swift */; };
 		EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB067F862992E561004D1AD9 /* HelpContent.swift */; };
 		EB25B3D62A3A2DC4000E25A1 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB25B3D52A3A2DC4000E25A1 /* StableDiffusion */; };
 		EB25B3D82A3A2DD5000E25A1 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB25B3D72A3A2DD5000E25A1 /* StableDiffusion */; };
@@ -27,7 +29,7 @@
 		EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5929426E06003A2A5B /* Downloader.swift */; };
 		EBDD7DB82976AAFE00C1C4B2 /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DB72976AAFE00C1C4B2 /* State.swift */; };
 		EBDD7DB92976AAFE00C1C4B2 /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DB72976AAFE00C1C4B2 /* State.swift */; };
-		EBDD7DBD2977FFB300C1C4B2 /* GeneratedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DBB2977FFB300C1C4B2 /* GeneratedImageView.swift */; };
+		EBDD7DBD2977FFB300C1C4B2 /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBDD7DBB2977FFB300C1C4B2 /* GalleryView.swift */; };
 		EBDD7DC02978642200C1C4B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EBE755CC293E37DD00806B32 /* Assets.xcassets */; };
 		EBE3FF4C295E1EFE00E921AA /* ModelInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */; };
 		EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE755C8293E37DD00806B32 /* DiffusionApp.swift */; };
@@ -65,9 +67,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8CD8A53D2A47807F00BD8A98 /* SingleGeneratedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleGeneratedImageView.swift; sourceTree = "<group>"; };
+		8CB41EDE2A5313ED006958D3 /* DiffusionImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiffusionImage.swift; sourceTree = "<group>"; };
+		8CB41EE12A53864F006958D3 /* InfoPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoPanel.swift; sourceTree = "<group>"; };
+		8CD8A53D2A47807F00BD8A98 /* GeneratedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedImageView.swift; sourceTree = "<group>"; };
 		8CD8A53F2A4780CF00BD8A98 /* ImageViewObservableModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewObservableModel.swift; sourceTree = "<group>"; };
-		8CD8A5422A47910600BD8A98 /* MultipleGeneratedImagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleGeneratedImagesView.swift; sourceTree = "<group>"; };
 		EB067F862992E561004D1AD9 /* HelpContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpContent.swift; sourceTree = "<group>"; };
 		EB33A51E2954E1BC00B16357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EB560F0329A3C20800C0F8B8 /* Capabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capabilities.swift; sourceTree = "<group>"; };
@@ -77,7 +80,7 @@
 		EBDD7DB22973200200C1C4B2 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		EBDD7DB72976AAFE00C1C4B2 /* State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
 		EBDD7DBA2976F03600C1C4B2 /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
-		EBDD7DBB2977FFB300C1C4B2 /* GeneratedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedImageView.swift; sourceTree = "<group>"; };
+		EBDD7DBB2977FFB300C1C4B2 /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
 		EBE3FF4A295DFE2400E921AA /* common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = config/common.xcconfig; sourceTree = "<group>"; };
 		EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelInfo.swift; sourceTree = "<group>"; };
 		EBE4438729488DCA00CDA605 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -149,6 +152,7 @@
 				EBDD7DB72976AAFE00C1C4B2 /* State.swift */,
 				EBDD7DB22973200200C1C4B2 /* Utils.swift */,
 				8CD8A53F2A4780CF00BD8A98 /* ImageViewObservableModel.swift */,
+				8CB41EDE2A5313ED006958D3 /* DiffusionImage.swift */,
 				EBB5BA5129425B07003A2A5B /* Pipeline */,
 			);
 			name = Common;
@@ -260,9 +264,9 @@
 				EB560F0529A4090D00C0F8B8 /* Info.plist */,
 				F15520232971093300DC009B /* Diffusion_macOSApp.swift */,
 				F15520252971093300DC009B /* ContentView.swift */,
-				EBDD7DBB2977FFB300C1C4B2 /* GeneratedImageView.swift */,
-				8CD8A53D2A47807F00BD8A98 /* SingleGeneratedImageView.swift */,
-				8CD8A5422A47910600BD8A98 /* MultipleGeneratedImagesView.swift */,
+				EBDD7DBB2977FFB300C1C4B2 /* GalleryView.swift */,
+				8CD8A53D2A47807F00BD8A98 /* GeneratedImageView.swift */,
+				8CB41EE12A53864F006958D3 /* InfoPanel.swift */,
 				F1552030297109C300DC009B /* ControlsView.swift */,
 				F155203329710B3600DC009B /* StatusView.swift */,
 				EB067F862992E561004D1AD9 /* HelpContent.swift */,
@@ -480,6 +484,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBE75602293E91E200806B32 /* Pipeline.swift in Sources */,
+				8CB41EDF2A5313ED006958D3 /* DiffusionImage.swift in Sources */,
 				EBE755CB293E37DD00806B32 /* TextToImage.swift in Sources */,
 				EBB5BA5A29426E06003A2A5B /* Downloader.swift in Sources */,
 				EBE3FF4C295E1EFE00E921AA /* ModelInfo.swift in Sources */,
@@ -518,17 +523,18 @@
 				F15520262971093300DC009B /* ContentView.swift in Sources */,
 				EBDD7DB92976AAFE00C1C4B2 /* State.swift in Sources */,
 				EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */,
+				8CB41EE22A53864F006958D3 /* InfoPanel.swift in Sources */,
 				EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */,
 				F1552031297109C300DC009B /* ControlsView.swift in Sources */,
 				EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */,
-				8CD8A5442A47910600BD8A98 /* MultipleGeneratedImagesView.swift in Sources */,
 				F155203429710B3600DC009B /* StatusView.swift in Sources */,
+				8CB41EE02A5313ED006958D3 /* DiffusionImage.swift in Sources */,
 				EB560F0429A3C20800C0F8B8 /* Capabilities.swift in Sources */,
 				F15520242971093300DC009B /* Diffusion_macOSApp.swift in Sources */,
 				EBDD7DB52973201800C1C4B2 /* ModelInfo.swift in Sources */,
 				8CD8A5412A4780CF00BD8A98 /* ImageViewObservableModel.swift in Sources */,
-				8CD8A53E2A47807F00BD8A98 /* SingleGeneratedImageView.swift in Sources */,
-				EBDD7DBD2977FFB300C1C4B2 /* GeneratedImageView.swift in Sources */,
+				8CD8A53E2A47807F00BD8A98 /* GeneratedImageView.swift in Sources */,
+				EBDD7DBD2977FFB300C1C4B2 /* GalleryView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -675,10 +681,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Diffusion/Preview Content\"";
+				DEVELOPMENT_TEAM = 9CPA8P59Z6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Diffusion/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Diffusers;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "To be able to save generated images to your Photo Library, you’ll need to allow this.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -718,6 +727,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Diffusion/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Diffusers;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "To be able to save generated images to your Photo Library, you’ll need to allow this.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -841,10 +852,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = "Diffusion-macOS/Diffusion_macOS.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Diffusion-macOS/Preview Content\"";
-				DEVELOPMENT_TEAM = 2EADP68M95;
+				DEVELOPMENT_TEAM = 9CPA8P59Z6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Diffusion-macOS/Info.plist";
@@ -869,10 +881,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = "Diffusion-macOS/Diffusion_macOS.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Diffusion-macOS/Preview Content\"";
-				DEVELOPMENT_TEAM = 2EADP68M95;
+				DEVELOPMENT_TEAM = 9CPA8P59Z6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Diffusion-macOS/Info.plist";
