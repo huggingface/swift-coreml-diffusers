@@ -87,10 +87,10 @@ struct StatusView: View {
                 let intervalString = String(format: "Time: %.1fs", interval ?? 0)
                 Text(intervalString)
                 Spacer()
-                if generation.seed != Double(lastSeed) {
+                if generation.seed != UInt32(lastSeed) {
                     Text("Seed: \(lastSeed)")
                     Button("Set") {
-                        generation.seed = Double(lastSeed)
+                        generation.seed = UInt32(lastSeed)
                     }
                 }
             }.frame(maxHeight: 25)

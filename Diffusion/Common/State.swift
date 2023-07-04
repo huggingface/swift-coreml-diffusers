@@ -17,6 +17,7 @@ let DEFAULT_PROMPT = "Labrador in the style of Vermeer"
 enum GenerationState {
     case startup
     case running(StableDiffusionProgress?)
+    //complete(positivePrompt, optional generated image, seed used to create it, how long it took to generate)
     case complete(String, CGImage?, UInt32, TimeInterval?)
     case userCanceled
     case failed(Error)
@@ -48,7 +49,7 @@ class GenerationContext: ObservableObject {
     // FIXME: Double to support the slider component
     @Published var steps = 25.0
     @Published var numImages = 1.0
-    @Published var seed = -1.0
+    @Published var seed = UInt32(0)
     @Published var guidanceScale = 7.5
     @Published var disableSafety = false
     
@@ -58,13 +59,13 @@ class GenerationContext: ObservableObject {
 
     func generate() async throws -> GenerationResult {
         guard let pipeline = pipeline else { throw "No pipeline" }
-        let seed = self.seed >= 0 ? UInt32(self.seed) : nil
+        let seed = self.seed > 0 ? UInt32(self.seed) : nil
         return try pipeline.generate(
             prompt: positivePrompt,
             negativePrompt: negativePrompt,
             scheduler: scheduler,
             numInferenceSteps: Int(steps),
-            seed: seed,
+            seed: UInt32(seed ?? 0),
             guidanceScale: Float(guidanceScale),
             disableSafety: disableSafety
         )

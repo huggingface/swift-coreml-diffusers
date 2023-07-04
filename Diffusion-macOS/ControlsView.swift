@@ -74,8 +74,8 @@ struct ControlsView: View {
     @State private var showSeedHelp = false
     @State private var showAdvancedHelp = false
 
-    // Reasonable range for the slider
-    let maxSeed: UInt32 = 1000
+    let maxSeed: UInt32 = UInt32.max
+    private var textFieldLabelSeed: String { generation.seed < 1 ? "Random Seed" : "Seed" }
 
     func updateSafetyCheckerState() {
         mustShowSafetyCheckerDisclaimer = generation.disableSafety && !Settings.shared.safetyCheckerDisclaimerShown
@@ -279,15 +279,10 @@ struct ControlsView: View {
                     }
                                         
                     DisclosureGroup(isExpanded: $disclosedSeed) {
-                        let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
-                        CompactSlider(value: $generation.seed, in: -1...Double(maxSeed), step: 1) {
-                            Text(sliderLabel)
-                            Spacer()
-                            Text("\(Int(generation.seed))")
-                        }.padding(.leading, 10)
+                        discloseSeedContent()
                     } label: {
                         HStack {
-                            Label("Seed", systemImage: "leaf").foregroundColor(.secondary)
+                            Label(textFieldLabelSeed, systemImage: "leaf").foregroundColor(.secondary)
                             Spacer()
                             if disclosedSeed {
                                 Button {
@@ -302,7 +297,8 @@ struct ControlsView: View {
                             } else {
                                 Text("\(Int(generation.seed))")
                             }
-                        }.foregroundColor(.secondary)
+                        }
+                        .foregroundColor(.secondary)
                     }
                     
                     if Capabilities.hasANE {
@@ -387,4 +383,39 @@ struct ControlsView: View {
             modelDidChange(model: ModelInfo.from(modelVersion: model) ?? ModelInfo.v2Base)
         }
     }
+    
+    fileprivate func discloseSeedContent() -> some View {
+        let seedBinding = Binding<String>(
+            get: {
+                generation.seed < 1 ? "" : String(generation.seed)
+            },
+            set: { newValue in
+                if let seed = UInt32(newValue) {
+                    generation.seed = seed
+                } else {
+                    generation.seed = 0
+                }
+            }
+        )
+        
+        return HStack {
+            TextField("", text: seedBinding)
+                .multilineTextAlignment(.trailing)
+                .onChange(of: seedBinding.wrappedValue, perform: { newValue in
+                    if let seed = UInt32(newValue) {
+                        generation.seed = seed
+                    } else {
+                        generation.seed = 0
+                    }
+                })
+                .onReceive(Just(seedBinding.wrappedValue)) { newValue in
+                    let filtered = newValue.filter { "0123456789".contains($0) }
+                    if filtered != newValue {
+                        seedBinding.wrappedValue = filtered
+                    }
+                }
+            Stepper("", value: $generation.seed, in: 0...UInt32.max)
+        }
+    }
+
 }

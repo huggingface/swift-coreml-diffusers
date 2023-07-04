@@ -119,7 +119,7 @@ func seedHelp(_ showing: Binding<Bool>) -> some View {
          Next, maybe add a negative prompt or tweak the prompt slightly, and see how the result changes. \
          Rinse and repeat until you are satisfied, or select a new seed to start over.
 
-         If you select -1, a random seed will be chosen for you.
+         Set the value to 0 for a random seed to be chosen for you.
          """
     return helpContent(title: "Generation Seed", description: description, showing: showing)
 }
