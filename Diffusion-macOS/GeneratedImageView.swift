@@ -92,7 +92,7 @@ struct GeneratedImageView: View {
                                     let pb = NSPasteboard.general
                                     let img = NSImage(cgImage: cgImage, size: CGSize(width: cgImage.width, height: cgImage.height))
                                     let filename = generation.positivePrompt.first200Safe + "\(generation.seed)"
-                                    if let fileURL = createTempFile(image: img, filename: filename) {
+                                    if let fileURL = diffusionImageWrapper.diffusionImage?.save(image: img, filename: filename) {
                                         do {
                                             let resourceValues = try fileURL.resourceValues(forKeys: [.contentTypeKey])
                                             if let contentType = resourceValues.contentType {

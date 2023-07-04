@@ -34,7 +34,7 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSItemProviderRead
     // Note: we do not capture the chosen Scheduler as it's a Swift enum and cannot confirm to NSSecureEncoding for Drag operations.
     let id: UUID
     let cgImage: CGImage
-    let seed: Int32
+    let seed: UInt32
     let steps: Double
     let positivePrompt: String
     let negativePrompt: String
@@ -47,7 +47,7 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSItemProviderRead
     
     var fileURL: URL
     
-    init(id: UUID, cgImage: CGImage, seed: Int32, steps: Double, positivePrompt: String, negativePrompt: String, guidanceScale: Double, disableSafety: Bool) {
+    init(id: UUID, cgImage: CGImage, seed: UInt32, steps: Double, positivePrompt: String, negativePrompt: String, guidanceScale: Double, disableSafety: Bool) {
         let genname = "\(seed)-\(positivePrompt)".first200Safe
         self.id = id
         self.cgImage = cgImage
@@ -58,22 +58,22 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSItemProviderRead
         self.guidanceScale = guidanceScale
         self.disableSafety = disableSafety
 #if os(macOS)
-        if let url = createTempFile(image: NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height)), filename: genname) {
+        self.fileURL = URL.applicationDirectory
+        super.init()
+        if let url = save(image: NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height)), filename: genname) {
             self.fileURL = url
         } else {
             fatalError("Fatal error init of DiffusionImage, cannot create image file at \(genname)")
         }
 #else
-        if let url = createTempFile(image: UIImage(cgImage: cgImage), filename: genname) {
+        self.fileURL = URL.applicationDirectory
+        super.init()
+        if let url = save(image: UIImage(cgImage: cgImage), filename: genname) {
             self.fileURL = url
         } else {
             fatalError("Fatal error init of DiffusionImage, cannot create image file at \(genname)")
         }
 #endif
-
-
-        
-        super.init()
     }
     
     func encode(with coder: NSCoder) {
@@ -101,7 +101,7 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSItemProviderRead
         }
         
         self.id = id
-        self.seed = coder.decodeInt32(forKey: "seed")
+        self.seed = UInt32(coder.decodeInt32(forKey: "seed"))
         self.steps = coder.decodeDouble(forKey: "steps")
         self.positivePrompt = coder.decodeObject(forKey: "positivePrompt") as? String ?? ""
         self.negativePrompt = coder.decodeObject(forKey: "negativePrompt") as? String ?? ""
@@ -120,7 +120,9 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSItemProviderRead
         } else {
             fatalError("Fatal error loading data with missing cgImage in object")
         }
-        if let url = createTempFile(image: NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height)), filename: genname) {
+        self.fileURL = URL.applicationDirectory
+        super.init()
+        if let url = save(image: NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height)), filename: genname) {
             self.fileURL = url
         } else {
             fatalError("Fatal error init of DiffusionImage, cannot create temp file at \(genname)")
@@ -140,14 +142,15 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSItemProviderRead
        } else {
            fatalError("Fatal error loading data with missing imageData in object")
        }
-        if let url = createTempFile(image: UIImage(cgImage: cgImage), filename: genname) {
+        self.fileURL = URL.applicationDirectory
+        super.init()
+        if let url = save(image: UIImage(cgImage: cgImage), filename: genname) {
             self.fileURL = url
         } else {
             fatalError("Fatal error init of DiffusionImage, cannot create temp file at \(genname)")
         }
 #endif
 
-        super.init()
     }
     
     static func == (lhs: DiffusionImage, rhs: DiffusionImage) -> Bool {
@@ -201,6 +204,52 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSItemProviderRead
     static var supportsSecureCoding: Bool {
         return true
     }
+
+#if os(macOS)
+func save(image: NSImage?, filename: String?) -> URL? {
+    let appSupportURL = Settings.shared.tempStorageURL()
+    let fn = filename ?? "diffusion_generated_image"
+    let fileURL = appSupportURL
+        .appendingPathComponent(fn)
+        .appendingPathExtension("png")
+
+    // Save the image as a temporary file
+    if let tiffData = image?.tiffRepresentation,
+       let bitmap = NSBitmapImageRep(data: tiffData),
+       let pngData = bitmap.representation(using: .png, properties: [:]) {
+        do {
+            try pngData.write(to: fileURL)
+            return fileURL
+        } catch {
+            print("Error saving image to temporary file: \(error)")
+        }
+    }
+    return nil
+}
+#else
+func save(image: UIImage?, filename: String?) -> URL? {
+    guard let image = image else {
+        return nil
+    }
+    let fn = filename ?? "diffusion_generated_image"
+    let appSupportURL = Settings.shared.tempStorageURL()
+
+    let fileURL = appSupportURL
+        .appendingPathComponent(fn)
+        .appendingPathExtension("png")
+    
+    if let imageData = image.pngData() {
+        do {
+            try imageData.write(to: fileURL)
+            return fileURL
+        } catch {
+            print("Error saving image to temporary file: \(error)")
+        }
+    }
+    
+    return nil
+}
+#endif
 
 }
 

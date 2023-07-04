@@ -42,7 +42,7 @@ class ImageViewObservableModel: ObservableObject {
     
     @MainActor
     fileprivate func makeDiffusionImage(_ generation: GenerationContext, _ img: CGImage, _ result: GenerationResult, _ state: DiffusionImageState) -> DiffusionImage {
-        return DiffusionImage(id: UUID(), cgImage: img, seed: Int32(result.lastSeed), steps: generation.steps, positivePrompt: generation.positivePrompt, negativePrompt: generation.negativePrompt, guidanceScale: generation.guidanceScale, disableSafety: generation.disableSafety)
+        return DiffusionImage(id: UUID(), cgImage: img, seed: UInt32(result.lastSeed), steps: generation.steps, positivePrompt: generation.positivePrompt, negativePrompt: generation.negativePrompt, guidanceScale: generation.guidanceScale, disableSafety: generation.disableSafety)
     }
     
     // Function to update the diffusion image state
@@ -142,7 +142,7 @@ class ImageViewObservableModel: ObservableObject {
                 } else {
                     if result.images != [nil] {
                         if let img = result.images.first! {
-                            currentBuildImages[index].diffusionImage = DiffusionImage(id: UUID(), cgImage: img, seed: Int32(result.lastSeed), steps: generation.steps, positivePrompt: generation.positivePrompt, negativePrompt: generation.negativePrompt, guidanceScale: generation.guidanceScale, disableSafety: generation.disableSafety)
+                            currentBuildImages[index].diffusionImage = DiffusionImage(id: UUID(), cgImage: img, seed: UInt32(result.lastSeed), steps: generation.steps, positivePrompt: generation.positivePrompt, negativePrompt: generation.negativePrompt, guidanceScale: generation.guidanceScale, disableSafety: generation.disableSafety)
                             currentBuildImages[index].diffusionImageState = .complete
                             generation.state = .complete(generation.positivePrompt, [img], result.lastSeed, result.interval)
                             successfulImageGenerated = true
@@ -164,49 +164,3 @@ class ImageViewObservableModel: ObservableObject {
         }
     }
 }
-
-#if os(macOS)
-func createTempFile(image: NSImage?, filename: String?) -> URL? {
-    let appSupportURL = Settings.shared.tempStorageURL()
-    let fn = filename ?? "diffusion_generated_image"
-    let fileURL = appSupportURL
-        .appendingPathComponent(fn)
-        .appendingPathExtension("png")
-
-    // Save the image as a temporary file
-    if let tiffData = image?.tiffRepresentation,
-       let bitmap = NSBitmapImageRep(data: tiffData),
-       let pngData = bitmap.representation(using: .png, properties: [:]) {
-        do {
-            try pngData.write(to: fileURL)
-            return fileURL
-        } catch {
-            print("Error saving image to temporary file: \(error)")
-        }
-    }
-    return nil
-}
-#else
-func createTempFile(image: UIImage?, filename: String?) -> URL? {
-    guard let image = image else {
-        return nil
-    }
-    let fn = filename ?? "diffusion_generated_image"
-    let appSupportURL = Settings.shared.tempStorageURL()
-
-    let fileURL = appSupportURL
-        .appendingPathComponent(fn)
-        .appendingPathExtension("png")
-    
-    if let imageData = image.pngData() {
-        do {
-            try imageData.write(to: fileURL)
-            return fileURL
-        } catch {
-            print("Error saving image to temporary file: \(error)")
-        }
-    }
-    
-    return nil
-}
-#endif
