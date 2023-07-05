@@ -80,33 +80,12 @@ struct GeneratedImageView: View {
                             .aspectRatio(1, contentMode: .fit)
                             .clipShape(RoundedRectangle(cornerRadius: 15))
                             .onDrag {
-                                if let diffusionImage = imageViewModel.currentBuildImages[diffusionImageIndex].diffusionImage {
-                                    let provider = NSItemProvider(object: diffusionImage.fileURL as NSURL)
-                                    provider.copy()
-                                    return provider
-                                }
-                                return NSItemProvider()
+                                return doOnDrag()
                             }
                             .contextMenu {
                                 Button {
-                                    let pb = NSPasteboard.general
-                                    let img = NSImage(cgImage: cgImage, size: CGSize(width: cgImage.width, height: cgImage.height))
-                                    let filename = generation.positivePrompt.first200Safe + "\(generation.seed)"
-                                    if let fileURL = diffusionImageWrapper.diffusionImage?.save(image: img, filename: filename) {
-                                        do {
-                                            let resourceValues = try fileURL.resourceValues(forKeys: [.contentTypeKey])
-                                            if let contentType = resourceValues.contentType {
-                                                let pasteboardType = NSPasteboard.PasteboardType(contentType.identifier)
-                                                pb.declareTypes([pasteboardType], owner: nil)
-                                                pb.writeObjects([fileURL as NSURL])
-                                            }
-                                        } catch {
-                                            print("cannot copy to pasteboard")
-                                            return
-                                        }
-                                    } else {
-                                        print("cannot create temp file to drag image out of app.")
-                                    }
+                                    // Action: copy the DiffusionImage to the pasteboard
+                                    doCopyAction()
                                 } label: {
                                     Label("Copy", systemImage: "square.and.arrow.down")
                                 }
@@ -149,9 +128,9 @@ struct GeneratedImageView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 15))
                         
                     }
-                    .sheet(isPresented: $isShowingInfo) {
-                        InfoPanel(isShowingInfo: $isShowingInfo, diffusionImage: imageViewModel.currentBuildImages[diffusionImageIndex].diffusionImage)
-                    })
+                        .sheet(isPresented: $isShowingInfo) {
+                            InfoPanel(isShowingInfo: $isShowingInfo, diffusionImage: imageViewModel.currentBuildImages[diffusionImageIndex].diffusionImage)
+                        })
             }
             
             // catch fallover conditions when diffusionImage is not equal to .generating, .waiting or .complete
@@ -169,6 +148,29 @@ struct GeneratedImageView: View {
                 .aspectRatio(1, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: 15))
         )
+    }
+    
+    func doCopyAction() {
+        if let diffusionImage = imageViewModel.currentBuildImages[diffusionImageIndex].diffusionImage {
+            let pb = NSPasteboard.general
+            pb.clearContents()
+            
+            // Create an array of NSPasteboardWriting objects
+            var items: [NSPasteboardWriting] = []
+            
+            // Add the DiffusionImage object itself
+            items.append(diffusionImage)
+            pb.writeObjects(items)
+        }
+    }
+    
+    func doOnDrag() -> NSItemProvider {
+        if let diffusionImage = imageViewModel.currentBuildImages[diffusionImageIndex].diffusionImage {
+            let provider = NSItemProvider(object: diffusionImage)
+            provider.copy()
+            return provider
+        }
+        return NSItemProvider()
     }
     
 }
