@@ -253,7 +253,7 @@ struct ControlsView: View {
                     }
 
                     DisclosureGroup(isExpanded: $disclosedSteps) {
-                        CompactSlider(value: $generation.steps, in: 0...150, step: 5) {
+                        CompactSlider(value: $generation.steps, in: 1...150, step: 1) {
                             Text("Steps")
                             Spacer()
                             Text("\(Int(generation.steps))")

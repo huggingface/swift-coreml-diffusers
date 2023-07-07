@@ -15,21 +15,38 @@ struct GeneratedImageView: View {
         switch generation.state {
         case .startup: return AnyView(Image("placeholder").resizable())
         case .running(let progress):
-            guard let progress = progress, progress.stepCount > 0 else {
+            guard let progress = progress, progress.stepCount > 0, progress.currentImages.count > 0 else {
                 // The first time it takes a little bit before generation starts
                 return AnyView(ProgressView())
+            }
+            guard let theImage = progress.currentImages.first, let safeImage = theImage else {
+                return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
             }
             let step = Int(progress.step) + 1
             let fraction = Double(step) / Double(progress.stepCount)
             let label = "Step \(step) of \(progress.stepCount)"
-            return AnyView(HStack {
-                ProgressView(label, value: fraction, total: 1).padding()
-                Button {
-                    generation.cancelGeneration()
-                } label: {
-                    Image(systemName: "x.circle.fill").foregroundColor(.gray)
+            return AnyView(VStack {
+                Image(safeImage, scale: 1, label: Text("generated"))
+                    .resizable()
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .contextMenu {
+                        Button {
+                            NSPasteboard.general.clearContents()
+                            let nsimage = NSImage(cgImage: safeImage, size: NSSize(width: safeImage.width, height: safeImage.height))
+                            NSPasteboard.general.writeObjects([nsimage])
+                        } label: {
+                            Text("Copy Photo")
+                        }
+                    }
+                HStack {
+                    ProgressView(label, value: fraction, total: 1).padding()
+                    Button {
+                        generation.cancelGeneration()
+                    } label: {
+                        Image(systemName: "x.circle.fill").foregroundColor(.gray)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             })
         case .complete(_, let image, _, _):
             guard let theImage = image else {
