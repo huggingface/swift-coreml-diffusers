@@ -13,6 +13,8 @@
 		8CD8A53E2A47807F00BD8A98 /* GeneratedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A53D2A47807F00BD8A98 /* GeneratedImageView.swift */; };
 		8CD8A5402A4780CF00BD8A98 /* ImageViewObservableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A53F2A4780CF00BD8A98 /* ImageViewObservableModel.swift */; };
 		8CD8A5412A4780CF00BD8A98 /* ImageViewObservableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A53F2A4780CF00BD8A98 /* ImageViewObservableModel.swift */; };
+		8CD8A53A2A456EF800BD8A98 /* PromptTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */; };
+		8CD8A53C2A476E2C00BD8A98 /* PromptTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */; };
 		EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB067F862992E561004D1AD9 /* HelpContent.swift */; };
 		EB25B3D62A3A2DC4000E25A1 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB25B3D52A3A2DC4000E25A1 /* StableDiffusion */; };
 		EB25B3D82A3A2DD5000E25A1 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB25B3D72A3A2DD5000E25A1 /* StableDiffusion */; };
@@ -71,6 +73,7 @@
 		8CB41EE12A53864F006958D3 /* InfoPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoPanel.swift; sourceTree = "<group>"; };
 		8CD8A53D2A47807F00BD8A98 /* GeneratedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedImageView.swift; sourceTree = "<group>"; };
 		8CD8A53F2A4780CF00BD8A98 /* ImageViewObservableModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewObservableModel.swift; sourceTree = "<group>"; };
+		8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromptTextField.swift; sourceTree = "<group>"; };
 		EB067F862992E561004D1AD9 /* HelpContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpContent.swift; sourceTree = "<group>"; };
 		EB33A51E2954E1BC00B16357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EB560F0329A3C20800C0F8B8 /* Capabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capabilities.swift; sourceTree = "<group>"; };
@@ -144,6 +147,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8CD8A53B2A476E1C00BD8A98 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		8CF53E022A44AE0400E6358B /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -154,6 +165,7 @@
 				8CD8A53F2A4780CF00BD8A98 /* ImageViewObservableModel.swift */,
 				8CB41EDE2A5313ED006958D3 /* DiffusionImage.swift */,
 				EBB5BA5129425B07003A2A5B /* Pipeline */,
+				8CD8A53B2A476E1C00BD8A98 /* Views */,
 			);
 			name = Common;
 			path = Diffusion/Common;
@@ -492,6 +504,7 @@
 				EBDD7DB82976AAFE00C1C4B2 /* State.swift in Sources */,
 				EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */,
 				8CD8A5402A4780CF00BD8A98 /* ImageViewObservableModel.swift in Sources */,
+				8CD8A53C2A476E2C00BD8A98 /* PromptTextField.swift in Sources */,
 				EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */,
 				EBDD7DB32973200200C1C4B2 /* Utils.swift in Sources */,
 			);
@@ -525,6 +538,7 @@
 				EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */,
 				8CB41EE22A53864F006958D3 /* InfoPanel.swift in Sources */,
 				EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */,
+				8CD8A53A2A456EF800BD8A98 /* PromptTextField.swift in Sources */,
 				F1552031297109C300DC009B /* ControlsView.swift in Sources */,
 				EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */,
 				F155203429710B3600DC009B /* StatusView.swift in Sources */,

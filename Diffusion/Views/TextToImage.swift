@@ -119,11 +119,7 @@ struct TextToImage: View {
     var body: some View {
         VStack {
             HStack {
-                TextField("Prompt", text: $generation.positivePrompt)
-                    .textFieldStyle(.roundedBorder)
-                    .onSubmit {
-                        submit()
-                    }
+                PromptTextField(text: $generation.positivePrompt, isPositivePrompt: true, model: deviceSupportsQuantization ? ModelInfo.v21Palettized.modelVersion : ModelInfo.v21Base.modelVersion)
                 Button("Generate") {
                     submit()
                 }
