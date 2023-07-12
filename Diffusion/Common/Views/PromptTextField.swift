@@ -123,6 +123,9 @@ struct PromptTextField: View {
         .onChange(of: model) { model in
             updateTokenCount(newText: textBinding)
         }
+        .onAppear {
+            updateTokenCount(newText: textBinding)
+        }
     }
 
     private func updateTokenCount(newText: String) {
