@@ -32,7 +32,7 @@ struct DiffusionImageWrapper {
 /// Model to capture generated image data
 final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
     
-    // Note: we do not capture the chosen Scheduler as it's a Swift enum and cannot confirm to NSSecureEncoding for Drag operations.
+    // Note: we do not capture the chosen Scheduler as it's a Swift enum and cannot conform to NSSecureCoding for Drag operations.
     let id: UUID
     let cgImage: CGImage
     let seed: UInt32
