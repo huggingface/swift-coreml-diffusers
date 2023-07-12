@@ -28,7 +28,8 @@ struct DiffusionImageWrapper {
     var diffusionImageState: DiffusionImageState = .waiting
     var diffusionImage: DiffusionImage? = nil
 }
-// Model to capture generated image data
+
+/// Model to capture generated image data
 final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
     
     // Note: we do not capture the chosen Scheduler as it's a Swift enum and cannot confirm to NSSecureEncoding for Drag operations.
