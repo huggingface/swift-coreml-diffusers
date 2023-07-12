@@ -69,7 +69,7 @@ struct PromptTextField: View {
         _model = model
     }
     
-    //iOS initializer
+    // iOS initializer
     init(text: Binding<String>, isPositivePrompt: Bool, model: String) {
         _textBinding = text
         self.isPositivePrompt = isPositivePrompt
