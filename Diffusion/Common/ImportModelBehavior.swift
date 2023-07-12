@@ -85,8 +85,8 @@ struct ImportModelBehavior: ViewModifier {
             }
             .alert(isPresented: $isBadSelectionAlertShown) {
                 Alert(
-                    title: Text("Not a model"),
-                    message: Text("The selected folder does not appear to be a model. Please select an extracted model folder or a zip compressed model file."),
+                    title: Text("Invalid model"),
+                    message: Text("The selected folder does not appear to contain a Core ML Stable Diffusion model. Please, select an extracted model folder or a zip compressed model file."),
                     dismissButton: .default(Text("OK"))
                 )
             }
