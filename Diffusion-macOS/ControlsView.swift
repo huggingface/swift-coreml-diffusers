@@ -288,6 +288,7 @@ struct ControlsView: View {
                                         
                     DisclosureGroup(isExpanded: $disclosedSeed) {
                         discloseSeedContent()
+                            .padding(.leading, 10)
                     } label: {
                         HStack {
                             Label(textFieldLabelSeed, systemImage: "leaf").foregroundColor(.secondary)
