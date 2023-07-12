@@ -129,13 +129,10 @@ class Settings {
 
     public func applicationSupportURL() -> URL {
         let fileManager = FileManager.default
-        guard let appSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+        guard let appDirectoryURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
             // To ensure we don't return an optional - if the user domain application support cannot be accessed use the top level application support directory
             return URL.applicationSupportDirectory
         }
-
-        let appBundleIdentifier = Bundle.main.bundleIdentifier ?? ""
-        let appDirectoryURL = appSupportURL.appendingPathComponent(appBundleIdentifier)
 
         do {
             // Create the application support directory if it doesn't exist
