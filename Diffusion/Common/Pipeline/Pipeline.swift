@@ -51,7 +51,7 @@ class Pipeline {
     ) throws -> GenerationResult {
         let beginDate = Date()
         canceled = false
-        print("Generating...")
+
         let theSeed = seed ?? UInt32.random(in: 0...maxSeed)
         let sampleTimer = SampleTimer()
         sampleTimer.start()

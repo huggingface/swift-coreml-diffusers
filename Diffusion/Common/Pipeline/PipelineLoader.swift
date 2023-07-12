@@ -14,7 +14,7 @@ import ZIPFoundation
 import StableDiffusion
 
 class PipelineLoader {
-    static let models = URL.applicationSupportDirectory.appendingPathComponent("hf-diffusion-models")
+    static let models = Settings.shared.applicationSupportURL().appendingPathComponent("hf-diffusion-models")
     let model: ModelInfo
     let computeUnits: ComputeUnits
     let maxSeed: UInt32
