@@ -73,6 +73,8 @@ struct ControlsView: View {
     @State private var showStepsHelp = false
     @State private var showSeedHelp = false
     @State private var showAdvancedHelp = false
+    @State private var positiveTokenCount: Int = 0
+    @State private var negativeTokenCount: Int = 0
 
     // Reasonable range for the slider
     let maxSeed: UInt32 = 1000
@@ -89,7 +91,7 @@ struct ControlsView: View {
     func resetComputeUnitsState() {
         generation.computeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
     }
-    
+
     func modelDidChange(model: ModelInfo) {
         guard pipelineLoader?.model != model || pipelineLoader?.computeUnits != generation.computeUnits else {
             print("Reusing same model \(model) with units \(generation.computeUnits)")
@@ -147,6 +149,19 @@ struct ControlsView: View {
         return selectedURL.path
     }
     
+    private func prompts() -> some View {
+        VStack {
+            Spacer()
+            PromptTextField(text: $generation.positivePrompt, isPositivePrompt: true, model: $model)
+                .padding(.top, 5)
+            Spacer()
+            PromptTextField(text: $generation.negativePrompt, isPositivePrompt: false, model: $model)
+                .padding(.bottom, 5)
+            Spacer()
+        }
+        .frame(maxHeight: .infinity)
+    }
+    
     var body: some View {
         VStack(alignment: .leading) {
             
@@ -196,13 +211,7 @@ struct ControlsView: View {
                     
                     DisclosureGroup(isExpanded: $disclosedPrompt) {
                         Group {
-                            TextField("Positive prompt", text: $generation.positivePrompt,
-                                      axis: .vertical).lineLimit(5)
-                                .textFieldStyle(.squareBorder)
-                                .listRowInsets(EdgeInsets(top: 0, leading: -20, bottom: 0, trailing: 20))
-                            TextField("Negative prompt", text: $generation.negativePrompt,
-                                      axis: .vertical).lineLimit(5)
-                                .textFieldStyle(.squareBorder)
+                            prompts()
                         }.padding(.leading, 10)
                     } label: {
                         HStack {
@@ -388,3 +397,4 @@ struct ControlsView: View {
         }
     }
 }
+
