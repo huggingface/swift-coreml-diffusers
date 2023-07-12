@@ -86,7 +86,7 @@ struct PromptTextField: View {
                 .listRowInsets(EdgeInsets(top: 0, leading: -20, bottom: 0, trailing: 20))
                 .foregroundColor(textColor == .green ? .primary : textColor)
                 .frame(minHeight: 30)
-            if (modelInfo != nil && tokenizer != nil) {
+            if modelInfo != nil && tokenizer != nil {
                 HStack {
                     Spacer()
                     if !textBinding.isEmpty {
