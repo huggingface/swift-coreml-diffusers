@@ -62,16 +62,18 @@ struct ImageWithPlaceholder: View {
                 // The first time it takes a little bit before generation starts
                 return AnyView(ProgressView())
             }
-            guard let theImage = progress.currentImages.first, let safeImage = theImage else {
-                return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
-            }
+
             let step = Int(progress.step) + 1
             let fraction = Double(step) / Double(progress.stepCount)
             let label = "Step \(step) of \(progress.stepCount)"
             return AnyView(VStack {
-                Image(safeImage, scale: 1, label: Text("generated"))
-                    .resizable()
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                Group {
+                    if let theImage = progress.currentImages.first, let safeImage = theImage {
+                        Image(safeImage, scale: 1, label: Text("generated"))
+                            .resizable()
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                    }
+                }
                 ProgressView(label, value: fraction, total: 1).padding()
             })
         case .complete(let lastPrompt, let image, _, let interval):

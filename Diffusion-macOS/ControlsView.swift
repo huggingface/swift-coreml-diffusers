@@ -55,6 +55,7 @@ struct ControlsView: View {
     @State private var disclosedPrompt = true
     @State private var disclosedGuidance = false
     @State private var disclosedSteps = false
+    @State private var disclosedPreview = false
     @State private var disclosedSeed = false
     @State private var disclosedAdvanced = false
 
@@ -71,6 +72,7 @@ struct ControlsView: View {
     @State private var showPromptsHelp = false
     @State private var showGuidanceHelp = false
     @State private var showStepsHelp = false
+    @State private var showPreviewHelp = false
     @State private var showSeedHelp = false
     @State private var showAdvancedHelp = false
 
@@ -277,7 +279,33 @@ struct ControlsView: View {
                             }
                         }.foregroundColor(.secondary)
                     }
-                                        
+
+                    DisclosureGroup(isExpanded: $disclosedPreview) {
+                        CompactSlider(value: $generation.previews, in: 0...25, step: 1) {
+                            Text("Previews")
+                            Spacer()
+                            Text("\(Int(generation.previews))")
+                        }.padding(.leading, 10)
+                    } label: {
+                        HStack {
+                            Label("Preview count", systemImage: "eye.square").foregroundColor(.secondary)
+                            Spacer()
+                            if disclosedPreview {
+                                Button {
+                                    showPreviewHelp.toggle()
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                }
+                                .buttonStyle(.plain)
+                                .popover(isPresented: $showPreviewHelp, arrowEdge: .trailing) {
+                                    previewHelp($showPreviewHelp)
+                                }
+                            } else {
+                                Text("\(Int(generation.previews))")
+                            }
+                        }.foregroundColor(.secondary)
+                    }
+
                     DisclosureGroup(isExpanded: $disclosedSeed) {
                         let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
                         CompactSlider(value: $generation.seed, in: -1...Double(maxSeed), step: 1) {
@@ -304,7 +332,7 @@ struct ControlsView: View {
                             }
                         }.foregroundColor(.secondary)
                     }
-                    
+
                     if Capabilities.hasANE {
                         Divider()
                         DisclosureGroup(isExpanded: $disclosedAdvanced) {

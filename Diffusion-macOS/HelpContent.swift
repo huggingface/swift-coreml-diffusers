@@ -110,6 +110,22 @@ func stepsHelp(_ showing: Binding<Bool>) -> some View {
     return helpContent(title: "Inference Steps", description: description, showing: showing)
 }
 
+func previewHelp(_ showing: Binding<Bool>) -> some View {
+    let description =
+         """
+         This number controls the how many previews to display throughout the image generation.
+
+         A higher number of previews can be useful if you want more visibility into how \
+         the generation process is progressing.
+
+         However, computing each preview consumes computation power, and can slow down \
+         the overall process as the number increases.
+
+         Typically, a balance between speed and variety is best.
+         """
+    return helpContent(title: "Preview Count", description: description, showing: showing)
+}
+
 func seedHelp(_ showing: Binding<Bool>) -> some View {
     let description =
          """
