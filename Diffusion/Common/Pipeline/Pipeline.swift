@@ -40,7 +40,7 @@ struct GenerationResult {
 }
 
 class Pipeline {
-    var pipeline: StableDiffusionPipeline
+    let pipeline: StableDiffusionPipeline
     let maxSeed: UInt32
     
     var progress: StableDiffusionProgress? = nil {

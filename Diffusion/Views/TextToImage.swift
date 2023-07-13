@@ -52,6 +52,7 @@ struct ShareButtons: View {
 }
 
 struct ImageWithPlaceholder: View {
+    @EnvironmentObject var generation: GenerationContext
     var state: Binding<GenerationState>
         
     var body: some View {
@@ -68,7 +69,7 @@ struct ImageWithPlaceholder: View {
             let label = "Step \(step) of \(progress.stepCount)"
             return AnyView(VStack {
                 Group {
-                    if let theImage = progress.currentImages.first, let safeImage = theImage {
+                    if let safeImage = generation.previewImage {
                         Image(safeImage, scale: 1, label: Text("generated"))
                             .resizable()
                             .clipShape(RoundedRectangle(cornerRadius: 20))
@@ -139,5 +140,6 @@ struct TextToImage: View {
             Spacer()
         }
         .padding()
+        .environmentObject(generation)
     }
 }
