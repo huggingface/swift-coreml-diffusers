@@ -5,16 +5,17 @@
 //  Created by Dolmere on 19/06/2023
 //  See LICENSE at https://github.com/huggingface/swift-coreml-diffusers/LICENSE
 
-
 import SwiftUI
 import ZIPFoundation
 
-// A view modifier to add a .fileImporter import panel into a view
+/// `ImportModelBehavior` is a view modifier which will add a .`fileImporter` import panel into any view.
+/// This allows the same behavior to be applied and attached to the main window whether the user selects the menu command, uses the shortcut combination or selects to import directly from the `ControlsView`.
 struct ImportModelBehavior: ViewModifier {
 
     @ObservedObject private var settings = Settings.shared
 
     @State var isBadSelectionAlertShown: Bool = false
+    
     @State private var importPanelState: Bool = false {
         didSet {
             if settings.isShowingImportPanel != importPanelState {
