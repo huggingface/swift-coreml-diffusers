@@ -13,10 +13,11 @@ import UniformTypeIdentifiers
 
 class ImageViewObservableModel: ObservableObject {
 
-    // Start with a placeholder position for one Diffusion image
+    /// On init start with a single placeholder position for one DiffusionImage.
     @MainActor
     @Published var currentBuildImages: [DiffusionImageWrapper] = [DiffusionImageWrapper(diffusionImageState: .waiting, diffusionImage: nil)]
 
+    /// Set this to the size of the batch size to be generated.
     @MainActor
     @Published var imageCount: Int = 1 {
         didSet {
@@ -34,18 +35,25 @@ class ImageViewObservableModel: ObservableObject {
         }
     }
     
+    /// Access to this class is via a singleton `ImageViewObservableModel.shared`
     static let shared: ImageViewObservableModel = ImageViewObservableModel()
+
+    /// Set to `true` in order to stop the entire batch image generation operation.
     @Published var userCanceled = false
+    
+    /// This will be set to `true` when a batch image generation process is active.
     @Published var isGeneratingBatch = false
     
+    /// Enforce singleton behaviour by preventing instances of this class being created.
     private init() {}
     
+    /// Create a new `DiffusionImage` instance from the `GenerationContext` details.
     @MainActor
     fileprivate func makeDiffusionImage(_ generation: GenerationContext, _ img: CGImage, _ result: GenerationResult, _ state: DiffusionImageState) -> DiffusionImage {
         return DiffusionImage(id: UUID(), cgImage: img, seed: UInt32(result.lastSeed), steps: generation.steps, positivePrompt: generation.positivePrompt, negativePrompt: generation.negativePrompt, guidanceScale: generation.guidanceScale, disableSafety: generation.disableSafety)
     }
     
-    // Function to update the diffusion image state
+    /// Update a known `DiffusionImage`'s `DiffusionImageState`. The image should already have been added to the `currentBuildImages` array.
     @MainActor
     func updateDiffusionImageState(atIndex index: Int, newState: DiffusionImageState) {
         guard index >= 0, index < currentBuildImages.count else {
@@ -54,13 +62,14 @@ class ImageViewObservableModel: ObservableObject {
         currentBuildImages[index].diffusionImageState = newState
     }
     
-    // Function to add a new diffusion image
+    /// Add a single new `DiffusionImage` to the internal array of `currentBuildImages`.
     @MainActor
     func addDiffusionImage(_ image: DiffusionImage) {
         let tracker = DiffusionImageWrapper(diffusionImage: image)
         currentBuildImages.append(tracker)
     }
     
+    /// Add more than one `DiffusionImage` into the `currentBuildImages` array in a single operation.
     @MainActor
     func addDiffusionImages(_ images: [DiffusionImage?]) {
         let placeholders = Array<DiffusionImage?>(repeating: nil, count: images.count)
@@ -68,8 +77,7 @@ class ImageViewObservableModel: ObservableObject {
         currentBuildImages.append(contentsOf: wrappers)
     }
 
-    
-    // Function to remove a diffusion image
+    /// Function to remove a `DiffusionImage` from the internal `currentBuildImages` array.
     @MainActor
     func removeDiffusionImage(atIndex index: Int) {
         guard index >= 0, index < currentBuildImages.count else {
@@ -78,18 +86,18 @@ class ImageViewObservableModel: ObservableObject {
         currentBuildImages.remove(at: index)
     }
 
+    /// Rather than cancel a single image's generation this func will stop the entire batch of images from being built.
     public func cancelBatchGeneration() {
         userCanceled = true
         isGeneratingBatch = false
     }
 
-    // Generate the number of images requested, continue generating until the number of requested images have been created
+    /// Generate the number of images requested in the local variable `imageCount`
+    /// This func will  continue generating until the number of requested images have been received and inserted into the local array `currentBuildImages`
     public func generate(generation: GenerationContext) async {
 
         // If we're already running return
         if isGeneratingBatch { return }
-
-//        if case .running = generation.state { return }
 
         DispatchQueue.main.asyncAndWait {
             self.isGeneratingBatch = true
@@ -117,10 +125,10 @@ class ImageViewObservableModel: ObservableObject {
                     self.isGeneratingBatch = false
                 }
             }
-                
         }
     }
 
+    /// Internal support func to process a single diffusion process. 
     @MainActor
     private func generateOneImage(generation: GenerationContext, forIndex index: Int) async {
         guard index >= 0 && index < currentBuildImages.count else {

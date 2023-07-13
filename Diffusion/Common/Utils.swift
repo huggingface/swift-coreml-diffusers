@@ -11,12 +11,15 @@ import Foundation
 extension String: Error {}
 
 extension Double {
+    /// Apply String() formatting to a Double number. For instance %.2f, etc
+    /// examples: https://www.waldo.com/blog/swift-string-format
     func formatted(_ format: String) -> String {
         return String(format: "\(format)", self)
     }
 }
 
 extension String {
+    /// Convert a String by extracting the first 200 characters while replacing whitespace characters with underscores.
     var first200Safe: String {
         let endIndex = index(startIndex, offsetBy: Swift.min(200, count))
         let substring = String(self[startIndex..<endIndex])
@@ -38,6 +41,7 @@ extension String {
 }
 
 extension Array {
+    /// Get an element from an Array safely to avoid runtime crashes when accessing an index out of range on an Array.
     subscript(safe index: Index) -> Element? {
         return indices.contains(index) ? self[index] : nil
     }
