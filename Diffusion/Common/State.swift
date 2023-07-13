@@ -60,11 +60,12 @@ class GenerationContext: ObservableObject {
     private var progressSubscriber: Cancellable?
 
     private func updatePreviewIfNeeded(_ progress: StableDiffusionProgress) {
+        if previews == 0 || progress.step == 0 {
+            previewImage = nil
+        }
+
         if previews > 0, let newImage = progress.currentImages.first, newImage != nil {
             previewImage = newImage
-        } else if previews == 0 {
-            // Previews disabled
-            previewImage = nil
         }
     }
 
