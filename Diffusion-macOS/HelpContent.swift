@@ -119,9 +119,10 @@ func previewHelp(_ showing: Binding<Bool>) -> some View {
          the generation process is progressing.
 
          However, computing each preview consumes computation power, and can slow down \
-         the overall process as the number increases.
+         the overall process. If the process is too slow you can reduce the preview count \
+         which will result in less visibility of the generation process.
 
-         Typically, a balance between speed and variety is best.
+         You can try different values to see what works best for your hardware.
          """
     return helpContent(title: "Preview Count", description: description, showing: showing)
 }
