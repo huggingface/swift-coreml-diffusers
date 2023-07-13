@@ -11,28 +11,31 @@ import CoreTransferable
 import UniformTypeIdentifiers
 #if os(macOS)
 #else
-import UIKit
+import UIKit // Access to UIImage on iOS
 #endif
 
+/// Tracking for a `DiffusionImage` generation state.
 enum DiffusionImageState {
     case generating
     case waiting
     case complete
 }
 
+/// Generic custom error to use when an image generation fails.
 enum DiffusionImageError: Error {
     case invalidDiffusionImage
 }
 
+/// Combination of a `DiffusionImage` and its associated `DiffusionImageState`
 struct DiffusionImageWrapper {
     var diffusionImageState: DiffusionImageState = .waiting
     var diffusionImage: DiffusionImage? = nil
 }
 
-/// Model to capture generated image data
+/// Model class  to hold a  generated image and the data used to generate it
 final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
     
-    // Note: we do not capture the chosen Scheduler as it's a Swift enum and cannot conform to NSSecureCoding for Drag operations.
+    // Note: we do not capture the chosen Scheduler as it's a Swift enum and cannot conform to NSSecureCoding, which is used for Drag operations.
     let id: UUID
     let cgImage: CGImage
     let seed: UInt32
@@ -41,13 +44,15 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
     let negativePrompt: String
     let guidanceScale: Double
     let disableSafety: Bool
-    
+
+    /// This is a composed `String` built from the numeric `Seed` and the user supplied `positivePrompt` limited to the first 200 character and with whitespace replaced with underscore characters.
     var generatedFilename: String {
         return "\(seed)-\(positivePrompt)".first200Safe
     }
-    
+
+    /// The location on the file system where this generated image is stored.
     var fileURL: URL
-    
+
     init(id: UUID, cgImage: CGImage, seed: UInt32, steps: Double, positivePrompt: String, negativePrompt: String, guidanceScale: Double, disableSafety: Bool) {
         let genname = "\(seed)-\(positivePrompt)".first200Safe
         self.id = id
@@ -59,7 +64,9 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
         self.guidanceScale = guidanceScale
         self.disableSafety = disableSafety
 #if os(macOS)
+        // Initially set the fileURL to the top level applicationDirectory to allow running the completed instance func save() where the fileURL will be updated to the correct location.
         self.fileURL = URL.applicationDirectory
+        // init the instance fully before executing an instance function
         super.init()
         if let url = save(image: NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height)), filename: genname) {
             self.fileURL = url
@@ -67,7 +74,9 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
             fatalError("Fatal error init of DiffusionImage, cannot create image file at \(genname)")
         }
 #else
+        // Initially set the fileURL to the top level applicationDirectory to allow running the completed instance func save() where the fileURL will be updated to the correct location.
         self.fileURL = URL.applicationDirectory
+        // init the instance fully before executing an instance function
         super.init()
         if let url = save(image: UIImage(cgImage: cgImage), filename: genname) {
             self.fileURL = url
@@ -154,6 +163,8 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
 
     }
     
+    // MARK: - Equatable
+
     static func == (lhs: DiffusionImage, rhs: DiffusionImage) -> Bool {
         return lhs.id == rhs.id
     }
@@ -165,62 +176,58 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
     }
 
 #if os(macOS)
-func save(image: NSImage?, filename: String?) -> URL? {
-    let appSupportURL = Settings.shared.tempStorageURL()
-    let fn = filename ?? "diffusion_generated_image"
-    let fileURL = appSupportURL
-        .appendingPathComponent(fn)
-        .appendingPathExtension("png")
+    /// Instance func to place the generated image on the file system and return the `fileURL` where it is stored.
+    func save(image: NSImage?, filename: String?) -> URL? {
+        let appSupportURL = Settings.shared.tempStorageURL()
+        let fn = filename ?? "diffusion_generated_image"
+        let fileURL = appSupportURL
+            .appendingPathComponent(fn)
+            .appendingPathExtension("png")
 
-    // Save the image as a temporary file
-    if let tiffData = image?.tiffRepresentation,
-       let bitmap = NSBitmapImageRep(data: tiffData),
-       let pngData = bitmap.representation(using: .png, properties: [:]) {
-        do {
-            try pngData.write(to: fileURL)
-            return fileURL
-        } catch {
-            print("Error saving image to temporary file: \(error)")
+        // Save the image as a temporary file
+        if let tiffData = image?.tiffRepresentation,
+           let bitmap = NSBitmapImageRep(data: tiffData),
+           let pngData = bitmap.representation(using: .png, properties: [:]) {
+            do {
+                try pngData.write(to: fileURL)
+                return fileURL
+            } catch {
+                print("Error saving image to temporary file: \(error)")
+            }
         }
-    }
-    return nil
-}
-#else
-func save(image: UIImage?, filename: String?) -> URL? {
-    guard let image = image else {
         return nil
     }
-    let fn = filename ?? "diffusion_generated_image"
-    let appSupportURL = Settings.shared.tempStorageURL()
-
-    let fileURL = appSupportURL
-        .appendingPathComponent(fn)
-        .appendingPathExtension("png")
-    
-    if let imageData = image.pngData() {
-        do {
-            try imageData.write(to: fileURL)
-            return fileURL
-        } catch {
-            print("Error saving image to temporary file: \(error)")
-        }
-    }
-    
-    return nil
-}
-#endif
-
-    public func pngData() -> Data? {
-        guard let data = try? NSKeyedArchiver.archivedData(withRootObject: self.cgImage, requiringSecureCoding: true) else {
+#else
+    func save(image: UIImage?, filename: String?) -> URL? {
+        guard let image = image else {
             return nil
         }
-        return data
+        let fn = filename ?? "diffusion_generated_image"
+        let appSupportURL = Settings.shared.tempStorageURL()
+
+        let fileURL = appSupportURL
+            .appendingPathComponent(fn)
+            .appendingPathExtension("png")
+        
+        if let imageData = image.pngData() {
+            do {
+                try imageData.write(to: fileURL)
+                return fileURL
+            } catch {
+                print("Error saving image to temporary file: \(error)")
+            }
+        }
+        
+        return nil
     }
-    
+#endif
 }
 
+
 extension DiffusionImage: NSItemProviderWriting {
-    
+
+    // MARK: - NSItemProviderWriting
+
     static var writableTypeIdentifiersForItemProvider: [String] {
         return [UTType.data.identifier, UTType.png.identifier, UTType.fileURL.identifier]
     }
@@ -248,7 +255,7 @@ extension DiffusionImage: NSItemProviderWriting {
             completionHandler(data, nil)
         } else if typeIdentifier == UTType.png.identifier {
             // Retrieve the PNG data representation
-            let data = pngData()
+            let data = pngRepresentation()
             completionHandler(data, nil)
         } else {
             // Indicate that the specified typeIdentifier is not supported
@@ -259,6 +266,7 @@ extension DiffusionImage: NSItemProviderWriting {
     }
     
 }
+
 
 #if os(macOS)
 extension DiffusionImage: NSPasteboardWriting {
@@ -281,7 +289,7 @@ extension DiffusionImage: NSPasteboardWriting {
         } else if type.rawValue == UTType.png.identifier {
             
             // Return a PNG data representation
-            return pngData()
+            return pngRepresentation()
         }
 
         return nil
@@ -314,6 +322,7 @@ extension DiffusionImage {
 
 #if os(macOS)
 extension DiffusionImage {
+    /// Returns a `Data` representation of this generated image in PNG format or nil if there is an error converting the image data.
     func pngRepresentation() -> Data? {
         let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
         return bitmapRep.representation(using: .png, properties: [:])
@@ -321,6 +330,7 @@ extension DiffusionImage {
 }
 #else
 extension DiffusionImage {
+    /// Returns a `Data` representation of this generated image in PNG format or nil if there is an error converting the image data.
     func pngRepresentation() -> Data? {
         let bitmapRep = UIImage(cgImage: cgImage).pngData()
         return bitmapRep
