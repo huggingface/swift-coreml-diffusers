@@ -81,6 +81,7 @@ class Pipeline {
         config.guidanceScale = guidanceScale
         config.disableSafety = disableSafety
         config.schedulerType = scheduler
+        config.useDenoisedIntermediates = true
 
         // Evenly distribute previews based on inference steps
         let previewIndices = previewIndices(stepCount, previewCount)
