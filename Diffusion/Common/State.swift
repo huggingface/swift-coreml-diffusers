@@ -35,6 +35,7 @@ class GenerationContext: ObservableObject {
                     .receive(on: DispatchQueue.main)
                     .sink { progress in
                         guard let progress = progress else { return }
+                        self.updatePreviewIfNeeded(progress)
                         self.state = .running(progress)
                     }
             }
@@ -50,11 +51,23 @@ class GenerationContext: ObservableObject {
     @Published var numImages = 1.0
     @Published var seed = -1.0
     @Published var guidanceScale = 7.5
+    @Published var previews = 5.0
     @Published var disableSafety = false
-    
+    @Published var previewImage: CGImage? = nil
+
     @Published var computeUnits: ComputeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
 
     private var progressSubscriber: Cancellable?
+
+    private func updatePreviewIfNeeded(_ progress: StableDiffusionProgress) {
+        if previews == 0 || progress.step == 0 {
+            previewImage = nil
+        }
+
+        if previews > 0, let newImage = progress.currentImages.first, newImage != nil {
+            previewImage = newImage
+        }
+    }
 
     func generate() async throws -> GenerationResult {
         guard let pipeline = pipeline else { throw "No pipeline" }
@@ -64,6 +77,7 @@ class GenerationContext: ObservableObject {
             negativePrompt: negativePrompt,
             scheduler: scheduler,
             numInferenceSteps: Int(steps),
+            numPreviews: Int(previews),
             seed: seed,
             guidanceScale: Float(guidanceScale),
             disableSafety: disableSafety
