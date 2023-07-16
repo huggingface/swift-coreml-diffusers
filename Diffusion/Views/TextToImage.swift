@@ -52,6 +52,7 @@ struct ShareButtons: View {
 }
 
 struct ImageWithPlaceholder: View {
+    @EnvironmentObject var generation: GenerationContext
     var state: Binding<GenerationState>
         
     var body: some View {
@@ -62,10 +63,20 @@ struct ImageWithPlaceholder: View {
                 // The first time it takes a little bit before generation starts
                 return AnyView(ProgressView())
             }
+
             let step = Int(progress.step) + 1
             let fraction = Double(step) / Double(progress.stepCount)
             let label = "Step \(step) of \(progress.stepCount)"
-            return AnyView(ProgressView(label, value: fraction, total: 1).padding())
+            return AnyView(VStack {
+                Group {
+                    if let safeImage = generation.previewImage {
+                        Image(safeImage, scale: 1, label: Text("generated"))
+                            .resizable()
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                    }
+                }
+                ProgressView(label, value: fraction, total: 1).padding()
+            })
         case .complete(let lastPrompt, let image, _, let interval):
             guard let theImage = image else {
                 return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
@@ -125,5 +136,6 @@ struct TextToImage: View {
             Spacer()
         }
         .padding()
+        .environmentObject(generation)
     }
 }
