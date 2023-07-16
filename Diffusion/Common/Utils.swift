@@ -26,7 +26,7 @@ extension Double {
 func previewIndices(_ numInferenceSteps: Int, _ numPreviews: Int) -> [Bool] {
     // Ensure valid parameters
     guard numInferenceSteps > 0, numPreviews > 0 else {
-        return [Bool](repeating: false, count: numInferenceSteps) // If parameters are not valid, return an array with only `false` values
+        return [Bool](repeating: false, count: numInferenceSteps)
     }
 
     // Compute the ideal (floating-point) step size, which represents the average number of steps between previews
@@ -39,19 +39,7 @@ func previewIndices(_ numInferenceSteps: Int, _ numPreviews: Int) -> [Bool] {
     })
     
     // Construct an array of booleans where each value indicates whether or not a preview should be made at that step.
-    // For each step in the total number of steps, we check if it is in our set of preview indices, resulting in `true` or `false`.
-    var previewArray = [Bool]()
+    let previewArray = (0..<numInferenceSteps).map { previewIndices.contains($0) }
 
-    // For each step in the total number of steps
-    for step in 0..<numInferenceSteps {
-        // Check if the current step is in our set of preview indices
-        // If it is, append `true` to our array, otherwise append `false`
-        if previewIndices.contains(step) {
-            previewArray.append(true)
-        } else {
-            previewArray.append(false)
-        }
-    }
-    
     return previewArray
 }

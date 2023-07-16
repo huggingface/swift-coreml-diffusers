@@ -29,16 +29,7 @@ struct GeneratedImageView: View {
                     if let safeImage = generation.previewImage {
                         Image(safeImage, scale: 1, label: Text("generated"))
                             .resizable()
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                            .contextMenu {
-                                Button {
-                                    NSPasteboard.general.clearContents()
-                                    let nsimage = NSImage(cgImage: safeImage, size: NSSize(width: safeImage.width, height: safeImage.height))
-                                    NSPasteboard.general.writeObjects([nsimage])
-                                } label: {
-                                    Text("Copy Photo")
-                                }
-                            }
+                            .clipShape(RoundedRectangle(cornerRadius: 20))                        
                     }
                 }
                 HStack {
