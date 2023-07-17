@@ -10,6 +10,7 @@ import Combine
 import SwiftUI
 import CompactSlider
 
+/// Track a StableDiffusion Pipeline's readiness. This include actively downloading from the internet, uncompressing the downloaded zip file, actively loading into memory, ready to use or an Error state.
 enum PipelineState {
     case downloading(Double)
     case uncompressing
@@ -80,21 +81,28 @@ struct ControlsView: View {
 
     let maxSeed: UInt32 = UInt32.max
     private var textFieldLabelSeed: String { generation.seed < 1 ? "Random Seed" : "Seed" }
-
-    func updateSafetyCheckerState() {
+    
+    var modelFilename: String? {
+        guard let pipelineLoader = pipelineLoader else { return nil }
+        let selectedURL = pipelineLoader.compiledURL
+        guard FileManager.default.fileExists(atPath: selectedURL.path) else { return nil }
+        return selectedURL.path
+    }
+    
+    fileprivate func updateSafetyCheckerState() {
         mustShowSafetyCheckerDisclaimer = generation.disableSafety && !Settings.shared.safetyCheckerDisclaimerShown
     }
     
-    func updateComputeUnitsState() {
+    fileprivate func updateComputeUnitsState() {
         Settings.shared.userSelectedComputeUnits = generation.computeUnits
         modelDidChange(model: Settings.shared.currentModel)
     }
     
-    func resetComputeUnitsState() {
+    fileprivate func resetComputeUnitsState() {
         generation.computeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
     }
 
-    func modelDidChange(model: ModelInfo) {
+    fileprivate func modelDidChange(model: ModelInfo) {
         guard pipelineLoader?.model != model || pipelineLoader?.computeUnits != generation.computeUnits else {
             print("Reusing same model \(model) with units \(generation.computeUnits)")
             return
@@ -133,24 +141,17 @@ struct ControlsView: View {
         }
     }
     
-    func isModelDownloaded(_ model: ModelInfo, computeUnits: ComputeUnits? = nil) -> Bool {
+    fileprivate func isModelDownloaded(_ model: ModelInfo, computeUnits: ComputeUnits? = nil) -> Bool {
         PipelineLoader(model: model, computeUnits: computeUnits ?? generation.computeUnits).ready
     }
     
-    func modelLabel(_ model: ModelInfo) -> Text {
+    fileprivate func modelLabel(_ model: ModelInfo) -> Text {
         let downloaded = isModelDownloaded(model)
         let prefix = downloaded ? "● " : "◌ "  //"○ "
         return Text(prefix).foregroundColor(downloaded ? .accentColor : .secondary) + Text(model.modelVersion)
     }
     
-    var modelFilename: String? {
-        guard let pipelineLoader = pipelineLoader else { return nil }
-        let selectedURL = pipelineLoader.compiledURL
-        guard FileManager.default.fileExists(atPath: selectedURL.path) else { return nil }
-        return selectedURL.path
-    }
-    
-    private func prompts() -> some View {
+    fileprivate func prompts() -> some View {
         VStack {
             Spacer()
             PromptTextField(text: $generation.positivePrompt, isPositivePrompt: true, model: $model)
@@ -183,6 +184,7 @@ struct ControlsView: View {
                         }
                         .onChange(of: model) { selection in
                             guard selection != revealOption else {
+                                // The reveal option has been requested - open the models folder in Finder
                                 NSWorkspace.shared.selectFile(modelFilename, inFileViewerRootedAtPath: PipelineLoader.models.path)
                                 model = Settings.shared.currentModel.modelVersion
                                 return
@@ -453,6 +455,4 @@ struct ControlsView: View {
             Stepper("", value: $generation.seed, in: 0...UInt32.max)
         }
     }
-
 }
-
