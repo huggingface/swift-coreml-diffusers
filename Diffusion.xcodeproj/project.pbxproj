@@ -15,6 +15,8 @@
 		8CBDA28C2A40DD9D0001B20E /* ShareButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBDA28B2A40DD9D0001B20E /* ShareButtons.swift */; };
 		8CFB91AE2A3BAEDB00BCC614 /* ModelsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CFB91AD2A3BAEDB00BCC614 /* ModelsViewModel.swift */; };
 		8CFB91AF2A3BAEDB00BCC614 /* ModelsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CFB91AD2A3BAEDB00BCC614 /* ModelsViewModel.swift */; };
+		8CD8A53A2A456EF800BD8A98 /* PromptTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */; };
+		8CD8A53C2A476E2C00BD8A98 /* PromptTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */; };
 		EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB067F862992E561004D1AD9 /* HelpContent.swift */; };
 		EB560F0429A3C20800C0F8B8 /* Capabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB560F0329A3C20800C0F8B8 /* Capabilities.swift */; };
 		EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */; };
@@ -71,6 +73,7 @@
 		8C509BB82A66E07000DE24FF /* PromptTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptTextField.swift; sourceTree = "<group>"; };
 		8CBDA28B2A40DD9D0001B20E /* ShareButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareButtons.swift; sourceTree = "<group>"; };
 		8CFB91AD2A3BAEDB00BCC614 /* ModelsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelsViewModel.swift; sourceTree = "<group>"; };
+		8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromptTextField.swift; sourceTree = "<group>"; };
 		EB067F862992E561004D1AD9 /* HelpContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpContent.swift; sourceTree = "<group>"; };
 		EB33A51E2954E1BC00B16357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EB560F0329A3C20800C0F8B8 /* Capabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capabilities.swift; sourceTree = "<group>"; };
@@ -113,6 +116,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8C82789C2A3B4731009A2E20 /* StableDiffusion in Frameworks */,
+				EB25B3D62A3A2DC4000E25A1 /* StableDiffusion in Frameworks */,
 				EBB5BA5D294504DE003A2A5B /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -137,6 +141,7 @@
 			files = (
 				F155203C297118E700DC009B /* CompactSlider in Frameworks */,
 				8C82789A2A3B4723009A2E20 /* StableDiffusion in Frameworks */,
+				EB25B3D82A3A2DD5000E25A1 /* StableDiffusion in Frameworks */,
 				EBDD7DAF29731FB300C1C4B2 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -184,7 +189,7 @@
 				EBE4438729488DCA00CDA605 /* README.md */,
 				EBE443892948953600CDA605 /* LICENSE */,
 				EBE755FF293E910800806B32 /* Packages */,
-				8CFB91AB2A3BAC4B00BCC614 /* Common */,
+				8CF53E022A44AE0400E6358B /* Common */,
 				EBE755C7293E37DD00806B32 /* Diffusion */,
 				F15520222971093300DC009B /* Diffusion-macOS */,
 				EBE755D9293E37DE00806B32 /* DiffusionTests */,
@@ -499,6 +504,7 @@
 				EBDD7DB82976AAFE00C1C4B2 /* State.swift in Sources */,
 				8C509BB92A66E07000DE24FF /* PromptTextField.swift in Sources */,
 				EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */,
+				8CD8A53C2A476E2C00BD8A98 /* PromptTextField.swift in Sources */,
 				EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */,
 				EBDD7DB32973200200C1C4B2 /* Utils.swift in Sources */,
 			);
@@ -533,6 +539,7 @@
 				8CFB91AF2A3BAEDB00BCC614 /* ModelsViewModel.swift in Sources */,
 				EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */,
 				EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */,
+				8CD8A53A2A456EF800BD8A98 /* PromptTextField.swift in Sources */,
 				F1552031297109C300DC009B /* ControlsView.swift in Sources */,
 				EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */,
 				F155203429710B3600DC009B /* StatusView.swift in Sources */,
@@ -981,8 +988,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/ml-stable-diffusion";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = main;
+				kind = branch;
 			};
 		};
 		EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
