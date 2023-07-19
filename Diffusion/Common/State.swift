@@ -36,6 +36,7 @@ class GenerationContext: ObservableObject {
                     .sink { progress in
                         DispatchQueue.main.async {
                             guard let progress = progress else { return }
+                            self.updatePreviewIfNeeded(progress)
                             self.state = .running(progress)
                         }
                     }
@@ -52,11 +53,23 @@ class GenerationContext: ObservableObject {
     @Published var imageCount: Int = 1
     @Published var seed: UInt32 = UInt32(0)
     @Published var guidanceScale = 7.5
+    @Published var previews = 5.0
     @Published var disableSafety = false
+    @Published var previewImage: CGImage? = nil
     @Published var computeUnits: ComputeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
     var overrideSeed: UInt32 = 0
 
     private var progressSubscriber: Cancellable?
+
+    private func updatePreviewIfNeeded(_ progress: StableDiffusionProgress) {
+        if previews == 0 || progress.step == 0 {
+            previewImage = nil
+        }
+
+        if previews > 0, let newImage = progress.currentImages.first, newImage != nil {
+            previewImage = newImage
+        }
+    }
 
     func generate() async throws -> GenerationResult {
         guard let pipeline = pipeline else { throw "No pipeline" }
@@ -70,6 +83,7 @@ class GenerationContext: ObservableObject {
             numInferenceSteps: Int(steps),
             imageCount: 1, // always process one at a time so that we can better control or inspect the seed from the run
             seed: overrideSeed > 0 ? overrideSeed : (UInt32(seed ?? 0)),
+            numPreviews: Int(previews),
             guidanceScale: Float(guidanceScale),
             disableSafety: disableSafety
         )

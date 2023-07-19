@@ -6,7 +6,7 @@
       "location" : "https://github.com/buh/CompactSlider.git",
       "state" : {
         "branch" : "main",
-        "revision" : "3cb37fb7385913835b6844c6af2680c64000dcd2"
+        "revision" : "6d591a76caecd583ad69fbcd06f2fb83135318c0"
       }
     },
     {
@@ -15,7 +15,7 @@
       "location" : "https://github.com/apple/ml-stable-diffusion",
       "state" : {
         "branch" : "main",
-        "revision" : "48f07f24891155a14c51dd835bba7371bdf32d0e"
+        "revision" : "b61c9aea05370d4bc06fce2dc00a002b21f13da5"
       }
     },
     {

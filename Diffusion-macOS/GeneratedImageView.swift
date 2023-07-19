@@ -45,6 +45,7 @@ struct GeneratedImageView: View {
                 case .userCanceled:
                     return AnyView(Text("Generation canceled"))
                 case .startup, .complete(_, _, _, _), .failed(_):
+                    // startup, complete and failed modes should not show because these conditions will be caught in the wrapping diffusionImageWrapper.diffusionImageState conditions. When the generation.state is startup, complete or failed the diffusionImageState is not longer generating.
                     return AnyView(ProgressView())
                 case .running(let progress):
                     guard let progress = progress, progress.stepCount > 0 else {
@@ -54,15 +55,24 @@ struct GeneratedImageView: View {
                     let step = Int(progress.step) + 1
                     let fraction = Double(step) / Double(progress.stepCount)
                     let label = "Step \(step) of \(progress.stepCount)"
-                    return AnyView(HStack {
-                        ProgressView(label, value: fraction, total: 1).padding()
-                        Button {
-                            generation.cancelGeneration()
-                            imageViewModel.cancelBatchGeneration()
-                        } label: {
-                            Image(systemName: "x.circle.fill").foregroundColor(.gray)
+                    
+                    return AnyView(VStack {
+                        Group {
+                            if let safeImage = generation.previewImage {
+                                Image(safeImage, scale: 1, label: Text("generated"))
+                                    .resizable()
+                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                            }
                         }
-                        .buttonStyle(.plain)
+                        HStack {
+                            ProgressView(label, value: fraction, total: 1).padding()
+                            Button {
+                                generation.cancelGeneration()
+                            } label: {
+                                Image(systemName: "x.circle.fill").foregroundColor(.gray)
+                            }
+                            .buttonStyle(.plain)
+                        }
                     })
                 }
             } else if .waiting == diffusionImageWrapper.diffusionImageState {
@@ -75,7 +85,7 @@ struct GeneratedImageView: View {
             } else if .complete == diffusionImageWrapper.diffusionImageState {
                 return AnyView(
                     VStack {
-                        Image(nsImage: NSImage(cgImage: cgImage, size: CGSize(width: cgImage.width, height: cgImage.height)))
+                        Image(nsImage: NSImage(cgImage: cgImage, size: CGSize(width: cgImage.width, height: cgImage.height)), scale: 1, label: Text("Generated image"))
                             .resizable()
                             .aspectRatio(1, contentMode: .fit)
                             .clipShape(RoundedRectangle(cornerRadius: 15))

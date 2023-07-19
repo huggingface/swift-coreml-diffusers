@@ -11,7 +11,24 @@ import CoreML
 import Combine
 import StableDiffusion
 
-typealias StableDiffusionProgress = StableDiffusionPipeline.Progress
+struct StableDiffusionProgress {
+    var progress: StableDiffusionPipeline.Progress
+
+    var step: Int { progress.step }
+    var stepCount: Int { progress.stepCount }
+
+    var currentImages: [CGImage?]
+
+    init(progress: StableDiffusionPipeline.Progress, previewIndices: [Bool]) {
+        self.progress = progress
+        self.currentImages = [nil]
+
+        // Since currentImages is a computed property, only access the preview image if necessary
+        if progress.step < previewIndices.count, previewIndices[progress.step] {
+            self.currentImages = progress.currentImages
+        }
+    }
+}
 
 struct GenerationResult {
     var images: [CGImage?]
@@ -46,6 +63,7 @@ class Pipeline {
         numInferenceSteps stepCount: Int = 50,
         imageCount: Int,
         seed: UInt32 = 0,
+        numPreviews previewCount: Int = 5,
         guidanceScale: Float = 7.5,
         disableSafety: Bool = false
     ) throws -> GenerationResult {
@@ -63,10 +81,16 @@ class Pipeline {
         config.guidanceScale = guidanceScale
         config.disableSafety = disableSafety
         config.schedulerType = scheduler
-        
+        config.useDenoisedIntermediates = true
+
+        // Evenly distribute previews based on inference steps
+        let previewIndices = previewIndices(stepCount, previewCount)
+
         let images = try pipeline.generateImages(configuration: config) { progress in
             sampleTimer.stop()
-            handleProgress(progress, sampleTimer: sampleTimer)
+            handleProgress(StableDiffusionProgress(progress: progress,
+                                                   previewIndices: previewIndices),
+                           sampleTimer: sampleTimer)
             if progress.stepCount != progress.step {
                 sampleTimer.start()
             }
@@ -79,7 +103,7 @@ class Pipeline {
         return GenerationResult(images: images, lastSeed: theSeed, interval: interval, userCanceled: canceled, itsPerSecond: 1.0/sampleTimer.median)
     }
 
-    func handleProgress(_ progress: StableDiffusionPipeline.Progress, sampleTimer: SampleTimer) {
+    func handleProgress(_ progress: StableDiffusionProgress, sampleTimer: SampleTimer) {
         self.progress = progress
     }
         
