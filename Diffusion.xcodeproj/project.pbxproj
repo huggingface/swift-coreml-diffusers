@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		8C3181BD2A40AEBA0032C4AD /* ImportModelBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3181BC2A40AEBA0032C4AD /* ImportModelBehavior.swift */; };
+		8C509BB92A66E07000DE24FF /* PromptTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C509BB82A66E07000DE24FF /* PromptTextField.swift */; };
+		8C509BBA2A66E07000DE24FF /* PromptTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C509BB82A66E07000DE24FF /* PromptTextField.swift */; };
 		8C82789A2A3B4723009A2E20 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = 8C8278992A3B4723009A2E20 /* StableDiffusion */; };
 		8C82789C2A3B4731009A2E20 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = 8C82789B2A3B4731009A2E20 /* StableDiffusion */; };
 		8CBDA28C2A40DD9D0001B20E /* ShareButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CBDA28B2A40DD9D0001B20E /* ShareButtons.swift */; };
@@ -66,6 +68,7 @@
 
 /* Begin PBXFileReference section */
 		8C3181BC2A40AEBA0032C4AD /* ImportModelBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportModelBehavior.swift; sourceTree = "<group>"; };
+		8C509BB82A66E07000DE24FF /* PromptTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptTextField.swift; sourceTree = "<group>"; };
 		8CBDA28B2A40DD9D0001B20E /* ShareButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareButtons.swift; sourceTree = "<group>"; };
 		8CFB91AD2A3BAEDB00BCC614 /* ModelsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelsViewModel.swift; sourceTree = "<group>"; };
 		EB067F862992E561004D1AD9 /* HelpContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpContent.swift; sourceTree = "<group>"; };
@@ -141,6 +144,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8C509BBB2A66E07900DE24FF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8C509BB82A66E07000DE24FF /* PromptTextField.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		8CFB91AB2A3BAC4B00BCC614 /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -149,8 +160,9 @@
 				EBDD7DB72976AAFE00C1C4B2 /* State.swift */,
 				EBB5BA5929426E06003A2A5B /* Downloader.swift */,
 				EBDD7DB22973200200C1C4B2 /* Utils.swift */,
-				EBB5BA5129425B07003A2A5B /* Pipeline */,
 				8CFB91AD2A3BAEDB00BCC614 /* ModelsViewModel.swift */,
+				EBB5BA5129425B07003A2A5B /* Pipeline */,
+				8C509BBB2A66E07900DE24FF /* Views */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -485,6 +497,7 @@
 				8CFB91AE2A3BAEDB00BCC614 /* ModelsViewModel.swift in Sources */,
 				EBE756092941178600806B32 /* Loading.swift in Sources */,
 				EBDD7DB82976AAFE00C1C4B2 /* State.swift in Sources */,
+				8C509BB92A66E07000DE24FF /* PromptTextField.swift in Sources */,
 				EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */,
 				EBE755C9293E37DD00806B32 /* DiffusionApp.swift in Sources */,
 				EBDD7DB32973200200C1C4B2 /* Utils.swift in Sources */,
@@ -523,6 +536,7 @@
 				F1552031297109C300DC009B /* ControlsView.swift in Sources */,
 				EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */,
 				F155203429710B3600DC009B /* StatusView.swift in Sources */,
+				8C509BBA2A66E07000DE24FF /* PromptTextField.swift in Sources */,
 				EB560F0429A3C20800C0F8B8 /* Capabilities.swift in Sources */,
 				F15520242971093300DC009B /* Diffusion_macOSApp.swift in Sources */,
 				EBDD7DB52973201800C1C4B2 /* ModelInfo.swift in Sources */,
