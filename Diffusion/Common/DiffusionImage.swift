@@ -218,6 +218,7 @@ func save(image: UIImage?, filename: String?) -> URL? {
     
 }
 
+#if os(macOS)
 extension DiffusionImage: NSItemProviderWriting {
     
     static var writableTypeIdentifiersForItemProvider: [String] {
@@ -259,7 +260,6 @@ extension DiffusionImage: NSItemProviderWriting {
     
 }
 
-#if os(macOS)
 extension DiffusionImage: NSPasteboardWriting {
     
     // MARK: - NSPasteboardWriting

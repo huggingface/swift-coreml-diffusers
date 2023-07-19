@@ -57,6 +57,7 @@ extension Array {
     subscript(safe index: Index) -> Element? {
         return indices.contains(index) ? self[index] : nil
     }
+}
 
 /// Returns an array of booleans that indicates at which steps a preview should be generated.
 ///
