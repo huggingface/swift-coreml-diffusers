@@ -122,6 +122,7 @@ struct ControlsView: View {
                     }, label: {
                         Text("Models")
                     })
+                  
                     Divider()
                     
                     DisclosureGroup(isExpanded: $disclosedPrompt) {
