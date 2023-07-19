@@ -85,7 +85,7 @@ struct GeneratedImageView: View {
             } else if .complete == diffusionImageWrapper.diffusionImageState {
                 return AnyView(
                     VStack {
-                        Image(nsImage: NSImage(cgImage: cgImage, size: CGSize(width: cgImage.width, height: cgImage.height)), scale: 1, label: Text("Generated image"))
+                        Image(cgImage, scale: 1, label: Text("Generated image"))
                             .resizable()
                             .aspectRatio(1, contentMode: .fit)
                             .clipShape(RoundedRectangle(cornerRadius: 15))
