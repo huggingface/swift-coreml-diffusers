@@ -13,9 +13,9 @@ let deviceHas6GBOrMore = true
 
 let deviceSupportsQuantization = {
     if #available(macOS 14, *) {
-        true
+        return true
     } else {
-        false
+        return false
     }
 }()
 
