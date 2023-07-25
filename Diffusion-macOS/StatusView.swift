@@ -90,7 +90,7 @@ struct StatusView: View {
                 if generation.seed != lastSeed {
                     Text("Seed: \(lastSeed)")
                     Button("Set") {
-                        generation.seed = UInt32(lastSeed)
+                        generation.seed = lastSeed
                     }
                 }
             }.frame(maxHeight: 25)
