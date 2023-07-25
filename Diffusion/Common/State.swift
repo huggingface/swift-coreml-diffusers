@@ -50,7 +50,7 @@ class GenerationContext: ObservableObject {
     // FIXME: Double to support the slider component
     @Published var steps = 25.0
     @Published var numImages = 1.0
-    @Published var seed = UInt32(0)
+    @Published var seed: UInt32 = 0
     @Published var guidanceScale = 7.5
     @Published var previews = 5.0
     @Published var disableSafety = false
