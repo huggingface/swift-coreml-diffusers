@@ -425,7 +425,7 @@ struct ControlsView: View {
     fileprivate func discloseSeedContent() -> some View {
         let seedBinding = Binding<String>(
             get: {
-                generation.seed < 1 ? "" : String(generation.seed)
+                String(generation.seed)
             },
             set: { newValue in
                 if let seed = UInt32(newValue) {

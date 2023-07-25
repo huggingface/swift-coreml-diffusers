@@ -88,7 +88,8 @@ struct StatusView: View {
                 Text(intervalString)
                 Spacer()
                 if generation.seed != lastSeed {
-                    Text("Seed: \(lastSeed)")
+                    
+                    Text(String("Seed: \(formatLargeNumber(lastSeed))"))
                     Button("Set") {
                         generation.seed = lastSeed
                     }
