@@ -78,7 +78,7 @@ class GenerationContext: ObservableObject {
             negativePrompt: negativePrompt,
             scheduler: scheduler,
             numInferenceSteps: Int(steps),
-            seed: UInt32(seed ?? 0),
+            seed: seed,
             numPreviews: Int(previews),
             guidanceScale: Float(guidanceScale),
             disableSafety: disableSafety
