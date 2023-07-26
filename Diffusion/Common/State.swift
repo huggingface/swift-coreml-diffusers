@@ -80,7 +80,7 @@ class GenerationContext: ObservableObject {
             scheduler: scheduler,
             numInferenceSteps: Int(steps),
             imageCount: 1, // always process one at a time so that we can better control or inspect the seed from the run
-            seed: overrideSeed > 0 ? overrideSeed : (UInt32(seed ?? 0)),
+            seed: overrideSeed > 0 ? overrideSeed : seed,
             numPreviews: Int(previews),
             guidanceScale: Float(guidanceScale),
             disableSafety: disableSafety

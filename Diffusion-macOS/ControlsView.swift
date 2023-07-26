@@ -152,15 +152,8 @@ struct ControlsView: View {
         let prefix = downloaded ? "● " : "◌ "  //"○ "
         return Text(prefix).foregroundColor(downloaded ? .accentColor : .secondary) + Text(model.modelVersion)
     }
-    
-    var modelFilename: String? {
-        guard let pipelineLoader = pipelineLoader else { return nil }
-        let selectedURL = pipelineLoader.compiledURL
-        guard FileManager.default.fileExists(atPath: selectedURL.path) else { return nil }
-        return selectedURL.path
-    }
 
-    func batchImageCount() -> some View {
+    fileprivate func batchImageCount() -> some View {
         HStack {
             CompactSlider(value: Binding<Double>(get: { Double(imageViewModel.imageCount) }, set: { imageViewModel.imageCount = Int($0) }), in: 1...100) {
                 Text("Batch Size")
