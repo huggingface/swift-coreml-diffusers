@@ -86,3 +86,38 @@ func previewIndices(_ numInferenceSteps: Int, _ numPreviews: Int) -> [Bool] {
 
     return previewArray
 }
+
+extension Double {
+    func reduceScale(to places: Int) -> Double {
+        let multiplier = pow(10, Double(places))
+        let newDecimal = multiplier * self // move the decimal right
+        let truncated = Double(Int(newDecimal)) // drop the fraction
+        let originalDecimal = truncated / multiplier // move the decimal back
+        return originalDecimal
+    }
+}
+
+func formatLargeNumber(_ n: UInt32) -> String {
+    let num = abs(Double(n))
+
+    switch num {
+    case 1_000_000_000...:
+        var formatted = num / 1_000_000_000
+        formatted = formatted.reduceScale(to: 3)
+        return "\(formatted)B"
+
+    case 1_000_000...:
+        var formatted = num / 1_000_000
+        formatted = formatted.reduceScale(to: 3)
+        return "\(formatted)M"
+
+    case 1_000...:
+        return "\(n)"
+
+    case 0...:
+        return "\(n)"
+
+    default:
+        return "\(n)"
+    }
+}

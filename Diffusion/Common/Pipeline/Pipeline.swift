@@ -69,7 +69,7 @@ class Pipeline {
     ) throws -> GenerationResult {
         let beginDate = Date()
         canceled = false
-        let theSeed = seed > 1 ? seed : UInt32.random(in: 1...maxSeed)
+        let theSeed = seed > 0 ? seed : UInt32.random(in: 1...maxSeed)
         let sampleTimer = SampleTimer()
         sampleTimer.start()
         
