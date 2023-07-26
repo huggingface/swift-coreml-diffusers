@@ -516,10 +516,6 @@ struct ControlsView: View {
             }
         }.foregroundColor(.secondary)
     }
-
-    fileprivate func isModelDownloaded(_ model: ModelInfo, computeUnits: ComputeUnits? = nil) -> Bool {
-        PipelineLoader(model: model, computeUnits: computeUnits ?? generation.computeUnits).ready
-    }
     
     fileprivate func modelLabel(_ model: ModelInfo) -> some View {
         let exists = modelsViewModel.getModelReadiness(model).state == ModelReadinessState.ready
