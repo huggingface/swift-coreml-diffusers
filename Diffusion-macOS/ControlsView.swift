@@ -12,6 +12,7 @@ import CompactSlider
 import AppKit
 import StableDiffusion
 
+/// Track a StableDiffusion Pipeline's readiness. This include actively downloading from the internet, uncompressing the downloaded zip file, actively loading into memory, ready to use or an Error state.
 enum PipelineState: Equatable {
     case unknown
     case downloading(Double)
@@ -102,8 +103,8 @@ struct ControlsView: View {
     @State private var positiveTokenCount: Int = 0
     @State private var negativeTokenCount: Int = 0
 
-    // Reasonable range for the slider
-    let maxSeed: UInt32 = 1000
+    let maxSeed: UInt32 = UInt32.max
+    private var textFieldLabelSeed: String { generation.seed < 1 ? "Random Seed" : "Seed" }
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -122,7 +123,7 @@ struct ControlsView: View {
                     }, label: {
                         Text("Models")
                     })
-                  
+   
                     Divider()
                     
                     DisclosureGroup(isExpanded: $disclosedPrompt) {
@@ -195,15 +196,11 @@ struct ControlsView: View {
                     }
 
                     DisclosureGroup(isExpanded: $disclosedSeed) {
-                        let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
-                        CompactSlider(value: $generation.seed, in: -1...Double(maxSeed), step: 1) {
-                            Text(sliderLabel)
-                            Spacer()
-                            Text("\(Int(generation.seed))")
-                        }.padding(.leading, 10)
+                        discloseSeedContent()
+                            .padding(.leading, 10)
                     } label: {
                         HStack {
-                            Label("Seed", systemImage: "leaf").foregroundColor(.secondary)
+                            Label(textFieldLabelSeed, systemImage: "leaf").foregroundColor(.secondary)
                             Spacer()
                             if disclosedSeed {
                                 Button {
@@ -218,7 +215,8 @@ struct ControlsView: View {
                             } else {
                                 Text("\(Int(generation.seed))")
                             }
-                        }.foregroundColor(.secondary)
+                        }
+                        .foregroundColor(.secondary)
                     }
 
                     if Capabilities.hasANE {
@@ -276,8 +274,6 @@ struct ControlsView: View {
                 DispatchQueue.main.async {
                     lastSelectedModelIndex = selectedModelIndex
                     selectedModelIndex = firstIndex
-//                    print("lastSelectedModelIndex \(String(describing: lastSelectedModelIndex))")
-//                    print("selectedModelIndex \(String(describing: selectedModelIndex))")
                 }
             }
             selectedComputeUnits = Settings.shared.currentComputeUnits
@@ -288,11 +284,11 @@ struct ControlsView: View {
     
     // MARK: Helper Functions
 
-    func updateSafetyCheckerState() {
+    fileprivate func updateSafetyCheckerState() {
         mustShowSafetyCheckerDisclaimer = generation.disableSafety && !Settings.shared.safetyCheckerDisclaimerShown
     }
-    
-    /// If the `defaultUnits` automation selection matches then this func adds an asterix (*) character  to the start of the label which indicates best choice to the user
+
+  /// If the `defaultUnits` automation selection matches then this func adds an asterix (*) character  to the start of the label which indicates best choice to the user
     func computeUnitsLabel(_ units: ComputeUnits) -> String {
         let defaultComputeUnits = ModelInfo.defaultComputeUnits
         let asterix = "* "
@@ -425,9 +421,8 @@ struct ControlsView: View {
             }
             .keyboardShortcut("I", modifiers: [.command, .shift])
         }
-        //.padding()
     }
-    
+  
     /// A SwiftUI View for presenting the two `PromptTextField` controls for positive and negative prompts.
     private func promptsContent() -> some View {
         VStack {
@@ -522,13 +517,12 @@ struct ControlsView: View {
         }.foregroundColor(.secondary)
     }
 
-    private func modelLabel(_ model: ModelInfo) -> some View {
-//            print("CONTROLS VIEW MODEL LABEL GETTING MODEL.READY")
+    fileprivate func isModelDownloaded(_ model: ModelInfo, computeUnits: ComputeUnits? = nil) -> Bool {
+        PipelineLoader(model: model, computeUnits: computeUnits ?? generation.computeUnits).ready
+    }
+    
+    fileprivate func modelLabel(_ model: ModelInfo) -> some View {
         let exists = modelsViewModel.getModelReadiness(model).state == ModelReadinessState.ready
-        
-//            print("Model name: \(model.humanReadableFileName) variant: \(model.variant)")
-//            print("Model exists? \(exists)")
-        
         let filledCircle = Image(systemName: "circle.fill")
             .font(.caption)
             .foregroundColor(exists ? .accentColor : .secondary)
@@ -561,5 +555,38 @@ struct ControlsView: View {
         pipelineState = .downloading(0.0)
         pipelineLoader?.state = .downloading(0.0)
     }
+    
+    fileprivate func discloseSeedContent() -> some View {
+        let seedBinding = Binding<String>(
+            get: {
+                String(generation.seed)
+            },
+            set: { newValue in
+                if let seed = UInt32(newValue) {
+                    generation.seed = seed
+                } else {
+                    generation.seed = 0
+                }
+            }
+        )
+        
+        return HStack {
+            TextField("", text: seedBinding)
+                .multilineTextAlignment(.trailing)
+                .onChange(of: seedBinding.wrappedValue, perform: { newValue in
+                    if let seed = UInt32(newValue) {
+                        generation.seed = seed
+                    } else {
+                        generation.seed = 0
+                    }
+                })
+                .onReceive(Just(seedBinding.wrappedValue)) { newValue in
+                    let filtered = newValue.filter { "0123456789".contains($0) }
+                    if filtered != newValue {
+                        seedBinding.wrappedValue = filtered
+                    }
+                }
+            Stepper("", value: $generation.seed, in: 0...UInt32.max)
+        }
+    }
 }
-

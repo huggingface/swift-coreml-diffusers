@@ -49,7 +49,7 @@ class GenerationContext: ObservableObject {
     // FIXME: Double to support the slider component
     @Published var steps = 25.0
     @Published var numImages = 1.0
-    @Published var seed = -1.0
+    @Published var seed: UInt32 = 0
     @Published var guidanceScale = 7.5
     @Published var previews = 5.0
     @Published var disableSafety = false
@@ -71,14 +71,13 @@ class GenerationContext: ObservableObject {
 
     func generate() async throws -> GenerationResult {
         guard let pipeline = pipeline else { throw "No pipeline" }
-        let seed = self.seed >= 0 ? UInt32(self.seed) : nil
         return try pipeline.generate(
             prompt: positivePrompt,
             negativePrompt: negativePrompt,
             scheduler: scheduler,
             numInferenceSteps: Int(steps),
-            numPreviews: Int(previews),
             seed: seed,
+            numPreviews: Int(previews),
             guidanceScale: Float(guidanceScale),
             disableSafety: disableSafety
         )

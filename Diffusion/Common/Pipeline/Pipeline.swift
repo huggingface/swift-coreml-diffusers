@@ -62,15 +62,14 @@ class Pipeline {
         negativePrompt: String = "",
         scheduler: StableDiffusionScheduler,
         numInferenceSteps stepCount: Int = 50,
+        seed: UInt32 = 0,
         numPreviews previewCount: Int = 5,
-        seed: UInt32? = nil,
         guidanceScale: Float = 7.5,
         disableSafety: Bool = false
     ) throws -> GenerationResult {
         let beginDate = Date()
         canceled = false
-
-        let theSeed = seed ?? UInt32.random(in: 0...maxSeed)
+        let theSeed = seed > 0 ? seed : UInt32.random(in: 1...maxSeed)
         let sampleTimer = SampleTimer()
         sampleTimer.start()
         
