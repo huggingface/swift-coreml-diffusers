@@ -10,6 +10,7 @@ import Combine
 import SwiftUI
 import CompactSlider
 
+/// Track a StableDiffusion Pipeline's readiness. This include actively downloading from the internet, uncompressing the downloaded zip file, actively loading into memory, ready to use or an Error state.
 enum PipelineState {
     case downloading(Double)
     case uncompressing
@@ -78,23 +79,30 @@ struct ControlsView: View {
     @State private var positiveTokenCount: Int = 0
     @State private var negativeTokenCount: Int = 0
 
-    // Reasonable range for the slider
-    let maxSeed: UInt32 = 1000
-
-    func updateSafetyCheckerState() {
+    let maxSeed: UInt32 = UInt32.max
+    private var textFieldLabelSeed: String { generation.seed < 1 ? "Random Seed" : "Seed" }
+    
+    var modelFilename: String? {
+        guard let pipelineLoader = pipelineLoader else { return nil }
+        let selectedURL = pipelineLoader.compiledURL
+        guard FileManager.default.fileExists(atPath: selectedURL.path) else { return nil }
+        return selectedURL.path
+    }
+    
+    fileprivate func updateSafetyCheckerState() {
         mustShowSafetyCheckerDisclaimer = generation.disableSafety && !Settings.shared.safetyCheckerDisclaimerShown
     }
     
-    func updateComputeUnitsState() {
+    fileprivate func updateComputeUnitsState() {
         Settings.shared.userSelectedComputeUnits = generation.computeUnits
         modelDidChange(model: Settings.shared.currentModel)
     }
     
-    func resetComputeUnitsState() {
+    fileprivate func resetComputeUnitsState() {
         generation.computeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
     }
 
-    func modelDidChange(model: ModelInfo) {
+    fileprivate func modelDidChange(model: ModelInfo) {
         guard pipelineLoader?.model != model || pipelineLoader?.computeUnits != generation.computeUnits else {
             print("Reusing same model \(model) with units \(generation.computeUnits)")
             return
@@ -133,24 +141,17 @@ struct ControlsView: View {
         }
     }
     
-    func isModelDownloaded(_ model: ModelInfo, computeUnits: ComputeUnits? = nil) -> Bool {
+    fileprivate func isModelDownloaded(_ model: ModelInfo, computeUnits: ComputeUnits? = nil) -> Bool {
         PipelineLoader(model: model, computeUnits: computeUnits ?? generation.computeUnits).ready
     }
     
-    func modelLabel(_ model: ModelInfo) -> Text {
+    fileprivate func modelLabel(_ model: ModelInfo) -> Text {
         let downloaded = isModelDownloaded(model)
         let prefix = downloaded ? "● " : "◌ "  //"○ "
         return Text(prefix).foregroundColor(downloaded ? .accentColor : .secondary) + Text(model.modelVersion)
     }
     
-    var modelFilename: String? {
-        guard let pipelineLoader = pipelineLoader else { return nil }
-        let selectedURL = pipelineLoader.compiledURL
-        guard FileManager.default.fileExists(atPath: selectedURL.path) else { return nil }
-        return selectedURL.path
-    }
-    
-    private func prompts() -> some View {
+    fileprivate func prompts() -> some View {
         VStack {
             Spacer()
             PromptTextField(text: $generation.positivePrompt, isPositivePrompt: true, model: $model)
@@ -183,6 +184,7 @@ struct ControlsView: View {
                         }
                         .onChange(of: model) { selection in
                             guard selection != revealOption else {
+                                // The reveal option has been requested - open the models folder in Finder
                                 NSWorkspace.shared.selectFile(modelFilename, inFileViewerRootedAtPath: PipelineLoader.models.path)
                                 model = Settings.shared.currentModel.modelVersion
                                 return
@@ -315,15 +317,11 @@ struct ControlsView: View {
                     }
 
                     DisclosureGroup(isExpanded: $disclosedSeed) {
-                        let sliderLabel = generation.seed < 0 ? "Random Seed" : "Seed"
-                        CompactSlider(value: $generation.seed, in: -1...Double(maxSeed), step: 1) {
-                            Text(sliderLabel)
-                            Spacer()
-                            Text("\(Int(generation.seed))")
-                        }.padding(.leading, 10)
+                        discloseSeedContent()
+                            .padding(.leading, 10)
                     } label: {
                         HStack {
-                            Label("Seed", systemImage: "leaf").foregroundColor(.secondary)
+                            Label(textFieldLabelSeed, systemImage: "leaf").foregroundColor(.secondary)
                             Spacer()
                             if disclosedSeed {
                                 Button {
@@ -338,7 +336,8 @@ struct ControlsView: View {
                             } else {
                                 Text("\(Int(generation.seed))")
                             }
-                        }.foregroundColor(.secondary)
+                        }
+                        .foregroundColor(.secondary)
                     }
 
                     if Capabilities.hasANE {
@@ -422,5 +421,38 @@ struct ControlsView: View {
             modelDidChange(model: ModelInfo.from(modelVersion: model) ?? ModelInfo.v2Base)
         }
     }
+    
+    fileprivate func discloseSeedContent() -> some View {
+        let seedBinding = Binding<String>(
+            get: {
+                String(generation.seed)
+            },
+            set: { newValue in
+                if let seed = UInt32(newValue) {
+                    generation.seed = seed
+                } else {
+                    generation.seed = 0
+                }
+            }
+        )
+        
+        return HStack {
+            TextField("", text: seedBinding)
+                .multilineTextAlignment(.trailing)
+                .onChange(of: seedBinding.wrappedValue, perform: { newValue in
+                    if let seed = UInt32(newValue) {
+                        generation.seed = seed
+                    } else {
+                        generation.seed = 0
+                    }
+                })
+                .onReceive(Just(seedBinding.wrappedValue)) { newValue in
+                    let filtered = newValue.filter { "0123456789".contains($0) }
+                    if filtered != newValue {
+                        seedBinding.wrappedValue = filtered
+                    }
+                }
+            Stepper("", value: $generation.seed, in: 0...UInt32.max)
+        }
+    }
 }
-
