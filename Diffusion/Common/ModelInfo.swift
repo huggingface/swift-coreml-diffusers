@@ -178,6 +178,14 @@ extension ModelInfo {
         isXL: true
     )
     
+    static let xlmbp = ModelInfo(
+        modelId: "apple/coreml-stable-diffusion-mixed-bit-palettization",
+        modelVersion: "Stable Diffusion XL base [4.5 bit]",
+        supportsEncoder: true,
+        quantized: true,
+        isXL: true
+    )
+    
     static let MODELS: [ModelInfo] = {
         if deviceSupportsQuantization {
             return [
@@ -190,6 +198,7 @@ extension ModelInfo {
                 ModelInfo.v21Base,
                 ModelInfo.v21Palettized,
                 ModelInfo.xl,
+                ModelInfo.xlmbp
             ]
         } else {
             return [
