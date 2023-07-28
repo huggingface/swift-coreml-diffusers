@@ -89,26 +89,21 @@ extension PipelineLoader {
     }
     
     var downloadedURL: URL {
-//        print("downloadedURL: \(modelsViewModel.modelsFolderURL.appending(path: zipFilename))")
         return modelsViewModel.modelsFolderURL.appending(path: zipFilename)  }
 
     var uncompressURL: URL {
-//        print("uncompressURL: \(modelsViewModel.modelsFolderURL)")
         return modelsViewModel.modelsFolderURL
         }
     
     var packagesFilename: String {
-//        print("packagesFilename: \(downloadedURL.deletingPathExtension().lastPathComponent)")
         return downloadedURL.deletingPathExtension().lastPathComponent
         }
 
     var compiledURL: URL {
-//        print("compiledURL: \(modelsViewModel.modelsFolderURL.appending(path: packagesFilename))")
         return modelsViewModel.modelsFolderURL.appending(path: packagesFilename)
     }
 
     var downloaded: Bool {
-//        print("file downloaded to \(downloadedURL.path)? \(FileManager.default.fileExists(atPath: downloadedURL.path))")
         return FileManager.default.fileExists(atPath: downloadedURL.path)
     }
     
@@ -125,7 +120,6 @@ extension PipelineLoader {
     
     // TODO: maybe receive Progress to add another progress as child -- pcuena
     func preparePipeline() async throws -> Pipeline {
-//        print("-----PREPARE PIPELINE--------")
         do {
             let pipeline = try await load(url: modelsViewModel.modelsFolderURL.appendingPathComponent(model.fileSystemFileName))
             return Pipeline(pipeline, maxSeed: maxSeed)
@@ -136,7 +130,6 @@ extension PipelineLoader {
     }
     
     func prepareDownload() async throws -> Pipeline {
-//        print("-----DOWNLOAD PIPELINE--------")
         do {
             try await download()
             try await unzip()
@@ -149,7 +142,6 @@ extension PipelineLoader {
     
     @discardableResult
     func download() async throws -> URL {
-//        print("PIPELINE LOADER DOWNLOAD GETTING MODEL READY")
         if modelsViewModel.getModelReadiness(model).state == ModelReadinessState.ready || downloaded { return downloadedURL }
         let downloader = Downloader(from: url, to: downloadedURL)
         self.downloader = downloader
@@ -179,15 +171,26 @@ extension PipelineLoader {
         modelsViewModel.setModelReadiness(of: model, to: .ready)
     }
     
-    func load(url: URL) async throws -> StableDiffusionPipeline {
+    func load(url: URL) async throws -> StableDiffusionPipelineProtocol {
         let beginDate = Date()
         let configuration = MLModelConfiguration()
         configuration.computeUnits = computeUnits
-        let pipeline = try StableDiffusionPipeline(resourcesAt: url,
-                                                   controlNet: [],
-                                                   configuration: configuration,
-                                                   disableSafety: false,
-                                                   reduceMemory: model.reduceMemory)
+        let pipeline: StableDiffusionPipelineProtocol
+        if model.isXL {
+            if #available(macOS 14.0, iOS 17.0, *) {
+                pipeline = try StableDiffusionXLPipeline(resourcesAt: url,
+                                                       configuration: configuration,
+                                                       reduceMemory: model.reduceMemory)
+            } else {
+                throw "Stable Diffusion XL requires macOS 14"
+            }
+        } else {
+            pipeline = try StableDiffusionPipeline(resourcesAt: url,
+                                                       controlNet: [],
+                                                       configuration: configuration,
+                                                       disableSafety: false,
+                                                       reduceMemory: model.reduceMemory)
+        }
         try pipeline.loadResources()
         print("Pipeline loaded in \(Date().timeIntervalSince(beginDate))")
         state = .loaded

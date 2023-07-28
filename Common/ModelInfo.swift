@@ -78,7 +78,11 @@ struct ModelInfo: Hashable, Identifiable {
     
     /// Are weights quantized? This is only used to decide whether to use `reduceMemory`
     let quantized: Bool
-    
+
+    /// Whether this is a Stable Diffusion XL model
+    // TODO: retrieve from remote config
+    let isXL: Bool
+
     //TODO: refactor all these properties
     init(modelId: String,
          variant: AttentionVariant,
@@ -91,7 +95,8 @@ struct ModelInfo: Hashable, Identifiable {
          splitAttentionV2Suffix: String = "split_einsum_v2_compiled",
          supportsEncoder: Bool = false,
          supportsAttentionV2: Bool = false,
-         quantized: Bool = false) {
+         quantized: Bool = false,
+         isXL: Bool = false) {
         self.modelId = modelId
         self.variant = variant
         self.builtin = builtin
@@ -104,6 +109,7 @@ struct ModelInfo: Hashable, Identifiable {
         self.supportsAttentionV2 = supportsAttentionV2
         self.quantized = quantized
         self.fileSystemFileName = fileSystemFileName
+        self.isXL = isXL
         if builtin {
             self.fileSystemFileName = fileSystemFileName + "_" + fileSuffix()
         } 
@@ -166,7 +172,29 @@ extension ModelInfo {
 
 extension ModelInfo {
     
-    
+    static let xl = ModelInfo(
+        modelId: "apple/coreml-stable-diffusion-xl-base",
+        variant: AttentionVariant.original,
+        builtin: true,
+        modelVersion: "Stable Diffusion XL base",
+        humanReadableFileName: "CoreML Stable Diffusion XL Base",
+        fileSystemFileName: "coreml-stable-diffusion-XL",
+        supportsEncoder: true,
+        isXL: true
+    )
+
+    static let xlmbp = ModelInfo(
+        modelId: "apple/coreml-stable-diffusion-mixed-bit-palettization",
+        variant: AttentionVariant.splitEinsumV2,
+        builtin: true,
+        modelVersion: "Stable Diffusion XL base [4.5 bit]",
+        humanReadableFileName: "CoreML Stable Diffusion XL Base",
+        fileSystemFileName: "coreml-stable-diffusion-XL",
+        supportsEncoder: true,
+        quantized: true,
+        isXL: true
+    )
+
     static let v14Base = ModelInfo(modelId: "pcuenq/coreml-stable-diffusion-1-4",
               variant: AttentionVariant.original,
               builtin: true,
@@ -238,13 +266,6 @@ extension ModelInfo {
               supportsAttentionV2: true,
               quantized: true)
     
-    static let ofaSmall = ModelInfo(modelId: "pcuenq/coreml-small-stable-diffusion-v0",
-              variant: AttentionVariant.original,
-              builtin: true,
-              modelVersion: "v0",
-              humanReadableFileName: "CoreML Small Stable Diffusion v0",
-              fileSystemFileName: "coreml-small-stable-diffusion-v0")
-
     static let BUILTIN_MODELS: [ModelInfo] = {
         if deviceSupportsQuantization {
             return [
@@ -256,15 +277,15 @@ extension ModelInfo {
                 ModelInfo.v2Palettized,
                 ModelInfo.v21Base,
                 ModelInfo.v21Palettized,
-                ModelInfo.ofaSmall
+                ModelInfo.xl,
+                ModelInfo.xlmbp
             ]
         } else {
             return [
                 ModelInfo.v14Base,
                 ModelInfo.v15Base,
                 ModelInfo.v2Base,
-                ModelInfo.v21Base,
-                ModelInfo.ofaSmall
+                ModelInfo.v21Base
             ]
         }
     }()
