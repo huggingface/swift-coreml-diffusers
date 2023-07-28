@@ -40,10 +40,10 @@ class ModelReadiness: ObservableObject {
 
 struct ModelInfo: Hashable, Identifiable {
     
-    // To be Identifiable compliant we need an id: field.
+    // To be Identifiable compliant we need variable specifically named 'id'.
     let id = UUID()
 
-    /// Hugging Face model Id that contains .zip archives with compiled Core ML models
+    /// Hugging Face model Id, which is a partial path to the directory which  contains .the zip archives with compiled Core ML models
     let modelId: String
     
     /// Arbitrary string for presentation purposes. Something like "2.1-base"
