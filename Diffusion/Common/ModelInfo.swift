@@ -43,6 +43,10 @@ struct ModelInfo {
     /// Are weights quantized? This is only used to decide whether to use `reduceMemory`
     let quantized: Bool
     
+    /// Whether this is a Stable Diffusion XL model
+    // TODO: retrieve from remote config
+    let isXL: Bool
+    
     //TODO: refactor all these properties
     init(modelId: String, modelVersion: String,
          originalAttentionSuffix: String = "original_compiled",
@@ -50,7 +54,8 @@ struct ModelInfo {
          splitAttentionV2Suffix: String = "split_einsum_v2_compiled",
          supportsEncoder: Bool = false,
          supportsAttentionV2: Bool = false,
-         quantized: Bool = false) {
+         quantized: Bool = false,
+         isXL: Bool = false) {
         self.modelId = modelId
         self.modelVersion = modelVersion
         self.originalAttentionSuffix = originalAttentionSuffix
@@ -59,6 +64,7 @@ struct ModelInfo {
         self.supportsEncoder = supportsEncoder
         self.supportsAttentionV2 = supportsAttentionV2
         self.quantized = quantized
+        self.isXL = isXL
     }
 }
 
@@ -165,6 +171,21 @@ extension ModelInfo {
         modelVersion: "OFA-Sys/small-stable-diffusion-v0"
     )
     
+    static let xl = ModelInfo(
+        modelId: "apple/coreml-stable-diffusion-xl-base",
+        modelVersion: "Stable Diffusion XL base",
+        supportsEncoder: true,
+        isXL: true
+    )
+    
+    static let xlmbp = ModelInfo(
+        modelId: "apple/coreml-stable-diffusion-mixed-bit-palettization",
+        modelVersion: "Stable Diffusion XL base [4.5 bit]",
+        supportsEncoder: true,
+        quantized: true,
+        isXL: true
+    )
+    
     static let MODELS: [ModelInfo] = {
         if deviceSupportsQuantization {
             return [
@@ -176,7 +197,8 @@ extension ModelInfo {
                 ModelInfo.v2Palettized,
                 ModelInfo.v21Base,
                 ModelInfo.v21Palettized,
-                ModelInfo.ofaSmall
+                ModelInfo.xl,
+                ModelInfo.xlmbp
             ]
         } else {
             return [
@@ -184,7 +206,6 @@ extension ModelInfo {
                 ModelInfo.v15Base,
                 ModelInfo.v2Base,
                 ModelInfo.v21Base,
-                ModelInfo.ofaSmall
             ]
         }
     }()
