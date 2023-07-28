@@ -12,7 +12,7 @@ import CompactSlider
 import AppKit
 import StableDiffusion
 
-/// Track a StableDiffusion Pipeline's readiness. This include actively downloading from the internet, uncompressing the downloaded zip file, actively loading into memory, ready to use or an Error state.
+/// Track a StableDiffusion Pipeline's readiness. This includes actively downloading from the internet, uncompressing the downloaded zip file, actively loading into memory, ready to use or an Error state.
 enum PipelineState: Equatable {
     case unknown
     case downloading(Double)
@@ -37,7 +37,6 @@ enum PipelineState: Equatable {
         }
     }
 }
-
 
 /// Mimics the native appearance, but labels are clickable.
 /// To be removed (adding gestures to all labels) if we observe any UI shenanigans.
@@ -92,7 +91,6 @@ struct ControlsView: View {
     
     // TODO: make this computed, and observable, and easy to read
     @State private var mustShowSafetyCheckerDisclaimer = false
-    
     @State private var showModelsHelp = false
     @State private var showPromptsHelp = false
     @State private var showGuidanceHelp = false
@@ -309,7 +307,7 @@ struct ControlsView: View {
         generation.computeUnits = Settings.shared.currentComputeUnits
     }
     
-    
+    /// The selected model or variant has potentially changed. Updates the list of models in the filter list associated with the selected variant. Checks that the combination is downloaded, if yes the load the pipeline.
     private func validateModelAndUnits() {
         if let modelIndex = selectedModelIndex {
             if (modelsViewModel.filteredModels.count > modelIndex) {
@@ -547,7 +545,6 @@ struct ControlsView: View {
 
     // When the download button is pressed start downloading the selected model/variant combination
     private func downloadButtonAction() {
-        print("download button action pressed")
         pipelineState = .downloading(0.0)
         pipelineLoader?.state = .downloading(0.0)
     }
