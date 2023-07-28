@@ -39,43 +39,43 @@ class ModelReadiness: ObservableObject {
 }
 
 struct ModelInfo: Hashable, Identifiable {
-    
+
     // To be Identifiable compliant we need variable specifically named 'id'.
     let id = UUID()
 
     /// Hugging Face model Id, which is a partial path to the directory which  contains .the zip archives with compiled Core ML models
     let modelId: String
-    
+
     /// Arbitrary string for presentation purposes. Something like "2.1-base"
     let modelVersion: String
-    
+
     /// Which attention variant is this model associated with?
     let variant: AttentionVariant
-    
+
     /// Is this a user added model or a built-in?
     let builtin: Bool
-    
+
     /// Decomposted version of `fileSystemFileName` to show in the UI
     var humanReadableFileName: String
 
     /// The name of the model's parent folder as it sits in the user selected models folder
     var fileSystemFileName: String
-    
+
     /// Suffix of the archive containing the ORIGINAL attention variant. Usually something like "original_compiled"
     let originalAttentionSuffix: String
 
     /// Suffix of the archive containing the SPLIT_EINSUM attention variant. Usually something like "split_einsum_compiled"
     let splitAttentionSuffix: String
-    
+
     /// Suffix of the archive containing the SPLIT_EINSUM_V2 attention variant. Usually something like "split_einsum_v2_compiled"
     let splitAttentionV2Suffix: String
-    
+
     /// Whether the archive contains the VAE Encoder (for image to image tasks). Not yet in use.
     let supportsEncoder: Bool
-    
+
     /// Is attention v2 supported? (Ideally, we should know by looking at the repo contents)
     let supportsAttentionV2: Bool
-    
+
     /// Are weights quantized? This is only used to decide whether to use `reduceMemory`
     let quantized: Bool
 
