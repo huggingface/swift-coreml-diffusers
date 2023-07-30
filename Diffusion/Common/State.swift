@@ -24,7 +24,7 @@ enum GenerationState {
 
 typealias ComputeUnits = MLComputeUnits
 
-/// Schedulers compatible with StableDiffusionPipeline
+/// Schedulers compatible with StableDiffusionPipeline. This is a local implementation of the StableDiffusionScheduler enum as a String represetation to allow for compliance with NSSecureCoding.
 public enum Diffusion_StableDiffusionScheduler: String {
     /// Scheduler that uses a pseudo-linear multi-step (PLMS) method
     case pndmScheduler = "pndmScheduler"
