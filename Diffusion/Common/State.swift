@@ -24,8 +24,16 @@ enum GenerationState {
 
 typealias ComputeUnits = MLComputeUnits
 
+/// Schedulers compatible with StableDiffusionPipeline
+public enum Diffusion_StableDiffusionScheduler: String {
+    /// Scheduler that uses a pseudo-linear multi-step (PLMS) method
+    case pndmScheduler = "pndmScheduler"
+    /// Scheduler that uses a second order DPM-Solver++ algorithm
+    case dpmSolverMultistepScheduler = "dpmSolverMultistepScheduler"
+}
+
 class GenerationContext: ObservableObject {
-    let scheduler = StableDiffusionScheduler.dpmSolverMultistepScheduler
+    let scheduler = Diffusion_StableDiffusionScheduler.dpmSolverMultistepScheduler
 
     @Published var pipeline: Pipeline? = nil {
         didSet {

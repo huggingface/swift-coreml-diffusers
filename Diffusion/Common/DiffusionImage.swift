@@ -35,7 +35,7 @@ struct DiffusionImageWrapper {
 /// Model class  to hold a  generated image and the data used to generate it
 final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
     
-    // Note: we do not capture the chosen Scheduler as it's a Swift enum and cannot conform to NSSecureCoding, which is used for Drag operations.
+    // Note: We created a local enum Diffusion_StableDiffusionScheduler so that we can track the Scheduler used in the image recipe. The StableDiffusionScheduler enum has not got a raw type and therefore cannot conform to NSSecureCoding which we use for Copy/Drag operations.
     let id: UUID
     let cgImage: CGImage
     let seed: UInt32
@@ -44,6 +44,7 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
     let negativePrompt: String
     let guidanceScale: Double
     let disableSafety: Bool
+    let scheduler: Diffusion_StableDiffusionScheduler
 
     /// This is a composed `String` built from the numeric `Seed` and the user supplied `positivePrompt` limited to the first 200 character and with whitespace replaced with underscore characters.
     var generatedFilename: String {
@@ -53,7 +54,7 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
     /// The location on the file system where this generated image is stored.
     var fileURL: URL
 
-    init(id: UUID, cgImage: CGImage, seed: UInt32, steps: Double, positivePrompt: String, negativePrompt: String, guidanceScale: Double, disableSafety: Bool) {
+    init(id: UUID, cgImage: CGImage, seed: UInt32, steps: Double, positivePrompt: String, negativePrompt: String, guidanceScale: Double, disableSafety: Bool, scheduler: Diffusion_StableDiffusionScheduler) {
         let genname = "\(seed)-\(positivePrompt)".first200Safe
         self.id = id
         self.cgImage = cgImage
@@ -63,6 +64,7 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
         self.negativePrompt = negativePrompt
         self.guidanceScale = guidanceScale
         self.disableSafety = disableSafety
+        self.scheduler = scheduler
 #if os(macOS)
         // Initially set the fileURL to the top level applicationDirectory to allow running the completed instance func save() where the fileURL will be updated to the correct location.
         self.fileURL = URL.applicationDirectory
@@ -94,6 +96,7 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
         coder.encode(negativePrompt, forKey: "negativePrompt")
         coder.encode(guidanceScale, forKey: "guidanceScale")
         coder.encode(disableSafety, forKey: "disableSafety")
+        coder.encode(scheduler, forKey: "scheduler")
         // Encode cgImage as data
 #if os(macOS)
         let data = NSBitmapImageRep(cgImage: cgImage).representation(using: .png, properties: [:])
@@ -117,6 +120,8 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
         self.negativePrompt = coder.decodeObject(forKey: "negativePrompt") as? String ?? ""
         self.guidanceScale = coder.decodeDouble(forKey: "guidanceScale")
         self.disableSafety = coder.decodeBool(forKey: "disableSafety")
+        // Should we error/throw here instead of assuming our default scheduler? -- dolmere
+        self.scheduler = coder.decodeObject(forKey: "scheduler") as? Diffusion_StableDiffusionScheduler ?? Diffusion_StableDiffusionScheduler.dpmSolverMultistepScheduler
         let genname = "\(seed)-\(positivePrompt)".first200Safe
         
         // Decode cgImage from data

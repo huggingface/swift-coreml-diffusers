@@ -60,7 +60,7 @@ class Pipeline {
     func generate(
         prompt: String,
         negativePrompt: String = "",
-        scheduler: StableDiffusionScheduler,
+        scheduler: Diffusion_StableDiffusionScheduler,
         numInferenceSteps stepCount: Int = 50,
         numPreviews previewCount: Int = 5,
         seed: UInt32? = nil,
@@ -80,7 +80,11 @@ class Pipeline {
         config.seed = theSeed
         config.guidanceScale = guidanceScale
         config.disableSafety = disableSafety
-        config.schedulerType = scheduler
+        if (scheduler == .dpmSolverMultistepScheduler) {
+            config.schedulerType = StableDiffusionScheduler.dpmSolverMultistepScheduler
+        } else {
+            config.schedulerType = StableDiffusionScheduler.pndmScheduler
+        }
         config.useDenoisedIntermediates = true
 
         // Evenly distribute previews based on inference steps
