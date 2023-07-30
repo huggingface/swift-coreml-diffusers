@@ -175,26 +175,48 @@ struct ControlsView: View {
             ScrollView {
                 Group {
                     DisclosureGroup(isExpanded: $disclosedModel) {
-                        let revealOption = "-- reveal --"
-                        Picker("", selection: $model) {
-                            ForEach(Self.models, id: \.modelVersion) {
-                                modelLabel($0)
+                        HStack {
+                            let revealOption = "-- reveal --"
+                            Picker("", selection: $model) {
+                                ForEach(Self.models, id: \.modelVersion) {
+                                    modelLabel($0)
+                                }
+                                Text("Reveal in Finder…").tag(revealOption)
                             }
-                            Text("Reveal in Finder…").tag(revealOption)
-                        }
-                        .onChange(of: model) { selection in
-                            guard selection != revealOption else {
-                                // The reveal option has been requested - open the models folder in Finder
-                                NSWorkspace.shared.selectFile(modelFilename, inFileViewerRootedAtPath: PipelineLoader.models.path)
-                                model = Settings.shared.currentModel.modelVersion
-                                return
+                            .onChange(of: model) { selection in
+                                guard selection != revealOption else {
+                                    // The reveal option has been requested - open the models folder in Finder
+                                    NSWorkspace.shared.selectFile(modelFilename, inFileViewerRootedAtPath: PipelineLoader.models.path)
+                                    model = Settings.shared.currentModel.modelVersion
+                                    return
+                                }
+                                guard let model = ModelInfo.from(modelVersion: selection) else { return }
+                                modelDidChange(model: model)
                             }
-                            guard let model = ModelInfo.from(modelVersion: selection) else { return }
-                            modelDidChange(model: model)
+                            Button {
+                                // Set the central singleton instance to ensure that the info panel state can be updated from anywhere in the app
+                                Settings.shared.isShowingImportPanel = true
+                            } label: {
+                                Image(systemName: "plus").foregroundColor(.gray)
+                            }
+                            .font(.caption)
+                            .modifier(ImportModelBehavior())
+                            .onAppear {
+                                NSApp.keyWindow?.standardWindowButton(.closeButton)?.isHidden = true
+                                NSApp.keyWindow?.standardWindowButton(.miniaturizeButton)?.isHidden = true
+                                NSApp.keyWindow?.standardWindowButton(.zoomButton)?.isHidden = true
+                            }
+                            .onDisappear {
+                                NSApp.keyWindow?.standardWindowButton(.closeButton)?.isHidden = false
+                                NSApp.keyWindow?.standardWindowButton(.miniaturizeButton)?.isHidden = false
+                                NSApp.keyWindow?.standardWindowButton(.zoomButton)?.isHidden = false
+                            }
+                            .keyboardShortcut("I", modifiers: [.command, .shift])
                         }
                     } label: {
                         HStack {
                             Label("Model from Hub", systemImage: "cpu").foregroundColor(.secondary)
+
                             Spacer()
                             if disclosedModel {
                                 Button {

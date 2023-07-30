@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8CB41E9E2A4860F7006958D3 /* ImportModelBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB41E9D2A4860F7006958D3 /* ImportModelBehavior.swift */; };
 		8CD8A53A2A456EF800BD8A98 /* PromptTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */; };
 		8CD8A53C2A476E2C00BD8A98 /* PromptTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */; };
 		EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB067F862992E561004D1AD9 /* HelpContent.swift */; };
@@ -63,6 +64,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8CB41E9D2A4860F7006958D3 /* ImportModelBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportModelBehavior.swift; sourceTree = "<group>"; };
 		8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromptTextField.swift; sourceTree = "<group>"; };
 		EB067F862992E561004D1AD9 /* HelpContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpContent.swift; sourceTree = "<group>"; };
 		EB33A51E2954E1BC00B16357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				EBB5BA5929426E06003A2A5B /* Downloader.swift */,
+				8CB41E9D2A4860F7006958D3 /* ImportModelBehavior.swift */,
 				EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */,
 				EBDD7DB72976AAFE00C1C4B2 /* State.swift */,
 				EBDD7DB22973200200C1C4B2 /* Utils.swift */,
@@ -526,6 +529,7 @@
 				EBDD7DB62973206600C1C4B2 /* Downloader.swift in Sources */,
 				F155203429710B3600DC009B /* StatusView.swift in Sources */,
 				EB560F0429A3C20800C0F8B8 /* Capabilities.swift in Sources */,
+				8CB41E9E2A4860F7006958D3 /* ImportModelBehavior.swift in Sources */,
 				F15520242971093300DC009B /* Diffusion_macOSApp.swift in Sources */,
 				EBDD7DB52973201800C1C4B2 /* ModelInfo.swift in Sources */,
 				EBDD7DBD2977FFB300C1C4B2 /* GeneratedImageView.swift in Sources */,

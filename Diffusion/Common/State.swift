@@ -83,12 +83,19 @@ class GenerationContext: ObservableObject {
         )
     }
     
+    /// Cancel the generation of a single diffused image generation operation
     func cancelGeneration() {
         pipeline?.setCancelled()
     }
 }
 
-class Settings {
+/// Settings as an `ObserableObject` enables a SwiftUI `View` to update based on the state of a Setting.
+class Settings: ObservableObject {
+
+    /// Supports the display of a model import view. By placing this in `Settings` the same import panel can be called from different parts of the app.
+    @Published var isShowingImportPanel: Bool = false
+
+    /// `Settings` is a singleton class. Access is via `Settings.shared`.
     static let shared = Settings()
     
     let defaults = UserDefaults.standard
@@ -140,6 +147,7 @@ class Settings {
         }
     }
     
+    /// Centralized API to get access to the correct ApplicationSupport folder.
     public func applicationSupportURL() -> URL {
         let fileManager = FileManager.default
         guard let appDirectoryURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
@@ -156,5 +164,4 @@ class Settings {
             return fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         }
     }
-
 }
