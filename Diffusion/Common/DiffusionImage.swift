@@ -38,8 +38,8 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
     let negativePrompt: String
     let guidanceScale: Double
     let disableSafety: Bool
-    /// Note: We created a local enum Diffusion_StableDiffusionScheduler so that we can track the Scheduler used in the image recipe. The StableDiffusionScheduler enum has not got a raw type and therefore cannot conform to NSSecureCoding which we use for Copy/Drag operations.
-    let scheduler: Diffusion_StableDiffusionScheduler
+    /// Note: We created a local enum StableDiffusionScheduler with a String type so that we can track the Scheduler used in the image recipe. The StableDiffusion.StableDiffusionScheduler enum has not got a raw type and therefore cannot conform to NSSecureCoding which we use for Copy/Drag operations.
+    let scheduler: StableDiffusionScheduler
 
     /// This is a composed `String` built from the numeric `Seed` and the user supplied `positivePrompt` limited to the first 200 character and with whitespace replaced with underscore characters.
     var generatedFilename: String {
@@ -49,7 +49,7 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
     /// The location on the file system where this generated image is stored.
     var fileURL: URL
 
-    init(id: UUID, cgImage: CGImage, seed: UInt32, steps: Double, positivePrompt: String, negativePrompt: String, guidanceScale: Double, disableSafety: Bool, scheduler: Diffusion_StableDiffusionScheduler) {
+    init(id: UUID, cgImage: CGImage, seed: UInt32, steps: Double, positivePrompt: String, negativePrompt: String, guidanceScale: Double, disableSafety: Bool, scheduler: StableDiffusionScheduler) {
         let genname = "\(seed)-\(positivePrompt)".first200Safe
         self.id = id
         self.cgImage = cgImage
@@ -99,24 +99,13 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
         self.guidanceScale = coder.decodeDouble(forKey: "guidanceScale")
         self.disableSafety = coder.decodeBool(forKey: "disableSafety")
         // Should we error/throw here instead of assuming our default scheduler? -- dolmere
-        self.scheduler = coder.decodeObject(forKey: "scheduler") as? Diffusion_StableDiffusionScheduler ?? Diffusion_StableDiffusionScheduler.dpmSolverMultistepScheduler
+        self.scheduler = coder.decodeObject(forKey: "scheduler") as? StableDiffusionScheduler ?? StableDiffusionScheduler.dpmSolverMultistepScheduler
         let genname = "\(seed)-\(positivePrompt)".first200Safe
         
         // Decode cgImage from data
         if let imageData = coder.decodeObject(forKey: "cgImage") as? Data {
-#if os(macOS)
-            if let img = NSBitmapImageRep(data: imageData)?.cgImage {
-                self.cgImage = img
-            } else {
-                fatalError("Fatal error loading data with missing cgImage")
-            }
-#else
-            if let image = UIImage(data: imageData)?.cgImage {
-                self.cgImage = image
-            } else {
-                fatalError("Fatal error loading data with missing cgImage")
-            }
-#endif
+            guard let img = CGImage.fromData(imageData) else { fatalError("Fatal error loading data with missing cgImage in object") }
+            self.cgImage = img
         } else {
             fatalError("Fatal error loading data with missing cgImage in object")
         }

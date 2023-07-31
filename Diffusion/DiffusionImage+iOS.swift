@@ -38,7 +38,6 @@ extension DiffusionImage {
         let bitmapRep = UIImage(cgImage: cgImage).pngData()
         return bitmapRep
     }
-
 }
 
 extension DiffusionImage {

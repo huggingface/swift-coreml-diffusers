@@ -41,7 +41,6 @@ extension DiffusionImage {
         let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
         return bitmapRep.representation(using: .png, properties: [:])
     }
-
 }
 
 extension DiffusionImage: NSItemProviderWriting {
