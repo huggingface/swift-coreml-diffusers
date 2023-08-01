@@ -69,7 +69,6 @@ extension DiffusionImage: NSItemProviderWriting {
     
     func loadData(withTypeIdentifier typeIdentifier: String, forItemProviderCompletionHandler completionHandler: @escaping @Sendable (Data?, Error?) -> Void) -> Progress? {
         if typeIdentifier == NSPasteboard.PasteboardType.fileURL.rawValue {
-            // Retrieve the file's data representation
             let data = fileURL.dataRepresentation
             completionHandler(data, nil)
         } else if typeIdentifier == UTType.png.identifier {
