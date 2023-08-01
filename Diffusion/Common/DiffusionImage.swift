@@ -38,7 +38,7 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
     let negativePrompt: String
     let guidanceScale: Double
     let disableSafety: Bool
-    /// Note: We created a local enum StableDiffusionScheduler with a String type so that we can track the Scheduler used in the image recipe. The StableDiffusion.StableDiffusionScheduler enum has not got a raw type and therefore cannot conform to NSSecureCoding which we use for Copy/Drag operations.
+    /// Local enum represented with a String to conform to NSSecureCoding
     let scheduler: StableDiffusionScheduler
 
     /// This is a composed `String` built from the numeric `Seed` and the user supplied `positivePrompt` limited to the first 200 character and with whitespace replaced with underscore characters.
