@@ -14,7 +14,7 @@ import ZIPFoundation
 import StableDiffusion
 
 class PipelineLoader {
-    static let models = URL.applicationSupportDirectory.appendingPathComponent("hf-diffusion-models")
+    static let models = Settings.shared.applicationSupportURL().appendingPathComponent("hf-diffusion-models")
     let model: ModelInfo
     let computeUnits: ComputeUnits
     let maxSeed: UInt32
@@ -161,15 +161,26 @@ extension PipelineLoader {
         state = .readyOnDisk
     }
     
-    func load(url: URL) async throws -> StableDiffusionPipeline {
+    func load(url: URL) async throws -> StableDiffusionPipelineProtocol {
         let beginDate = Date()
         let configuration = MLModelConfiguration()
         configuration.computeUnits = computeUnits
-        let pipeline = try StableDiffusionPipeline(resourcesAt: url,
-                                                   controlNet: [],
-                                                   configuration: configuration,
-                                                   disableSafety: false,
-                                                   reduceMemory: model.reduceMemory)
+        let pipeline: StableDiffusionPipelineProtocol
+        if model.isXL {
+            if #available(macOS 14.0, iOS 17.0, *) {
+                pipeline = try StableDiffusionXLPipeline(resourcesAt: url,
+                                                       configuration: configuration,
+                                                       reduceMemory: model.reduceMemory)
+            } else {
+                throw "Stable Diffusion XL requires macOS 14"
+            }
+        } else {
+            pipeline = try StableDiffusionPipeline(resourcesAt: url,
+                                                       controlNet: [],
+                                                       configuration: configuration,
+                                                       disableSafety: false,
+                                                       reduceMemory: model.reduceMemory)
+        }
         try pipeline.loadResources()
         print("Pipeline loaded in \(Date().timeIntervalSince(beginDate))")
         state = .loaded

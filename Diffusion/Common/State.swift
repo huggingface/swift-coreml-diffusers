@@ -35,6 +35,7 @@ class GenerationContext: ObservableObject {
                     .receive(on: DispatchQueue.main)
                     .sink { progress in
                         guard let progress = progress else { return }
+                        self.updatePreviewIfNeeded(progress)
                         self.state = .running(progress)
                     }
             }
@@ -48,23 +49,35 @@ class GenerationContext: ObservableObject {
     // FIXME: Double to support the slider component
     @Published var steps = 25.0
     @Published var numImages = 1.0
-    @Published var seed = -1.0
+    @Published var seed: UInt32 = 0
     @Published var guidanceScale = 7.5
+    @Published var previews = 5.0
     @Published var disableSafety = false
-    
+    @Published var previewImage: CGImage? = nil
+
     @Published var computeUnits: ComputeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
 
     private var progressSubscriber: Cancellable?
 
+    private func updatePreviewIfNeeded(_ progress: StableDiffusionProgress) {
+        if previews == 0 || progress.step == 0 {
+            previewImage = nil
+        }
+
+        if previews > 0, let newImage = progress.currentImages.first, newImage != nil {
+            previewImage = newImage
+        }
+    }
+
     func generate() async throws -> GenerationResult {
         guard let pipeline = pipeline else { throw "No pipeline" }
-        let seed = self.seed >= 0 ? UInt32(self.seed) : nil
         return try pipeline.generate(
             prompt: positivePrompt,
             negativePrompt: negativePrompt,
             scheduler: scheduler,
             numInferenceSteps: Int(steps),
             seed: seed,
+            numPreviews: Int(previews),
             guidanceScale: Float(guidanceScale),
             disableSafety: disableSafety
         )
@@ -126,4 +139,22 @@ class Settings {
             return ComputeUnits(rawValue: current)
         }
     }
+    
+    public func applicationSupportURL() -> URL {
+        let fileManager = FileManager.default
+        guard let appDirectoryURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
+            // To ensure we don't return an optional - if the user domain application support cannot be accessed use the top level application support directory
+            return URL.applicationSupportDirectory
+        }
+
+        do {
+            // Create the application support directory if it doesn't exist
+            try fileManager.createDirectory(at: appDirectoryURL, withIntermediateDirectories: true, attributes: nil)
+            return appDirectoryURL
+        } catch {
+            print("Error creating application support directory: \(error)")
+            return fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        }
+    }
+
 }

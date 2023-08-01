@@ -110,6 +110,25 @@ func stepsHelp(_ showing: Binding<Bool>) -> some View {
     return helpContent(title: "Inference Steps", description: description, showing: showing)
 }
 
+func previewHelp(_ showing: Binding<Bool>) -> some View {
+    let description =
+         """
+         This number controls how many previews to display throughout the image generation process.
+
+         Using more previews can be useful if you want more visibility into how \
+         generation is progressing.
+
+         However, computing each preview takes some time and can slow down \
+         generation. If the process is too slow you can reduce the preview count, \
+         which will result in less visibility of intermediate steps during generation.
+
+         You can try different values to see what works best for your hardware.
+
+         For the absolute fastest generation times, use 0 previews.
+         """
+    return helpContent(title: "Preview Count", description: description, showing: showing)
+}
+
 func seedHelp(_ showing: Binding<Bool>) -> some View {
     let description =
          """
@@ -119,7 +138,7 @@ func seedHelp(_ showing: Binding<Bool>) -> some View {
          Next, maybe add a negative prompt or tweak the prompt slightly, and see how the result changes. \
          Rinse and repeat until you are satisfied, or select a new seed to start over.
 
-         If you select -1, a random seed will be chosen for you.
+         Set the value to 0 for a random seed to be chosen for you.
          """
     return helpContent(title: "Generation Seed", description: description, showing: showing)
 }
