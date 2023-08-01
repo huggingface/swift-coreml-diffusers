@@ -72,7 +72,6 @@ extension DiffusionImage: NSItemProviderWriting {
             let data = fileURL.dataRepresentation
             completionHandler(data, nil)
         } else if typeIdentifier == UTType.png.identifier {
-            // Retrieve the PNG data representation
             let data = pngRepresentation()
             completionHandler(data, nil)
         } else {
