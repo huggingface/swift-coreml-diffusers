@@ -98,7 +98,6 @@ final class DiffusionImage: NSObject, Identifiable, NSCoding, NSSecureCoding {
         self.negativePrompt = coder.decodeObject(forKey: "negativePrompt") as? String ?? ""
         self.guidanceScale = coder.decodeDouble(forKey: "guidanceScale")
         self.disableSafety = coder.decodeBool(forKey: "disableSafety")
-        // Should we error/throw here instead of assuming our default scheduler? -- dolmere
         self.scheduler = coder.decodeObject(forKey: "scheduler") as? StableDiffusionScheduler ?? StableDiffusionScheduler.dpmSolverMultistepScheduler
         let genname = "\(seed)-\(positivePrompt)".first200Safe
         
