@@ -7,8 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8C4B32042A770C1D0090EF17 /* DiffusionImage+macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4B32032A770C1D0090EF17 /* DiffusionImage+macOS.swift */; };
+		8C4B32062A770C300090EF17 /* DiffusionImage+iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4B32052A770C300090EF17 /* DiffusionImage+iOS.swift */; };
+		8C4B32082A77F90C0090EF17 /* Utils_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4B32072A77F90C0090EF17 /* Utils_iOS.swift */; };
+		8C4B320A2A77F9160090EF17 /* Utils_macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4B32092A77F9160090EF17 /* Utils_macOS.swift */; };
 		8CD8A53A2A456EF800BD8A98 /* PromptTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */; };
 		8CD8A53C2A476E2C00BD8A98 /* PromptTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */; };
+		8CEEB7D92A54C88C00C23829 /* DiffusionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEEB7D82A54C88C00C23829 /* DiffusionImage.swift */; };
+		8CEEB7DA2A54C88C00C23829 /* DiffusionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEEB7D82A54C88C00C23829 /* DiffusionImage.swift */; };
 		EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB067F862992E561004D1AD9 /* HelpContent.swift */; };
 		EB25B3D62A3A2DC4000E25A1 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB25B3D52A3A2DC4000E25A1 /* StableDiffusion */; };
 		EB25B3D82A3A2DD5000E25A1 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB25B3D72A3A2DD5000E25A1 /* StableDiffusion */; };
@@ -63,7 +69,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8C4B32032A770C1D0090EF17 /* DiffusionImage+macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiffusionImage+macOS.swift"; sourceTree = "<group>"; };
+		8C4B32052A770C300090EF17 /* DiffusionImage+iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DiffusionImage+iOS.swift"; sourceTree = "<group>"; };
+		8C4B32072A77F90C0090EF17 /* Utils_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils_iOS.swift; sourceTree = "<group>"; };
+		8C4B32092A77F9160090EF17 /* Utils_macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils_macOS.swift; sourceTree = "<group>"; };
 		8CD8A5392A456EF800BD8A98 /* PromptTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PromptTextField.swift; sourceTree = "<group>"; };
+		8CEEB7D82A54C88C00C23829 /* DiffusionImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiffusionImage.swift; sourceTree = "<group>"; };
 		EB067F862992E561004D1AD9 /* HelpContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpContent.swift; sourceTree = "<group>"; };
 		EB33A51E2954E1BC00B16357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EB560F0329A3C20800C0F8B8 /* Capabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capabilities.swift; sourceTree = "<group>"; };
@@ -152,6 +163,7 @@
 				EBE3FF4B295E1EFE00E921AA /* ModelInfo.swift */,
 				EBDD7DB72976AAFE00C1C4B2 /* State.swift */,
 				EBDD7DB22973200200C1C4B2 /* Utils.swift */,
+				8CEEB7D82A54C88C00C23829 /* DiffusionImage.swift */,
 				EBB5BA5129425B07003A2A5B /* Pipeline */,
 				8CD8A53B2A476E1C00BD8A98 /* Views */,
 			);
@@ -206,6 +218,8 @@
 				EBE755CC293E37DD00806B32 /* Assets.xcassets */,
 				EBE755CE293E37DD00806B32 /* Diffusion.entitlements */,
 				EBE755CF293E37DD00806B32 /* Preview Content */,
+				8C4B32052A770C300090EF17 /* DiffusionImage+iOS.swift */,
+				8C4B32072A77F90C0090EF17 /* Utils_iOS.swift */,
 			);
 			path = Diffusion;
 			sourceTree = "<group>";
@@ -269,6 +283,8 @@
 				F155203329710B3600DC009B /* StatusView.swift */,
 				EB067F862992E561004D1AD9 /* HelpContent.swift */,
 				EB560F0329A3C20800C0F8B8 /* Capabilities.swift */,
+				8C4B32032A770C1D0090EF17 /* DiffusionImage+macOS.swift */,
+				8C4B32092A77F9160090EF17 /* Utils_macOS.swift */,
 				F155202C2971093400DC009B /* Diffusion_macOS.entitlements */,
 				F15520292971093400DC009B /* Preview Content */,
 			);
@@ -484,8 +500,11 @@
 				EBE75602293E91E200806B32 /* Pipeline.swift in Sources */,
 				EBE755CB293E37DD00806B32 /* TextToImage.swift in Sources */,
 				EBB5BA5A29426E06003A2A5B /* Downloader.swift in Sources */,
+				8C4B32062A770C300090EF17 /* DiffusionImage+iOS.swift in Sources */,
+				8CEEB7D92A54C88C00C23829 /* DiffusionImage.swift in Sources */,
 				EBE3FF4C295E1EFE00E921AA /* ModelInfo.swift in Sources */,
 				EBE756092941178600806B32 /* Loading.swift in Sources */,
+				8C4B32082A77F90C0090EF17 /* Utils_iOS.swift in Sources */,
 				EBDD7DB82976AAFE00C1C4B2 /* State.swift in Sources */,
 				EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */,
 				8CD8A53C2A476E2C00BD8A98 /* PromptTextField.swift in Sources */,
@@ -520,6 +539,7 @@
 				F15520262971093300DC009B /* ContentView.swift in Sources */,
 				EBDD7DB92976AAFE00C1C4B2 /* State.swift in Sources */,
 				EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */,
+				8C4B320A2A77F9160090EF17 /* Utils_macOS.swift in Sources */,
 				EBDD7DB42973200200C1C4B2 /* Utils.swift in Sources */,
 				8CD8A53A2A456EF800BD8A98 /* PromptTextField.swift in Sources */,
 				F1552031297109C300DC009B /* ControlsView.swift in Sources */,
@@ -528,7 +548,9 @@
 				EB560F0429A3C20800C0F8B8 /* Capabilities.swift in Sources */,
 				F15520242971093300DC009B /* Diffusion_macOSApp.swift in Sources */,
 				EBDD7DB52973201800C1C4B2 /* ModelInfo.swift in Sources */,
+				8C4B32042A770C1D0090EF17 /* DiffusionImage+macOS.swift in Sources */,
 				EBDD7DBD2977FFB300C1C4B2 /* GeneratedImageView.swift in Sources */,
+				8CEEB7DA2A54C88C00C23829 /* DiffusionImage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

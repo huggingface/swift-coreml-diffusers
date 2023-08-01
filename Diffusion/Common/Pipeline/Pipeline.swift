@@ -79,7 +79,7 @@ class Pipeline {
         config.seed = theSeed
         config.guidanceScale = guidanceScale
         config.disableSafety = disableSafety
-        config.schedulerType = scheduler
+        config.schedulerType = scheduler.asStableDiffusionScheduler()
         config.useDenoisedIntermediates = true
 
         // Evenly distribute previews based on inference steps
