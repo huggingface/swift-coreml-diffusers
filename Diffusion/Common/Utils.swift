@@ -34,13 +34,11 @@ extension String {
             .replacingOccurrences(of: " ", with: "_")
             .replacingOccurrences(of: "\t", with: "_")
             .replacingOccurrences(of: "\n", with: "_")
-
         // Remove unsafe characters from the substring
         let allowedCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
         let filteredSubstring = replacedSubstring
             .components(separatedBy: allowedCharacters.inverted)
             .joined()
-
         return filteredSubstring
     }
 }

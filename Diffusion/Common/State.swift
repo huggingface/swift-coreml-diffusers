@@ -24,6 +24,21 @@ enum GenerationState {
 
 typealias ComputeUnits = MLComputeUnits
 
+/// Schedulers compatible with StableDiffusionPipeline. This is a local implementation of the StableDiffusionScheduler enum as a String represetation to allow for compliance with NSSecureCoding.
+public enum StableDiffusionScheduler: String {
+    /// Scheduler that uses a pseudo-linear multi-step (PLMS) method
+    case pndmScheduler
+    /// Scheduler that uses a second order DPM-Solver++ algorithm
+    case dpmSolverMultistepScheduler
+
+    func asStableDiffusionScheduler() -> StableDiffusion.StableDiffusionScheduler {
+        switch self {
+        case .pndmScheduler: return StableDiffusion.StableDiffusionScheduler.pndmScheduler
+        case .dpmSolverMultistepScheduler: return StableDiffusion.StableDiffusionScheduler.dpmSolverMultistepScheduler
+        }
+    }
+}
+
 class GenerationContext: ObservableObject {
     let scheduler = StableDiffusionScheduler.dpmSolverMultistepScheduler
 
@@ -143,7 +158,7 @@ class Settings {
             return ComputeUnits(rawValue: current)
         }
     }
-    
+
     public func applicationSupportURL() -> URL {
         let fileManager = FileManager.default
         guard let appDirectoryURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else {
@@ -161,6 +176,23 @@ class Settings {
         }
     }
     
+    func tempStorageURL() -> URL {
+        
+        let tmpDir = applicationSupportURL().appendingPathComponent("hf-diffusion-tmp")
+        
+        // Create directory if it doesn't exist
+        if !FileManager.default.fileExists(atPath: tmpDir.path) {
+            do {
+                try FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print("Failed to create temporary directory: \(error)")
+                return FileManager.default.temporaryDirectory
+            }
+        }
+        
+        return tmpDir
+    }
+
     func tempStorageURL() -> URL {
         
         let tmpDir = applicationSupportURL().appendingPathComponent("hf-diffusion-tmp")
