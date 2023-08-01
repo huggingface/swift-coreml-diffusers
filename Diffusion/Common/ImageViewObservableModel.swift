@@ -50,7 +50,7 @@ class ImageViewObservableModel: ObservableObject {
     /// Create a new `DiffusionImage` instance from the `GenerationContext` details.
     @MainActor
     fileprivate func makeDiffusionImage(_ generation: GenerationContext, _ img: CGImage, _ result: GenerationResult, _ state: DiffusionImageState) -> DiffusionImage {
-        return DiffusionImage(id: UUID(), cgImage: img, seed: UInt32(result.lastSeed), steps: generation.steps, positivePrompt: generation.positivePrompt, negativePrompt: generation.negativePrompt, guidanceScale: generation.guidanceScale, disableSafety: generation.disableSafety)
+        return DiffusionImage(id: UUID(), cgImage: img, seed: UInt32(result.lastSeed), steps: generation.steps, positivePrompt: generation.positivePrompt, negativePrompt: generation.negativePrompt, guidanceScale: generation.guidanceScale, disableSafety: generation.disableSafety, scheduler: generation.scheduler)
     }
     
     /// Update a known `DiffusionImage`'s `DiffusionImageState`. The image should already have been added to the `currentBuildImages` array.
@@ -150,7 +150,7 @@ class ImageViewObservableModel: ObservableObject {
                 } else {
                     if result.images != [nil] {
                         if let img = result.images.first! {
-                            currentBuildImages[index].diffusionImage = DiffusionImage(id: UUID(), cgImage: img, seed: UInt32(result.lastSeed), steps: generation.steps, positivePrompt: generation.positivePrompt, negativePrompt: generation.negativePrompt, guidanceScale: generation.guidanceScale, disableSafety: generation.disableSafety)
+                            currentBuildImages[index].diffusionImage = DiffusionImage(id: UUID(), cgImage: img, seed: UInt32(result.lastSeed), steps: generation.steps, positivePrompt: generation.positivePrompt, negativePrompt: generation.negativePrompt, guidanceScale: generation.guidanceScale, disableSafety: generation.disableSafety, scheduler: generation.scheduler)
                             currentBuildImages[index].diffusionImageState = .complete
                             generation.state = .complete(generation.positivePrompt, [img], result.lastSeed, result.interval)
                             successfulImageGenerated = true

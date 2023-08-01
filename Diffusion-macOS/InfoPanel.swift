@@ -38,6 +38,7 @@ struct InfoPanel: View {
                 Text("Guidance Scale: \(Int(diffusionImage.guidanceScale))")
                 Text("Step Count: \(Int(diffusionImage.steps))")
                 Text("Seed: \(Int(diffusionImage.seed))")
+                Text("Scheduler: \(diffusionImage.scheduler.rawValue)")
             }
         }
         .padding()

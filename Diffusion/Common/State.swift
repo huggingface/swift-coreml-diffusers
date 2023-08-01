@@ -192,22 +192,4 @@ class Settings {
         
         return tmpDir
     }
-
-    func tempStorageURL() -> URL {
-        
-        let tmpDir = applicationSupportURL().appendingPathComponent("hf-diffusion-tmp")
-        
-        // Create directory if it doesn't exist
-        if !FileManager.default.fileExists(atPath: tmpDir.path) {
-            do {
-                try FileManager.default.createDirectory(at: tmpDir, withIntermediateDirectories: true, attributes: nil)
-            } catch {
-                print("Failed to create temporary directory: \(error)")
-                return FileManager.default.temporaryDirectory
-            }
-        }
-        
-        return tmpDir
-    }
-
 }
