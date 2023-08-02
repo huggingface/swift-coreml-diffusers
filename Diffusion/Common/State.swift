@@ -13,6 +13,9 @@ import CoreML
 
 let DEFAULT_MODEL = ModelInfo.v2Base
 let DEFAULT_PROMPT = "Labrador in the style of Vermeer"
+let DEFAULT_MODEL_FOLDER_NAME = "hf-diffusion-models"
+let DEFAULT_MODELS_FOLDER = URL.applicationSupportDirectory.appendingPathComponent(DEFAULT_MODEL_FOLDER_NAME)
+let DEFAULT_COMPUTE_UNITS = ComputeUnits.cpuAndGPU
 
 enum GenerationState {
     case startup
@@ -23,6 +26,41 @@ enum GenerationState {
 }
 
 typealias ComputeUnits = MLComputeUnits
+
+/// Helper function to print compute units to log
+func computeUnitsDescription(units: ComputeUnits) -> String {
+     return {
+        switch units {
+        case .cpuOnly:
+            return "CPU Only"
+        case .cpuAndGPU:
+            return "CPU and GPU"
+        case .all:
+            return "All"
+        case .cpuAndNeuralEngine:
+            return "CPU and Neural Engine"
+        @unknown default:
+            return "Unknown Unit"
+        }
+     }()
+}
+
+/// Helper function to compare compute units to attendionvariants
+func convertUnitsToVariant(computeUnits: ComputeUnits?) -> AttentionVariant {
+    var units: AttentionVariant {
+        switch computeUnits {
+        case .cpuOnly           : return .original          // Not supported yet
+        case .cpuAndGPU         : return .original
+        case .cpuAndNeuralEngine: return .splitEinsum
+        case .all               : return .splitEinsum
+        case .none:
+            return .splitEinsum
+        @unknown default:
+            return .splitEinsum
+        }
+    }
+    return units
+}
 
 /// Schedulers compatible with StableDiffusionPipeline. This is a local implementation of the StableDiffusionScheduler enum as a String represetation to allow for compliance with NSSecureCoding.
 public enum StableDiffusionScheduler: String {
@@ -103,7 +141,7 @@ class GenerationContext: ObservableObject {
     }
 }
 
-class Settings {
+class Settings: ObservableObject {
     static let shared = Settings()
     
     let defaults = UserDefaults.standard
@@ -112,13 +150,15 @@ class Settings {
         case model
         case safetyCheckerDisclaimer
         case computeUnits
+        case modelsFolderURL
     }
     
     private init() {
         defaults.register(defaults: [
             Keys.model.rawValue: ModelInfo.v2Base.modelId,
             Keys.safetyCheckerDisclaimer.rawValue: false,
-            Keys.computeUnits.rawValue: -1      // Use default
+            Keys.computeUnits.rawValue: -1,  // Use default
+            Keys.modelsFolderURL.rawValue: DEFAULT_MODELS_FOLDER
         ])
     }
     
