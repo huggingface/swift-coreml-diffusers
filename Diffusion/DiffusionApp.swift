@@ -22,8 +22,8 @@ let deviceHas6GBOrMore = ProcessInfo.processInfo.physicalMemory > 5924000000   /
 
 let deviceSupportsQuantization = {
     if #available(iOS 17, *) {
-        true
+        return true
     } else {
-        false
+        return false
     }
 }()
