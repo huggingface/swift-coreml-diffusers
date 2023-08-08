@@ -43,6 +43,13 @@ class Pipeline {
     let pipeline: StableDiffusionPipelineProtocol
     let maxSeed: UInt32
     
+    var isXL: Bool {
+        if #available(macOS 14.0, iOS 17.0, *) {
+            return (pipeline as? StableDiffusionXLPipeline) != nil
+        }
+        return false
+    }
+
     var progress: StableDiffusionProgress? = nil {
         didSet {
             progressPublisher.value = progress
@@ -81,6 +88,10 @@ class Pipeline {
         config.disableSafety = disableSafety
         config.schedulerType = scheduler.asStableDiffusionScheduler()
         config.useDenoisedIntermediates = true
+        if isXL {
+            config.encoderScaleFactor = 0.13025
+            config.decoderScaleFactor = 0.13025
+        }
 
         // Evenly distribute previews based on inference steps
         let previewIndices = previewIndices(stepCount, previewCount)
