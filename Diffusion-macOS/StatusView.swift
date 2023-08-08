@@ -10,25 +10,15 @@ import SwiftUI
 
 struct StatusView: View {
     @EnvironmentObject var generation: GenerationContext
+    @EnvironmentObject var imageViewModel: ImageViewObservableModel
     var pipelineState: Binding<PipelineState>
     
     @State private var showErrorPopover = false
     
-    func submit() {
-        if case .running = generation.state { return }
-        Task {
-            generation.state = .running(nil)
-            do {
-                let result = try await generation.generate()
-                if result.userCanceled {
-                    generation.state = .userCanceled
-                } else {
-                    generation.state = .complete(generation.positivePrompt, result.image, result.lastSeed, result.interval)
-                }
-            } catch {
-                generation.state = .failed(error)
-            }
-        }
+    func submit() async {
+        // reset overrideSeed to ensure no leftover previous run info.
+        generation.overrideSeed = 0
+        await imageViewModel.generate(generation: generation)
     }
 
     func errorWithDetails(_ message: String, error: Error) -> any View {
@@ -62,21 +52,25 @@ struct StatusView: View {
         switch generation.state {
         case .startup: return EmptyView()
         case .running(let progress):
-            guard let progress = progress, progress.stepCount > 0 else {
-                // The first time it takes a little bit before generation starts
+            if imageViewModel.isGeneratingBatch {
+                guard let progress = progress, progress.stepCount > 0 else {
+                    // The first time it takes a little bit before generation starts
+                    return HStack {
+                        Text("Preparing model…")
+                        Spacer()
+                    }
+                }
+                let step = Int(progress.step) + 1
+                let fraction = Double(step) / Double(progress.stepCount)
                 return HStack {
-                    Text("Preparing model…")
+                    Text("Generating \(Int(round(100*fraction)))%")
                     Spacer()
                 }
+            } else {
+                return EmptyView()
             }
-            let step = Int(progress.step) + 1
-            let fraction = Double(step) / Double(progress.stepCount)
-            return HStack {
-                Text("Generating \(Int(round(100*fraction)))%")
-                Spacer()
-            }
-        case .complete(_, let image, let lastSeed, let interval):
-            guard let _ = image else {
+        case .complete(_, let images, let lastSeed, let interval):
+            guard let _ = images.first else {
                 return HStack {
                     Text("Safety checker triggered, please try a different prompt or seed.")
                     Spacer()
@@ -108,26 +102,45 @@ struct StatusView: View {
     var body: some View {
         switch pipelineState.wrappedValue {
         case .downloading(let progress):
-            ProgressView("Downloading…", value: progress*100, total: 110).padding()
+            return AnyView(ProgressView("Downloading…", value: progress*100, total: 110).padding())
         case .uncompressing:
-            ProgressView("Uncompressing…", value: 100, total: 110).padding()
+            return AnyView(ProgressView("Uncompressing…", value: 100, total: 110).padding())
         case .loading:
-            ProgressView("Loading…", value: 105, total: 110).padding()
+            return AnyView(ProgressView("Loading…", value: 105, total: 110).padding())
         case .ready:
-            VStack {
-                Button {
-                    submit()
-                } label: {
-                    Text("Generate")
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                }
-                .buttonStyle(.borderedProminent)
-                
-                AnyView(generationStatusView())
+            if imageViewModel.isGeneratingBatch {
+                return AnyView(VStack {
+                    Button {
+                        generation.cancelGeneration()
+                        imageViewModel.cancelBatchGeneration()
+                    } label: {
+                        Text("Cancel")
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .foregroundColor(.orange)
+
+                    AnyView(generationStatusView())
+                })
+            } else {
+                return AnyView(VStack {
+                    Button {
+                        Task {
+                            await submit()
+                        }
+                    } label: {
+                        Text("Generate")
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                    }
+                    .buttonStyle(.borderedProminent)
+
+                    AnyView(generationStatusView())
+                })
             }
         case .failed(let error):
-            AnyView(errorWithDetails("Pipeline loading error", error: error))
+            return AnyView(errorWithDetails("Pipeline loading error", error: error))
         }
     }
 }

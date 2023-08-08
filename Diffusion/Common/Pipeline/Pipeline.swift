@@ -9,7 +9,6 @@
 import Foundation
 import CoreML
 import Combine
-
 import StableDiffusion
 
 struct StableDiffusionProgress {
@@ -32,7 +31,7 @@ struct StableDiffusionProgress {
 }
 
 struct GenerationResult {
-    var image: CGImage?
+    var images: [CGImage?]
     var lastSeed: UInt32
     var interval: TimeInterval?
     var userCanceled: Bool
@@ -69,6 +68,7 @@ class Pipeline {
         negativePrompt: String = "",
         scheduler: StableDiffusionScheduler,
         numInferenceSteps stepCount: Int = 50,
+        imageCount: Int,
         seed: UInt32 = 0,
         numPreviews previewCount: Int = 5,
         guidanceScale: Float = 7.5,
@@ -83,6 +83,7 @@ class Pipeline {
         var config = StableDiffusionPipeline.Configuration(prompt: prompt)
         config.negativePrompt = negativePrompt
         config.stepCount = stepCount
+        config.imageCount = 1
         config.seed = theSeed
         config.guidanceScale = guidanceScale
         config.disableSafety = disableSafety
@@ -107,11 +108,10 @@ class Pipeline {
             return !canceled
         }
         let interval = Date().timeIntervalSince(beginDate)
-        print("Got images: \(images) in \(interval)")
+        print("Got images: \(images) in \(interval) for seed \(config.seed)")
         
-        // Unwrap the 1 image we asked for, nil means safety checker triggered
-        let image = images.compactMap({ $0 }).first
-        return GenerationResult(image: image, lastSeed: theSeed, interval: interval, userCanceled: canceled, itsPerSecond: 1.0/sampleTimer.median)
+        // Unwrap the images we asked for, nil means safety checker triggered
+        return GenerationResult(images: images, lastSeed: theSeed, interval: interval, userCanceled: canceled, itsPerSecond: 1.0/sampleTimer.median)
     }
 
     func handleProgress(_ progress: StableDiffusionProgress, sampleTimer: SampleTimer) {

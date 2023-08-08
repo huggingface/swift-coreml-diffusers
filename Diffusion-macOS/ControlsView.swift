@@ -48,6 +48,7 @@ struct LabelToggleDisclosureGroupStyle: DisclosureGroupStyle {
 
 struct ControlsView: View {
     @EnvironmentObject var generation: GenerationContext
+    @EnvironmentObject var imageViewModel: ImageViewObservableModel
 
     static let models = ModelInfo.MODELS
     
@@ -58,6 +59,7 @@ struct ControlsView: View {
     @State private var disclosedSteps = false
     @State private var disclosedPreview = false
     @State private var disclosedSeed = false
+    @State private var disclosedImageCount = false
     @State private var disclosedAdvanced = false
 
     // TODO: refactor download with similar code in Loading.swift (iOS)
@@ -150,7 +152,19 @@ struct ControlsView: View {
         let prefix = downloaded ? "● " : "◌ "  //"○ "
         return Text(prefix).foregroundColor(downloaded ? .accentColor : .secondary) + Text(model.modelVersion)
     }
-    
+
+    fileprivate func batchImageCount() -> some View {
+        HStack {
+            CompactSlider(value: Binding<Double>(get: { Double(imageViewModel.imageCount) }, set: { imageViewModel.imageCount = Int($0) }), in: 1...100) {
+                Text("Batch Size")
+                Spacer()
+                Text("\(Int(imageViewModel.imageCount))")
+            }
+            Stepper("", value: $imageViewModel.imageCount, in: 1...100)
+        }
+        .foregroundColor(.secondary)
+    }
+
     fileprivate func prompts() -> some View {
         VStack {
             Spacer()
@@ -163,7 +177,7 @@ struct ControlsView: View {
         }
         .frame(maxHeight: .infinity)
     }
-    
+ 
     var body: some View {
         VStack(alignment: .leading) {
             
@@ -269,7 +283,8 @@ struct ControlsView: View {
                             Text("Steps")
                             Spacer()
                             Text("\(Int(generation.steps))")
-                        }.padding(.leading, 10)
+                        }
+                        .padding(.leading, 10)
                     } label: {
                         HStack {
                             Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary)
@@ -339,7 +354,17 @@ struct ControlsView: View {
                         }
                         .foregroundColor(.secondary)
                     }
-
+                    
+                    DisclosureGroup(isExpanded: $disclosedImageCount) {
+                        batchImageCount()
+                    } label: {
+                        HStack {
+                            Label("Image Count", systemImage: "photo.stack").foregroundColor(.secondary)
+                            Spacer()
+                            Text("\(Int(imageViewModel.imageCount))")
+                        }.foregroundColor(.secondary)
+                    }
+                    
                     if Capabilities.hasANE {
                         Divider()
                         DisclosureGroup(isExpanded: $disclosedAdvanced) {
@@ -415,6 +440,7 @@ struct ControlsView: View {
             Divider()
             
             StatusView(pipelineState: $pipelineState)
+                .environmentObject(imageViewModel)
         }
         .padding()
         .onAppear {

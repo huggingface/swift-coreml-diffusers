@@ -25,6 +25,7 @@ struct ShareButtons: View {
         let imageView = Image(image, scale: 1, label: Text(name))
 
         if runningOnMac {
+            // Mac catalyst - we're running iOS build on a mac
             HStack {
                 ShareLink(item: imageView, preview: SharePreview(name, image: imageView))
                 Button() {
@@ -77,18 +78,24 @@ struct ImageWithPlaceholder: View {
                 }
                 ProgressView(label, value: fraction, total: 1).padding()
             })
-        case .complete(let lastPrompt, let image, _, let interval):
-            guard let theImage = image else {
+
+        case .complete(let lastPrompt, let images, _, let interval):
+            guard let firstImage = images.first else {
                 return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
             }
-                              
-            let imageView = Image(theImage, scale: 1, label: Text("generated"))
+
+            guard let theImage = firstImage else {
+                return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
+            }
+            
+            let imageView = Image(theImage, scale: 1, label: Text("Generated image"))
             return AnyView(
                 VStack {
                     imageView.resizable().clipShape(RoundedRectangle(cornerRadius: 20))
                     HStack {
                         let intervalString = String(format: "Time: %.1fs", interval ?? 0)
-                        Rectangle().fill(.clear).overlay(Text(intervalString).frame(maxWidth: .infinity, alignment: .leading).padding(.leading))
+                        Rectangle().fill(.clear).overlay(Text(intervalString)
+                            .frame(maxWidth: .infinity, alignment: .leading).padding(.leading))
                         Rectangle().fill(.clear).overlay(
                             HStack {
                                 Spacer()
@@ -114,7 +121,7 @@ struct TextToImage: View {
             generation.state = .running(nil)
             do {
                 let result = try await generation.generate()
-                generation.state = .complete(generation.positivePrompt, result.image, result.lastSeed, result.interval)
+                generation.state = .complete(generation.positivePrompt, result.images, result.lastSeed, result.interval)
             } catch {
                 generation.state = .failed(error)
             }

@@ -7,8 +7,6 @@
 //
 
 import SwiftUI
-import ImageIO
-
 
 // AppKit version that uses NSImage, NSSavePanel
 struct ShareButtons: View {
@@ -64,11 +62,17 @@ struct ShareButtons: View {
 
 struct ContentView: View {
     @StateObject var generation = GenerationContext()
-
+    @StateObject var imageViewModel = ImageViewObservableModel.shared
+    
     func toolbar() -> any View {
-        if case .complete(let prompt, let cgImage, _, _) = generation.state, let cgImage = cgImage {
+        if case .complete(let prompt, let cgImage, _, _) = generation.state {
             // TODO: share seed too
-            return ShareButtons(image: cgImage, name: prompt)
+            if let firstItem = cgImage.first {
+                if let img = firstItem {
+                    return ShareButtons(image: img, name: prompt)
+                }
+            }
+            return AnyView(EmptyView())
         } else {
             let prompt = DEFAULT_PROMPT
             let cgImage = NSImage(imageLiteralResourceName: "placeholder").cgImage(forProposedRect: nil, context: nil, hints: nil)!
@@ -81,16 +85,14 @@ struct ContentView: View {
             ControlsView()
                 .navigationSplitViewColumnWidth(min: 250, ideal: 300)
         } detail: {
-            GeneratedImageView()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 512, height: 512)
-                .cornerRadius(15)
+            GalleryView()
                 .toolbar {
                     AnyView(toolbar())
                 }
-
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .environmentObject(generation)
+        .environmentObject(imageViewModel)
     }
 }
 

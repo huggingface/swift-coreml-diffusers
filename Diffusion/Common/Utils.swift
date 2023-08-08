@@ -11,12 +11,20 @@ import Foundation
 extension String: Error {}
 
 extension Double {
+    /// Apply String() formatting to a Double number. For instance %.2f, etc
+    /// examples: https://www.waldo.com/blog/swift-string-format
     func formatted(_ format: String) -> String {
         return String(format: "\(format)", self)
     }
 }
 
+/// Extracts the first 200 characters from a string and replaces whitespace characters with an underscore.
+///
+/// Examples usage: safestring = "really long string  with tabs       and spaces".first200
+///
+/// - Returns: A substring with the first 200 characters of the `String` operated on.
 extension String {
+    /// Convert a String by extracting the first 200 characters while replacing whitespace characters with underscores.
     var first200Safe: String {
         let endIndex = index(startIndex, offsetBy: Swift.min(200, count))
         let substring = String(self[startIndex..<endIndex])
@@ -26,14 +34,26 @@ extension String {
             .replacingOccurrences(of: " ", with: "_")
             .replacingOccurrences(of: "\t", with: "_")
             .replacingOccurrences(of: "\n", with: "_")
-        
         // Remove unsafe characters from the substring
         let allowedCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
         let filteredSubstring = replacedSubstring
             .components(separatedBy: allowedCharacters.inverted)
             .joined()
-        
         return filteredSubstring
+    }
+}
+
+/// Allows the safe access ot an array subscript. If the subscript is missing then nil is returned.
+///  access as Array[safe: indexNumber] and returns an optional generic `Element`.
+///
+/// - Parameters:
+///   - safe: The index inside the `Array` you'd like to retrive an `Element` from.
+///
+/// - Returns: A generic `Element` instance of nil if the `safe` index is invalid.
+extension Array {
+    /// Get an element from an Array safely to avoid runtime crashes when accessing an index out of range on an Array.
+    subscript(safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
     }
 }
 

@@ -6,10 +6,10 @@
 //  See LICENSE at https://github.com/huggingface/swift-coreml-diffusers/LICENSE
 //
 
-import Combine
 import SwiftUI
 import StableDiffusion
 import CoreML
+import Combine
 
 let DEFAULT_MODEL = ModelInfo.v2Base
 let DEFAULT_PROMPT = "Labrador in the style of Vermeer"
@@ -17,7 +17,7 @@ let DEFAULT_PROMPT = "Labrador in the style of Vermeer"
 enum GenerationState {
     case startup
     case running(StableDiffusionProgress?)
-    case complete(String, CGImage?, UInt32, TimeInterval?)
+    case complete(String, [CGImage?], UInt32, TimeInterval?)
     case userCanceled
     case failed(Error)
 }
@@ -49,9 +49,11 @@ class GenerationContext: ObservableObject {
                     .progressPublisher
                     .receive(on: DispatchQueue.main)
                     .sink { progress in
-                        guard let progress = progress else { return }
-                        self.updatePreviewIfNeeded(progress)
-                        self.state = .running(progress)
+                        DispatchQueue.main.async {
+                            guard let progress = progress else { return }
+                            self.updatePreviewIfNeeded(progress)
+                            self.state = .running(progress)
+                        }
                     }
             }
         }
@@ -61,16 +63,17 @@ class GenerationContext: ObservableObject {
     @Published var positivePrompt = DEFAULT_PROMPT
     @Published var negativePrompt = ""
     
-    // FIXME: Double to support the slider component
+    // FIXME: Double to support the slider component -- pcuenca
     @Published var steps = 25.0
+    @Published var imageCount: Int = 1
     @Published var numImages = 1.0
     @Published var seed: UInt32 = 0
     @Published var guidanceScale = 7.5
     @Published var previews = 5.0
     @Published var disableSafety = false
     @Published var previewImage: CGImage? = nil
-
     @Published var computeUnits: ComputeUnits = Settings.shared.userSelectedComputeUnits ?? ModelInfo.defaultComputeUnits
+    var overrideSeed: UInt32 = 0
 
     private var progressSubscriber: Cancellable?
 
@@ -91,7 +94,8 @@ class GenerationContext: ObservableObject {
             negativePrompt: negativePrompt,
             scheduler: scheduler,
             numInferenceSteps: Int(steps),
-            seed: seed,
+            imageCount: 1, // always process one at a time so that we can better control or inspect the seed from the run
+            seed: overrideSeed > 0 ? overrideSeed : seed,
             numPreviews: Int(previews),
             guidanceScale: Float(guidanceScale),
             disableSafety: disableSafety
@@ -171,7 +175,7 @@ class Settings {
             return fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         }
     }
-
+    
     func tempStorageURL() -> URL {
         
         let tmpDir = applicationSupportURL().appendingPathComponent("hf-diffusion-tmp")
@@ -188,5 +192,4 @@ class Settings {
         
         return tmpDir
     }
-
 }
