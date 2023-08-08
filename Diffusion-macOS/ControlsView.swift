@@ -49,7 +49,7 @@ struct LabelToggleDisclosureGroupStyle: DisclosureGroupStyle {
 struct ControlsView: View {
     @EnvironmentObject var generation: GenerationContext
 
-    static let models = ModelInfo.MODELS
+    static let models = ModelInfo.BUILTIN_MODELS
     
     @State private var model = Settings.shared.currentModel.modelVersion
     @State private var disclosedModel = true
