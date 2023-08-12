@@ -10,10 +10,13 @@ import SwiftUI
 
 struct StatusView: View {
     @EnvironmentObject var generation: GenerationContext
+
     var pipelineState: Binding<PipelineState>
-    
+    @ObservedObject var modelsViewModel: ModelsViewModel
+    var selectedModelIndex: Binding<Int?>
     @State private var showErrorPopover = false
-    
+    var downloadButtonAction: (() -> Void)?
+
     func submit() {
         if case .running = generation.state { return }
         Task {
@@ -105,35 +108,115 @@ struct StatusView: View {
         }
     }
     
-    var body: some View {
-        switch pipelineState.wrappedValue {
-        case .downloading(let progress):
-            ProgressView("Downloading…", value: progress*100, total: 110).padding()
-        case .uncompressing:
-            ProgressView("Uncompressing…", value: 100, total: 110).padding()
-        case .loading:
-            ProgressView("Loading…", value: 105, total: 110).padding()
-        case .ready:
-            VStack {
-                Button {
-                    submit()
-                } label: {
-                    Text("Generate")
+    func actionButton() -> some View {
+        if let modelIndex = selectedModelIndex.wrappedValue {
+            if (modelsViewModel.filteredModels.count > modelIndex) {
+                guard let model = modelsViewModel.filteredModels[safe: modelIndex] else {
+                    return AnyView(Text("Select a model…")
                         .frame(maxWidth: .infinity)
-                        .frame(height: 50)
+                        .frame(height: 50))
                 }
-                .buttonStyle(.borderedProminent)
+                let readinessState = modelsViewModel.getModelReadiness(model).state
+                let pipelineState = pipelineState.wrappedValue
                 
-                AnyView(generationStatusView())
+                // print("readiness state: \(readinessState) and pipelinestate: \(pipelineState)")
+                
+                if readinessState == .downloaded || readinessState == .downloading {
+                    return AnyView(VStack {
+                        Button {
+                            submit()
+                        } label: {
+                            Text("Downloading…")
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 50)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        // TODO: Add cancel button to cancel download. -- dolmere
+                        .disabled(true)
+                        
+                        AnyView(generationStatusView())
+                    })
+                } else if readinessState == .uncompressing {
+                    return AnyView( VStack {
+                        Button {
+                            submit()
+                        } label: {
+                            Text("Uncompressing…")
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 50)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        // TODO: Add cancel button to cancel hung decompress. -- dolmere
+                        .disabled(true)
+                        
+                        AnyView(generationStatusView())
+                    })
+                } else if readinessState == .failed {
+                    return AnyView(Text("Model loading error"))
+                } else if readinessState == .unknown && pipelineState == .unknown {
+                    return AnyView( VStack {
+                        Button {
+                            // Call the closure when the button is tapped
+                            downloadButtonAction?()
+                        } label: {
+                            Text("Download")
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 50)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        
+                        AnyView(generationStatusView())
+                    })
+                    
+                } else if pipelineState == .ready {
+                    return AnyView( VStack {
+                        Button {
+                            print(pipelineState)
+                            print(generation.state)
+                            
+                            //                        submit()
+                        } label: {
+                            Text("Generate")
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 50)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        
+                        AnyView(generationStatusView())
+                    })
+                }
             }
-        case .failed(let error):
-            AnyView(errorWithDetails("Pipeline loading error", error: error))
+        }
+        return AnyView(EmptyView())
+    }
+    
+    var body: some View {
+        
+        VStack {
+            
+            actionButton()
+            
+            switch pipelineState.wrappedValue {
+            case .downloading(let progress):
+                ProgressView("Downloading…", value: progress*100, total: 110).padding()
+            case .uncompressing:
+                ProgressView("Uncompressing…", value: 100, total: 110).padding()
+            case .loading:
+                ProgressView("Loading…", value: 105, total: 110).padding()
+            case .ready:
+                AnyView(EmptyView())
+            case .unknown:
+                AnyView(Text(""))
+            case .failed(let error):
+                AnyView(errorWithDetails("Pipeline loading error", error: error))
+            }
         }
     }
 }
 
 struct StatusView_Previews: PreviewProvider {
     static var previews: some View {
-        StatusView(pipelineState: .constant(.downloading(0.2)))
+        @ObservedObject var modelsViewModel: ModelsViewModel = ModelsViewModel(settings: Settings.shared)
+        StatusView(pipelineState: .constant(.downloading(0.2)), modelsViewModel: modelsViewModel, selectedModelIndex: .constant(nil))
     }
 }
