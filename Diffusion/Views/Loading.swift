@@ -60,6 +60,7 @@ struct LoadingView: View {
                 }
                 do {
                     generation.pipeline = try await loader.prepare()
+                    print("Did load model \(loader.model)")
                     self.currentView = .textToImage
                 } catch {
                     self.currentView = .error("Could not load model, error: \(error)")
