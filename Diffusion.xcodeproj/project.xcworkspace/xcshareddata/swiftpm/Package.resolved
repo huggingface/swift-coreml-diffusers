@@ -12,10 +12,10 @@
     {
       "identity" : "ml-stable-diffusion",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/ml-stable-diffusion",
+      "location" : "https://github.com/ZachNagengast/ml-stable-diffusion",
       "state" : {
-        "branch" : "main",
-        "revision" : "ce8ee78e28613d8a2e4c8b56932b236cb57e7e20"
+        "branch" : "sdxl-refiner",
+        "revision" : "90864bc9be4da1c7d79de6cf21e5c64a22a329c5"
       }
     },
     {
