@@ -124,7 +124,7 @@ struct TextToImage: View {
     var body: some View {
         VStack {
             HStack {
-                PromptTextField(text: $generation.positivePrompt, isPositivePrompt: true, model: deviceSupportsQuantization ? ModelInfo.v21Palettized.modelVersion : ModelInfo.v21Base.modelVersion)
+                PromptTextField(text: $generation.positivePrompt, isPositivePrompt: true, model: model.modelVersion)
                 Button("Generate") {
                     submit()
                 }
