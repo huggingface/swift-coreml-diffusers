@@ -83,6 +83,7 @@ extension ModelInfo {
     static var defaultComputeUnits: MLComputeUnits { defaultAttention.defaultComputeUnits }
     
     var bestAttention: AttentionVariant {
+        if BENCHMARK { return .splitEinsum }
         if !runningOnMac && supportsAttentionV2 { return .splitEinsumV2 }
         return ModelInfo.defaultAttention
     }
@@ -107,6 +108,7 @@ extension ModelInfo {
     var reduceMemory: Bool {
         // Enable on iOS devices, except when using quantization
         if runningOnMac { return false }
+        if BENCHMARK { return true }
         return !(quantized && deviceHas6GBOrMore)
     }
 }

@@ -93,7 +93,12 @@ extension PipelineLoader {
     
     var packagesFilename: String { (filename as NSString).deletingPathExtension }
     
-    var compiledURL: URL { downloadedURL.deletingLastPathComponent().appendingPathComponent(packagesFilename)  }
+    var compiledURL: URL {
+        guard BENCHMARK else { return downloadedURL.deletingLastPathComponent().appendingPathComponent(packagesFilename) }
+
+        // Model files must be part of the bundle when benchmarking
+        return Bundle.main.resourceURL!
+    }
 
     var downloaded: Bool {
         return FileManager.default.fileExists(atPath: downloadedURL.path)

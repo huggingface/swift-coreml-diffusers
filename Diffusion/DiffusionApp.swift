@@ -17,6 +17,7 @@ struct DiffusionApp: App {
     }
 }
 
+let BENCHMARK = true
 let runningOnMac = ProcessInfo.processInfo.isMacCatalystApp
 let deviceHas6GBOrMore = ProcessInfo.processInfo.physicalMemory > 5910000000   // Reported by iOS 17 beta (21A5319a) on iPhone 13 Pro: 5917753344
 
