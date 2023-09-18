@@ -28,27 +28,13 @@ struct PromptTextField: View {
         ModelInfo.from(modelVersion: $model.wrappedValue)
     }
     
-    private var filename: String? {
-        let variant = modelInfo?.bestAttention ?? .original
-        return modelInfo?.modelURL(for: variant).lastPathComponent
+    private var pipelineLoader: PipelineLoader? {
+        guard let modelInfo = modelInfo else { return nil }
+        return PipelineLoader(model: modelInfo)
     }
-    
-    private var downloadedURL: URL? {
-        if let filename = filename {
-            return PipelineLoader.models.appendingPathComponent(filename)
-        }
-        return nil
-    }
-    
-    private var packagesFilename: String? {
-        (filename as NSString?)?.deletingPathExtension
-    }
-    
+
     private var compiledURL: URL? {
-        if let packagesFilename = packagesFilename {
-            return downloadedURL?.deletingLastPathComponent().appendingPathComponent(packagesFilename)
-        }
-        return nil
+        return pipelineLoader?.compiledURL
     }
     
     private var textColor: Color {
