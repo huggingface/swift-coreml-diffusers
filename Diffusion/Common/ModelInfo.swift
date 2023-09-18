@@ -188,6 +188,15 @@ extension ModelInfo {
         isXL: true
     )
     
+    // Temporary until we integrate it in `xlmbpp`
+    static let xlmbpChunked = ModelInfo(
+        modelId: "coremlfiles/coreml-stable-diffusion-mixed-bit-palettization",
+        modelVersion: "Stable Diffusion XL base [4.5 bit]",
+        supportsEncoder: true,
+        quantized: true,
+        isXL: true
+    )
+    
     static let MODELS: [ModelInfo] = {
         if deviceSupportsQuantization {
             return [
@@ -200,7 +209,8 @@ extension ModelInfo {
                 ModelInfo.v21Base,
                 ModelInfo.v21Palettized,
                 ModelInfo.xl,
-                ModelInfo.xlmbp
+                ModelInfo.xlmbp,
+                ModelInfo.xlmbpChunked,
             ]
         } else {
             return [
