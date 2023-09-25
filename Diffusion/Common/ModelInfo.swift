@@ -108,7 +108,7 @@ extension ModelInfo {
     var reduceMemory: Bool {
         // Enable on iOS devices, except when using quantization
         if runningOnMac { return false }
-        if BENCHMARK { return true }
+        if BENCHMARK { return !deviceHas8GBOrMore }
         return !(quantized && deviceHas6GBOrMore)
     }
 }
