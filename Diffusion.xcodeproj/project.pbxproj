@@ -17,7 +17,8 @@
 		8CEEB7DA2A54C88C00C23829 /* DiffusionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEEB7D82A54C88C00C23829 /* DiffusionImage.swift */; };
 		EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB067F862992E561004D1AD9 /* HelpContent.swift */; };
 		EB560F0429A3C20800C0F8B8 /* Capabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB560F0329A3C20800C0F8B8 /* Capabilities.swift */; };
-		EB9ACA2F2AB8990100889C5B /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB9ACA2E2AB8990100889C5B /* StableDiffusion */; };
+		EB9BE0152AC425D300468918 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB9BE0142AC425D300468918 /* StableDiffusion */; };
+		EB9BE0172AC425DA00468918 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB9BE0162AC425DA00468918 /* StableDiffusion */; };
 		EBB56B382AB87932005361A6 /* merges.txt in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B342AB87559005361A6 /* merges.txt */; };
 		EBB56B392AB87932005361A6 /* UnetChunk2.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B302AB87559005361A6 /* UnetChunk2.mlmodelc */; };
 		EBB56B3A2AB87932005361A6 /* UnetChunk1.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B362AB87559005361A6 /* UnetChunk1.mlmodelc */; };
@@ -132,7 +133,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EBB5BA5D294504DE003A2A5B /* ZIPFoundation in Frameworks */,
-				EB9ACA2F2AB8990100889C5B /* StableDiffusion in Frameworks */,
+				EB9BE0152AC425D300468918 /* StableDiffusion in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,6 +156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F155203C297118E700DC009B /* CompactSlider in Frameworks */,
+				EB9BE0172AC425DA00468918 /* StableDiffusion in Frameworks */,
 				EBDD7DAF29731FB300C1C4B2 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -348,7 +350,7 @@
 			name = Diffusion;
 			packageProductDependencies = (
 				EBB5BA5C294504DE003A2A5B /* ZIPFoundation */,
-				EB9ACA2E2AB8990100889C5B /* StableDiffusion */,
+				EB9BE0142AC425D300468918 /* StableDiffusion */,
 			);
 			productName = Diffusion;
 			productReference = EBE755C5293E37DD00806B32 /* Diffusion.app */;
@@ -408,6 +410,7 @@
 			packageProductDependencies = (
 				F155203B297118E700DC009B /* CompactSlider */,
 				EBDD7DAE29731FB300C1C4B2 /* ZIPFoundation */,
+				EB9BE0162AC425DA00468918 /* StableDiffusion */,
 			);
 			productName = "Diffusion-macOS";
 			productReference = F15520212971093300DC009B /* Diffusers.app */;
@@ -451,7 +454,7 @@
 			packageReferences = (
 				EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				F155203A297118E600DC009B /* XCRemoteSwiftPackageReference "CompactSlider" */,
-				EB9ACA2D2AB8990100889C5B /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
+				EB9BE0132AC4256F00468918 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
 			);
 			productRefGroup = EBE755C6293E37DD00806B32 /* Products */;
 			projectDirPath = "";
@@ -1000,11 +1003,11 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		EB9ACA2D2AB8990100889C5B /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */ = {
+		EB9BE0132AC4256F00468918 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ZachNagengast/ml-stable-diffusion";
+			repositoryURL = "https://github.com/apple/ml-stable-diffusion";
 			requirement = {
-				branch = "sdxl-refiner";
+				branch = main;
 				kind = branch;
 			};
 		};
@@ -1031,9 +1034,14 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = StableDiffusion;
 		};
-		EB9ACA2E2AB8990100889C5B /* StableDiffusion */ = {
+		EB9BE0142AC425D300468918 /* StableDiffusion */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EB9ACA2D2AB8990100889C5B /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
+			package = EB9BE0132AC4256F00468918 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
+			productName = StableDiffusion;
+		};
+		EB9BE0162AC425DA00468918 /* StableDiffusion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EB9BE0132AC4256F00468918 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
 			productName = StableDiffusion;
 		};
 		EBB5BA5C294504DE003A2A5B /* ZIPFoundation */ = {
