@@ -25,7 +25,6 @@
 		EBB56B3B2AB87932005361A6 /* VAEDecoder.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B332AB87559005361A6 /* VAEDecoder.mlmodelc */; };
 		EBB56B3C2AB87932005361A6 /* vocab.json in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B352AB87559005361A6 /* vocab.json */; };
 		EBB56B3D2AB87932005361A6 /* TextEncoder.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B312AB87559005361A6 /* TextEncoder.mlmodelc */; };
-		EBB56B3E2AB87932005361A6 /* VAEEncoder.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B372AB87559005361A6 /* VAEEncoder.mlmodelc */; };
 		EBB56B3F2AB87932005361A6 /* TextEncoder2.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B322AB87559005361A6 /* TextEncoder2.mlmodelc */; };
 		EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */; };
 		EBB5BA5A29426E06003A2A5B /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5929426E06003A2A5B /* Downloader.swift */; };
@@ -94,7 +93,6 @@
 		EBB56B342AB87559005361A6 /* merges.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = merges.txt; sourceTree = "<group>"; };
 		EBB56B352AB87559005361A6 /* vocab.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = vocab.json; sourceTree = "<group>"; };
 		EBB56B362AB87559005361A6 /* UnetChunk1.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = UnetChunk1.mlmodelc; sourceTree = "<group>"; };
-		EBB56B372AB87559005361A6 /* VAEEncoder.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = VAEEncoder.mlmodelc; sourceTree = "<group>"; };
 		EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineLoader.swift; sourceTree = "<group>"; };
 		EBB5BA5929426E06003A2A5B /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
 		EBDD7DB22973200200C1C4B2 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -196,7 +194,6 @@
 				EBB56B362AB87559005361A6 /* UnetChunk1.mlmodelc */,
 				EBB56B302AB87559005361A6 /* UnetChunk2.mlmodelc */,
 				EBB56B332AB87559005361A6 /* VAEDecoder.mlmodelc */,
-				EBB56B372AB87559005361A6 /* VAEEncoder.mlmodelc */,
 				EBB56B352AB87559005361A6 /* vocab.json */,
 			);
 			path = Model;
@@ -475,7 +472,6 @@
 			files = (
 				EBB56B3B2AB87932005361A6 /* VAEDecoder.mlmodelc in Resources */,
 				EBB56B382AB87932005361A6 /* merges.txt in Resources */,
-				EBB56B3E2AB87932005361A6 /* VAEEncoder.mlmodelc in Resources */,
 				EBB56B3F2AB87932005361A6 /* TextEncoder2.mlmodelc in Resources */,
 				EBB56B392AB87932005361A6 /* UnetChunk2.mlmodelc in Resources */,
 				EBB56B3A2AB87932005361A6 /* UnetChunk1.mlmodelc in Resources */,
