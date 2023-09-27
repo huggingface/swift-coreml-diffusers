@@ -9,7 +9,7 @@
 import SwiftUI
 import Combine
 
-let model = deviceSupportsQuantization ? ModelInfo.v21Palettized : ModelInfo.v21Base
+let model = BENCHMARK ? ModelInfo.xlmbpChunked : deviceSupportsQuantization ? ModelInfo.v21Palettized : ModelInfo.v21Base
 
 struct LoadingView: View {
     @StateObject var generation = GenerationContext()
@@ -60,6 +60,7 @@ struct LoadingView: View {
                 }
                 do {
                     generation.pipeline = try await loader.prepare()
+                    print("Did load model \(loader.model)")
                     self.currentView = .textToImage
                 } catch {
                     self.currentView = .error("Could not load model, error: \(error)")

@@ -16,9 +16,16 @@
 		8CEEB7D92A54C88C00C23829 /* DiffusionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEEB7D82A54C88C00C23829 /* DiffusionImage.swift */; };
 		8CEEB7DA2A54C88C00C23829 /* DiffusionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEEB7D82A54C88C00C23829 /* DiffusionImage.swift */; };
 		EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB067F862992E561004D1AD9 /* HelpContent.swift */; };
-		EB25B3D62A3A2DC4000E25A1 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB25B3D52A3A2DC4000E25A1 /* StableDiffusion */; };
-		EB25B3D82A3A2DD5000E25A1 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB25B3D72A3A2DD5000E25A1 /* StableDiffusion */; };
 		EB560F0429A3C20800C0F8B8 /* Capabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB560F0329A3C20800C0F8B8 /* Capabilities.swift */; };
+		EB9BE0152AC425D300468918 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB9BE0142AC425D300468918 /* StableDiffusion */; };
+		EB9BE0172AC425DA00468918 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB9BE0162AC425DA00468918 /* StableDiffusion */; };
+		EBB56B382AB87932005361A6 /* merges.txt in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B342AB87559005361A6 /* merges.txt */; };
+		EBB56B392AB87932005361A6 /* UnetChunk2.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B302AB87559005361A6 /* UnetChunk2.mlmodelc */; };
+		EBB56B3A2AB87932005361A6 /* UnetChunk1.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B362AB87559005361A6 /* UnetChunk1.mlmodelc */; };
+		EBB56B3B2AB87932005361A6 /* VAEDecoder.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B332AB87559005361A6 /* VAEDecoder.mlmodelc */; };
+		EBB56B3C2AB87932005361A6 /* vocab.json in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B352AB87559005361A6 /* vocab.json */; };
+		EBB56B3D2AB87932005361A6 /* TextEncoder.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B312AB87559005361A6 /* TextEncoder.mlmodelc */; };
+		EBB56B3F2AB87932005361A6 /* TextEncoder2.mlmodelc in Resources */ = {isa = PBXBuildFile; fileRef = EBB56B322AB87559005361A6 /* TextEncoder2.mlmodelc */; };
 		EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */; };
 		EBB5BA5A29426E06003A2A5B /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5929426E06003A2A5B /* Downloader.swift */; };
 		EBB5BA5D294504DE003A2A5B /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = EBB5BA5C294504DE003A2A5B /* ZIPFoundation */; };
@@ -79,6 +86,13 @@
 		EB33A51E2954E1BC00B16357 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EB560F0329A3C20800C0F8B8 /* Capabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capabilities.swift; sourceTree = "<group>"; };
 		EB560F0529A4090D00C0F8B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		EBB56B302AB87559005361A6 /* UnetChunk2.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = UnetChunk2.mlmodelc; sourceTree = "<group>"; };
+		EBB56B312AB87559005361A6 /* TextEncoder.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TextEncoder.mlmodelc; sourceTree = "<group>"; };
+		EBB56B322AB87559005361A6 /* TextEncoder2.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TextEncoder2.mlmodelc; sourceTree = "<group>"; };
+		EBB56B332AB87559005361A6 /* VAEDecoder.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = VAEDecoder.mlmodelc; sourceTree = "<group>"; };
+		EBB56B342AB87559005361A6 /* merges.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = merges.txt; sourceTree = "<group>"; };
+		EBB56B352AB87559005361A6 /* vocab.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = vocab.json; sourceTree = "<group>"; };
+		EBB56B362AB87559005361A6 /* UnetChunk1.mlmodelc */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = UnetChunk1.mlmodelc; sourceTree = "<group>"; };
 		EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineLoader.swift; sourceTree = "<group>"; };
 		EBB5BA5929426E06003A2A5B /* Downloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
 		EBDD7DB22973200200C1C4B2 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -116,8 +130,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EB25B3D62A3A2DC4000E25A1 /* StableDiffusion in Frameworks */,
 				EBB5BA5D294504DE003A2A5B /* ZIPFoundation in Frameworks */,
+				EB9BE0152AC425D300468918 /* StableDiffusion in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,7 +154,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F155203C297118E700DC009B /* CompactSlider in Frameworks */,
-				EB25B3D82A3A2DD5000E25A1 /* StableDiffusion in Frameworks */,
+				EB9BE0172AC425DA00468918 /* StableDiffusion in Frameworks */,
 				EBDD7DAF29731FB300C1C4B2 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -171,6 +185,20 @@
 			path = Diffusion/Common;
 			sourceTree = "<group>";
 		};
+		EBB56B212AB874C0005361A6 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				EBB56B342AB87559005361A6 /* merges.txt */,
+				EBB56B312AB87559005361A6 /* TextEncoder.mlmodelc */,
+				EBB56B322AB87559005361A6 /* TextEncoder2.mlmodelc */,
+				EBB56B362AB87559005361A6 /* UnetChunk1.mlmodelc */,
+				EBB56B302AB87559005361A6 /* UnetChunk2.mlmodelc */,
+				EBB56B332AB87559005361A6 /* VAEDecoder.mlmodelc */,
+				EBB56B352AB87559005361A6 /* vocab.json */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		EBB5BA5129425B07003A2A5B /* Pipeline */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,6 +215,7 @@
 				EBDD7DBA2976F03600C1C4B2 /* debug.xcconfig */,
 				EBE4438729488DCA00CDA605 /* README.md */,
 				EBE443892948953600CDA605 /* LICENSE */,
+				EBB56B212AB874C0005361A6 /* Model */,
 				EBE755FF293E910800806B32 /* Packages */,
 				8CF53E022A44AE0400E6358B /* Common */,
 				EBE755C7293E37DD00806B32 /* Diffusion */,
@@ -318,7 +347,7 @@
 			name = Diffusion;
 			packageProductDependencies = (
 				EBB5BA5C294504DE003A2A5B /* ZIPFoundation */,
-				EB25B3D52A3A2DC4000E25A1 /* StableDiffusion */,
+				EB9BE0142AC425D300468918 /* StableDiffusion */,
 			);
 			productName = Diffusion;
 			productReference = EBE755C5293E37DD00806B32 /* Diffusion.app */;
@@ -378,7 +407,7 @@
 			packageProductDependencies = (
 				F155203B297118E700DC009B /* CompactSlider */,
 				EBDD7DAE29731FB300C1C4B2 /* ZIPFoundation */,
-				EB25B3D72A3A2DD5000E25A1 /* StableDiffusion */,
+				EB9BE0162AC425DA00468918 /* StableDiffusion */,
 			);
 			productName = "Diffusion-macOS";
 			productReference = F15520212971093300DC009B /* Diffusers.app */;
@@ -422,7 +451,7 @@
 			packageReferences = (
 				EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				F155203A297118E600DC009B /* XCRemoteSwiftPackageReference "CompactSlider" */,
-				EB25B3D42A3A2DC4000E25A1 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
+				EB9BE0132AC4256F00468918 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
 			);
 			productRefGroup = EBE755C6293E37DD00806B32 /* Products */;
 			projectDirPath = "";
@@ -441,7 +470,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EBB56B3B2AB87932005361A6 /* VAEDecoder.mlmodelc in Resources */,
+				EBB56B382AB87932005361A6 /* merges.txt in Resources */,
+				EBB56B3F2AB87932005361A6 /* TextEncoder2.mlmodelc in Resources */,
+				EBB56B392AB87932005361A6 /* UnetChunk2.mlmodelc in Resources */,
+				EBB56B3A2AB87932005361A6 /* UnetChunk1.mlmodelc in Resources */,
+				EBB56B3D2AB87932005361A6 /* TextEncoder.mlmodelc in Resources */,
 				EBE755D1293E37DD00806B32 /* Preview Assets.xcassets in Resources */,
+				EBB56B3C2AB87932005361A6 /* vocab.json in Resources */,
 				EBE755CD293E37DD00806B32 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -963,7 +999,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		EB25B3D42A3A2DC4000E25A1 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */ = {
+		EB9BE0132AC4256F00468918 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/ml-stable-diffusion";
 			requirement = {
@@ -994,14 +1030,14 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = StableDiffusion;
 		};
-		EB25B3D52A3A2DC4000E25A1 /* StableDiffusion */ = {
+		EB9BE0142AC425D300468918 /* StableDiffusion */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EB25B3D42A3A2DC4000E25A1 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
+			package = EB9BE0132AC4256F00468918 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
 			productName = StableDiffusion;
 		};
-		EB25B3D72A3A2DD5000E25A1 /* StableDiffusion */ = {
+		EB9BE0162AC425DA00468918 /* StableDiffusion */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EB25B3D42A3A2DC4000E25A1 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
+			package = EB9BE0132AC4256F00468918 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
 			productName = StableDiffusion;
 		};
 		EBB5BA5C294504DE003A2A5B /* ZIPFoundation */ = {

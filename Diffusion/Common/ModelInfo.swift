@@ -83,6 +83,7 @@ extension ModelInfo {
     static var defaultComputeUnits: MLComputeUnits { defaultAttention.defaultComputeUnits }
     
     var bestAttention: AttentionVariant {
+        if BENCHMARK { return .splitEinsum }
         if !runningOnMac && supportsAttentionV2 { return .splitEinsumV2 }
         return ModelInfo.defaultAttention
     }
@@ -107,6 +108,7 @@ extension ModelInfo {
     var reduceMemory: Bool {
         // Enable on iOS devices, except when using quantization
         if runningOnMac { return false }
+        if BENCHMARK { return !deviceHas8GBOrMore }
         return !(quantized && deviceHas6GBOrMore)
     }
 }
@@ -186,6 +188,15 @@ extension ModelInfo {
         isXL: true
     )
     
+    // Temporary until we integrate it in `xlmbpp`
+    static let xlmbpChunked = ModelInfo(
+        modelId: "coremlfiles/coreml-stable-diffusion-mixed-bit-palettization",
+        modelVersion: "Stable Diffusion XL base [4.5 bit]",
+        supportsEncoder: true,
+        quantized: true,
+        isXL: true
+    )
+    
     static let MODELS: [ModelInfo] = {
         if deviceSupportsQuantization {
             return [
@@ -198,7 +209,8 @@ extension ModelInfo {
                 ModelInfo.v21Base,
                 ModelInfo.v21Palettized,
                 ModelInfo.xl,
-                ModelInfo.xlmbp
+                ModelInfo.xlmbp,
+                ModelInfo.xlmbpChunked,
             ]
         } else {
             return [

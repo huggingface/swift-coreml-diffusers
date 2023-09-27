@@ -77,7 +77,7 @@ struct ImageWithPlaceholder: View {
                 }
                 ProgressView(label, value: fraction, total: 1).padding()
             })
-        case .complete(let lastPrompt, let image, _, let interval):
+        case .complete(let lastPrompt, let image, _, let interval, let itsPerSecond):
             guard let theImage = image else {
                 return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
             }
@@ -87,7 +87,7 @@ struct ImageWithPlaceholder: View {
                 VStack {
                     imageView.resizable().clipShape(RoundedRectangle(cornerRadius: 20))
                     HStack {
-                        let intervalString = String(format: "Time: %.1fs", interval ?? 0)
+                        let intervalString = String(format: "%.1fs, %.2f it/s", interval ?? 0, itsPerSecond ?? 0)
                         Rectangle().fill(.clear).overlay(Text(intervalString).frame(maxWidth: .infinity, alignment: .leading).padding(.leading))
                         Rectangle().fill(.clear).overlay(
                             HStack {
@@ -114,7 +114,7 @@ struct TextToImage: View {
             generation.state = .running(nil)
             do {
                 let result = try await generation.generate()
-                generation.state = .complete(generation.positivePrompt, result.image, result.lastSeed, result.interval)
+                generation.state = .complete(generation.positivePrompt, result.image, result.lastSeed, result.interval, result.itsPerSecond)
             } catch {
                 generation.state = .failed(error)
             }
@@ -124,7 +124,7 @@ struct TextToImage: View {
     var body: some View {
         VStack {
             HStack {
-                PromptTextField(text: $generation.positivePrompt, isPositivePrompt: true, model: deviceSupportsQuantization ? ModelInfo.v21Palettized.modelVersion : ModelInfo.v21Base.modelVersion)
+                PromptTextField(text: $generation.positivePrompt, isPositivePrompt: true, model: model.modelVersion)
                 Button("Generate") {
                     submit()
                 }
