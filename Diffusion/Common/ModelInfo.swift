@@ -179,6 +179,13 @@ extension ModelInfo {
         isXL: true
     )
     
+    static let xlWithRefiner = ModelInfo(
+        modelId: "pcuenq/coreml-stable-diffusion-xl-base-with-refiner",
+        modelVersion: "SDXL with refiner (1024, macOS)",
+        supportsEncoder: true,
+        isXL: true
+    )
+
     static let xlmbp = ModelInfo(
         modelId: "apple/coreml-stable-diffusion-mixed-bit-palettization",
         modelVersion: "SDXL base (1024, macOS) [4.5 bit]",
@@ -197,7 +204,7 @@ extension ModelInfo {
 
     static let MODELS: [ModelInfo] = {
         if deviceSupportsQuantization {
-            return [
+            var models = [
                 ModelInfo.v14Base,
                 ModelInfo.v14Palettized,
                 ModelInfo.v15Base,
@@ -205,11 +212,18 @@ extension ModelInfo {
                 ModelInfo.v2Base,
                 ModelInfo.v2Palettized,
                 ModelInfo.v21Base,
-                ModelInfo.v21Palettized,
-                ModelInfo.xl,
-                ModelInfo.xlmbp,
-                ModelInfo.xlmbpChunked,
+                ModelInfo.v21Palettized
             ]
+            if runningOnMac {
+                models.append(contentsOf: [
+                    ModelInfo.xl,
+                    ModelInfo.xlWithRefiner,
+                    ModelInfo.xlmbp
+                ])
+            } else {
+                models.append(ModelInfo.xlmbpChunked)
+            }
+            return models
         } else {
             return [
                 ModelInfo.v14Base,
