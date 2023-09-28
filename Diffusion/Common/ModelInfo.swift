@@ -188,9 +188,9 @@ extension ModelInfo {
     )
     
     static let xlmbpChunked = ModelInfo(
-        modelId: "coremlfiles/coreml-stable-diffusion-mixed-bit-palettization",
+        modelId: "apple/coreml-stable-diffusion-xl-base-ios",
         modelVersion: "SDXL base (768, iOS) [4 bit]",
-        supportsEncoder: true,
+        supportsEncoder: false,
         quantized: true,
         isXL: true
     )
