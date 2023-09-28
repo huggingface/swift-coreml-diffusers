@@ -107,6 +107,7 @@ extension ModelInfo {
     var reduceMemory: Bool {
         // Enable on iOS devices, except when using quantization
         if runningOnMac { return false }
+        if isXL { return !deviceHas8GBOrMore }
         return !(quantized && deviceHas6GBOrMore)
     }
 }
@@ -173,19 +174,27 @@ extension ModelInfo {
     
     static let xl = ModelInfo(
         modelId: "apple/coreml-stable-diffusion-xl-base",
-        modelVersion: "Stable Diffusion XL base",
+        modelVersion: "SDXL base (1024, macOS)",
         supportsEncoder: true,
         isXL: true
     )
     
     static let xlmbp = ModelInfo(
         modelId: "apple/coreml-stable-diffusion-mixed-bit-palettization",
-        modelVersion: "Stable Diffusion XL base [4.5 bit]",
+        modelVersion: "SDXL base (1024, macOS) [4.5 bit]",
         supportsEncoder: true,
         quantized: true,
         isXL: true
     )
     
+    static let xlmbpChunked = ModelInfo(
+        modelId: "coremlfiles/coreml-stable-diffusion-mixed-bit-palettization",
+        modelVersion: "SDXL base (768, iOS) [4 bit]",
+        supportsEncoder: true,
+        quantized: true,
+        isXL: true
+    )
+
     static let MODELS: [ModelInfo] = {
         if deviceSupportsQuantization {
             return [
@@ -198,7 +207,8 @@ extension ModelInfo {
                 ModelInfo.v21Base,
                 ModelInfo.v21Palettized,
                 ModelInfo.xl,
-                ModelInfo.xlmbp
+                ModelInfo.xlmbp,
+                ModelInfo.xlmbpChunked,
             ]
         } else {
             return [
