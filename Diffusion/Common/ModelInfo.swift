@@ -180,7 +180,7 @@ extension ModelInfo {
     )
     
     static let xlWithRefiner = ModelInfo(
-        modelId: "pcuenq/coreml-stable-diffusion-xl-base-with-refiner",
+        modelId: "apple/coreml-stable-diffusion-xl-base-with-refiner",
         modelVersion: "SDXL with refiner (1024, macOS)",
         supportsEncoder: true,
         isXL: true
