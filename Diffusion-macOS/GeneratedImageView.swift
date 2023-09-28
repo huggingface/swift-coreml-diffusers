@@ -42,7 +42,7 @@ struct GeneratedImageView: View {
                     .buttonStyle(.plain)
                 }
             })
-        case .complete(_, let image, _, _):
+        case .complete(_, let image, _, _, _):
             guard let theImage = image else {
                 return AnyView(Image(systemName: "exclamationmark.triangle").resizable())
             }

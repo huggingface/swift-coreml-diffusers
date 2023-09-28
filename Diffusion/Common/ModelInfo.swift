@@ -188,7 +188,6 @@ extension ModelInfo {
         isXL: true
     )
     
-    // Temporary until we integrate it in `xlmbpp`
     static let xlmbpChunked = ModelInfo(
         modelId: "coremlfiles/coreml-stable-diffusion-mixed-bit-palettization",
         modelVersion: "SDXL base (768, iOS) [4 bit]",
