@@ -91,6 +91,7 @@ class Pipeline {
         if isXL {
             config.encoderScaleFactor = 0.13025
             config.decoderScaleFactor = 0.13025
+            config.schedulerTimestepSpacing = .karras
         }
 
         // Evenly distribute previews based on inference steps

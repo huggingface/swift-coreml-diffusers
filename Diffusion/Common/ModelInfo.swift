@@ -107,6 +107,7 @@ extension ModelInfo {
     var reduceMemory: Bool {
         // Enable on iOS devices, except when using quantization
         if runningOnMac { return false }
+        if isXL { return !deviceHas8GBOrMore }
         return !(quantized && deviceHas6GBOrMore)
     }
 }
@@ -173,22 +174,37 @@ extension ModelInfo {
     
     static let xl = ModelInfo(
         modelId: "apple/coreml-stable-diffusion-xl-base",
-        modelVersion: "Stable Diffusion XL base",
+        modelVersion: "SDXL base (1024, macOS)",
         supportsEncoder: true,
         isXL: true
     )
     
+    static let xlWithRefiner = ModelInfo(
+        modelId: "apple/coreml-stable-diffusion-xl-base-with-refiner",
+        modelVersion: "SDXL with refiner (1024, macOS)",
+        supportsEncoder: true,
+        isXL: true
+    )
+
     static let xlmbp = ModelInfo(
         modelId: "apple/coreml-stable-diffusion-mixed-bit-palettization",
-        modelVersion: "Stable Diffusion XL base [4.5 bit]",
+        modelVersion: "SDXL base (1024, macOS) [4.5 bit]",
         supportsEncoder: true,
         quantized: true,
         isXL: true
     )
     
+    static let xlmbpChunked = ModelInfo(
+        modelId: "apple/coreml-stable-diffusion-xl-base-ios",
+        modelVersion: "SDXL base (768, iOS) [4 bit]",
+        supportsEncoder: false,
+        quantized: true,
+        isXL: true
+    )
+
     static let MODELS: [ModelInfo] = {
         if deviceSupportsQuantization {
-            return [
+            var models = [
                 ModelInfo.v14Base,
                 ModelInfo.v14Palettized,
                 ModelInfo.v15Base,
@@ -196,10 +212,18 @@ extension ModelInfo {
                 ModelInfo.v2Base,
                 ModelInfo.v2Palettized,
                 ModelInfo.v21Base,
-                ModelInfo.v21Palettized,
-                ModelInfo.xl,
-                ModelInfo.xlmbp
+                ModelInfo.v21Palettized
             ]
+            if runningOnMac {
+                models.append(contentsOf: [
+                    ModelInfo.xl,
+                    ModelInfo.xlWithRefiner,
+                    ModelInfo.xlmbp
+                ])
+            } else {
+                models.append(ModelInfo.xlmbpChunked)
+            }
+            return models
         } else {
             return [
                 ModelInfo.v14Base,

@@ -9,9 +9,14 @@
 import SwiftUI
 import Combine
 
-let model = deviceSupportsQuantization ? ModelInfo.v21Palettized : ModelInfo.v21Base
+func iosModel() -> ModelInfo {
+    guard deviceSupportsQuantization else { return ModelInfo.v21Base }
+    if deviceHas6GBOrMore { return ModelInfo.xlmbpChunked }
+    return ModelInfo.v21Palettized
+}
 
 struct LoadingView: View {
+
     @StateObject var generation = GenerationContext()
 
     @State private var preparationPhase = "Downloading…"
@@ -40,7 +45,7 @@ struct LoadingView: View {
         .environmentObject(generation)
         .onAppear {
             Task.init {
-                let loader = PipelineLoader(model: model)
+                let loader = PipelineLoader(model: iosModel())
                 stateSubscriber = loader.statePublisher.sink { state in
                     DispatchQueue.main.async {
                         switch state {
