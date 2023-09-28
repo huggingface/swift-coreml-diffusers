@@ -175,14 +175,14 @@ extension ModelInfo {
     
     static let xl = ModelInfo(
         modelId: "apple/coreml-stable-diffusion-xl-base",
-        modelVersion: "Stable Diffusion XL base",
+        modelVersion: "SDXL base (1024, macOS)",
         supportsEncoder: true,
         isXL: true
     )
     
     static let xlmbp = ModelInfo(
         modelId: "apple/coreml-stable-diffusion-mixed-bit-palettization",
-        modelVersion: "Stable Diffusion XL base [4.5 bit]",
+        modelVersion: "SDXL base (1024, macOS) [4.5 bit]",
         supportsEncoder: true,
         quantized: true,
         isXL: true
@@ -191,7 +191,7 @@ extension ModelInfo {
     // Temporary until we integrate it in `xlmbpp`
     static let xlmbpChunked = ModelInfo(
         modelId: "coremlfiles/coreml-stable-diffusion-mixed-bit-palettization",
-        modelVersion: "Stable Diffusion XL base [4.5 bit]",
+        modelVersion: "SDXL base (768, iOS) [4 bit]",
         supportsEncoder: true,
         quantized: true,
         isXL: true
