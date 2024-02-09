@@ -6,7 +6,7 @@
       "location" : "https://github.com/buh/CompactSlider.git",
       "state" : {
         "branch" : "main",
-        "revision" : "6d591a76caecd583ad69fbcd06f2fb83135318c0"
+        "revision" : "31a4db8ef10f32e574be35399b10b00e05d27e38"
       }
     },
     {
@@ -15,7 +15,7 @@
       "location" : "https://github.com/apple/ml-stable-diffusion",
       "state" : {
         "branch" : "main",
-        "revision" : "94814cfa41935efd8151a43758360a54e4e3c5d5"
+        "revision" : "d456a972cd7d84cab2ec353a29896d59b8602248"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/weichsel/ZIPFoundation.git",
       "state" : {
-        "revision" : "43ec568034b3731101dbf7670765d671c30f54f3",
-        "version" : "0.9.16"
+        "revision" : "b979e8b52c7ae7f3f39fa0182e738e9e7257eb78",
+        "version" : "0.9.18"
       }
     }
   ],
