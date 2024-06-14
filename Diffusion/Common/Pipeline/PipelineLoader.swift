@@ -18,7 +18,7 @@ class PipelineLoader {
     let model: ModelInfo
     let computeUnits: ComputeUnits
     let maxSeed: UInt32
-    
+
     private var downloadSubscriber: Cancellable?
 
     init(model: ModelInfo, computeUnits: ComputeUnits? = nil, maxSeed: UInt32 = UInt32.max) {
@@ -28,7 +28,7 @@ class PipelineLoader {
         state = .undetermined
         setInitialState()
     }
-        
+
     enum PipelinePreparationPhase {
         case undetermined
         case waitingToDownload
@@ -39,7 +39,7 @@ class PipelineLoader {
         case loaded
         case failed(Error)
     }
-    
+
     var state: PipelinePreparationPhase {
         didSet {
             statePublisher.value = state
@@ -82,38 +82,38 @@ extension PipelineLoader {
     var url: URL {
         return model.modelURL(for: variant)
     }
-    
+
     var filename: String {
         return url.lastPathComponent
     }
-    
+
     var downloadedURL: URL { PipelineLoader.models.appendingPathComponent(filename) }
 
     var uncompressURL: URL { PipelineLoader.models }
-    
+
     var packagesFilename: String { (filename as NSString).deletingPathExtension }
-    
+
     var compiledURL: URL { downloadedURL.deletingLastPathComponent().appendingPathComponent(packagesFilename)  }
 
     var downloaded: Bool {
         return FileManager.default.fileExists(atPath: downloadedURL.path)
     }
-    
+
     var ready: Bool {
         return FileManager.default.fileExists(atPath: compiledURL.path)
     }
-    
+
     var variant: AttentionVariant {
         switch computeUnits {
         case .cpuOnly           : return .original          // Not supported yet
         case .cpuAndGPU         : return .original
         case .cpuAndNeuralEngine: return model.supportsAttentionV2 ? .splitEinsumV2 : .splitEinsum
-        case .all               : return .splitEinsum
+        case .all               : return model.isSD3 ? .original : .splitEinsum
         @unknown default:
             fatalError("Unknown MLComputeUnits")
         }
     }
-    
+
     func prepare() async throws -> Pipeline {
         do {
             do {
@@ -131,11 +131,11 @@ extension PipelineLoader {
             throw error
         }
     }
-    
+
     @discardableResult
     func download() async throws -> URL {
         if ready || downloaded { return downloadedURL }
-        
+
         let downloader = Downloader(from: url, to: downloadedURL)
         self.downloader = downloader
         downloadSubscriber = downloader.downloadState.sink { state in
@@ -146,7 +146,7 @@ extension PipelineLoader {
         try downloader.waitUntilDone()
         return downloadedURL
     }
-    
+
     func unzip() async throws {
         guard downloaded else { return }
         state = .uncompressing
@@ -160,7 +160,7 @@ extension PipelineLoader {
         try FileManager.default.removeItem(at: downloadedURL)
         state = .readyOnDisk
     }
-    
+
     func load(url: URL) async throws -> StableDiffusionPipelineProtocol {
         let beginDate = Date()
         let configuration = MLModelConfiguration()
@@ -169,10 +169,19 @@ extension PipelineLoader {
         if model.isXL {
             if #available(macOS 14.0, iOS 17.0, *) {
                 pipeline = try StableDiffusionXLPipeline(resourcesAt: url,
-                                                       configuration: configuration,
-                                                       reduceMemory: model.reduceMemory)
+                                                         configuration: configuration,
+                                                         reduceMemory: model.reduceMemory)
             } else {
                 throw "Stable Diffusion XL requires macOS 14"
+            }
+
+        } else if model.isSD3 {
+            if #available(macOS 14.0, iOS 17.0, *) {
+                pipeline = try StableDiffusion3Pipeline(resourcesAt: url,
+                                                        configuration: configuration,
+                                                        reduceMemory: model.reduceMemory)
+            } else {
+                throw "Stable Diffusion 3 requires macOS 14"
             }
         } else {
             pipeline = try StableDiffusionPipeline(resourcesAt: url,

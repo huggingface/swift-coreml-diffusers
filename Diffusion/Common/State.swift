@@ -11,7 +11,7 @@ import SwiftUI
 import StableDiffusion
 import CoreML
 
-let DEFAULT_MODEL = ModelInfo.v2Base
+let DEFAULT_MODEL = ModelInfo.sd3
 let DEFAULT_PROMPT = "Labrador in the style of Vermeer"
 
 enum GenerationState {
@@ -30,11 +30,14 @@ public enum StableDiffusionScheduler: String {
     case pndmScheduler
     /// Scheduler that uses a second order DPM-Solver++ algorithm
     case dpmSolverMultistepScheduler
+    /// Scheduler for rectified flow based multimodal diffusion transformer models
+    case discreteFlowScheduler
 
     func asStableDiffusionScheduler() -> StableDiffusion.StableDiffusionScheduler {
         switch self {
         case .pndmScheduler: return StableDiffusion.StableDiffusionScheduler.pndmScheduler
         case .dpmSolverMultistepScheduler: return StableDiffusion.StableDiffusionScheduler.dpmSolverMultistepScheduler
+        case .discreteFlowScheduler: return StableDiffusion.StableDiffusionScheduler.discreteFlowScheduler
         }
     }
 }
@@ -58,15 +61,15 @@ class GenerationContext: ObservableObject {
     }
     @Published var state: GenerationState = .startup
     
-    @Published var positivePrompt = DEFAULT_PROMPT
-    @Published var negativePrompt = ""
-    
+    @Published var positivePrompt = Settings.shared.prompt
+    @Published var negativePrompt = Settings.shared.negativePrompt
+
     // FIXME: Double to support the slider component
-    @Published var steps = 25.0
-    @Published var numImages = 1.0
-    @Published var seed: UInt32 = 0
-    @Published var guidanceScale = 7.5
-    @Published var previews = runningOnMac ? 5.0 : 0.0
+    @Published var steps: Double = Settings.shared.stepCount
+    @Published var numImages: Double = 1.0
+    @Published var seed: UInt32 = Settings.shared.seed
+    @Published var guidanceScale: Double = Settings.shared.guidanceScale
+    @Published var previews: Double = runningOnMac ? Settings.shared.previewCount : 0.0
     @Published var disableSafety = false
     @Published var previewImage: CGImage? = nil
 
@@ -112,16 +115,28 @@ class Settings {
         case model
         case safetyCheckerDisclaimer
         case computeUnits
+        case prompt
+        case negativePrompt
+        case guidanceScale
+        case stepCount
+        case previewCount
+        case seed
     }
-    
+
     private init() {
         defaults.register(defaults: [
             Keys.model.rawValue: ModelInfo.v2Base.modelId,
             Keys.safetyCheckerDisclaimer.rawValue: false,
-            Keys.computeUnits.rawValue: -1      // Use default
+            Keys.computeUnits.rawValue: -1,      // Use default
+            Keys.prompt.rawValue: DEFAULT_PROMPT,
+            Keys.negativePrompt.rawValue: "",
+            Keys.guidanceScale.rawValue: 7.5,
+            Keys.stepCount.rawValue: 25,
+            Keys.previewCount.rawValue: 5,
+            Keys.seed.rawValue: 0
         ])
     }
-    
+
     var currentModel: ModelInfo {
         set {
             defaults.set(newValue.modelId, forKey: Keys.model.rawValue)
@@ -131,7 +146,64 @@ class Settings {
             return ModelInfo.from(modelId: modelId) ?? DEFAULT_MODEL
         }
     }
-    
+
+    var prompt: String {
+        set {
+            defaults.set(newValue, forKey: Keys.prompt.rawValue)
+        }
+        get {
+            return defaults.string(forKey: Keys.prompt.rawValue) ?? DEFAULT_PROMPT
+        }
+    }
+
+    var negativePrompt: String {
+        set {
+            defaults.set(newValue, forKey: Keys.negativePrompt.rawValue)
+        }
+        get {
+            return defaults.string(forKey: Keys.negativePrompt.rawValue) ?? ""
+        }
+    }
+
+    var guidanceScale: Double {
+        set {
+            defaults.set(newValue, forKey: Keys.guidanceScale.rawValue)
+        }
+        get {
+            return defaults.double(forKey: Keys.guidanceScale.rawValue)
+        }
+    }
+
+    var stepCount: Double {
+        set {
+            defaults.set(newValue, forKey: Keys.stepCount.rawValue)
+        }
+        get {
+            return defaults.double(forKey: Keys.stepCount.rawValue)
+        }
+    }
+
+    var previewCount: Double {
+        set {
+            defaults.set(newValue, forKey: Keys.previewCount.rawValue)
+        }
+        get {
+            return defaults.double(forKey: Keys.previewCount.rawValue)
+        }
+    }
+
+    var seed: UInt32 {
+        set {
+            defaults.set(String(newValue), forKey: Keys.seed.rawValue)
+        }
+        get {
+            if let seedString = defaults.string(forKey: Keys.seed.rawValue), let seedValue = UInt32(seedString) {
+                return seedValue
+            }
+            return 0
+        }
+    }
+
     var safetyCheckerDisclaimerShown: Bool {
         set {
             defaults.set(newValue, forKey: Keys.safetyCheckerDisclaimer.rawValue)

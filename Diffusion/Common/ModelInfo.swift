@@ -46,7 +46,11 @@ struct ModelInfo {
     /// Whether this is a Stable Diffusion XL model
     // TODO: retrieve from remote config
     let isXL: Bool
-    
+
+    /// Whether this is a Stable Diffusion 3 model
+    // TODO: retrieve from remote config
+    let isSD3: Bool
+
     //TODO: refactor all these properties
     init(modelId: String, modelVersion: String,
          originalAttentionSuffix: String = "original_compiled",
@@ -55,7 +59,8 @@ struct ModelInfo {
          supportsEncoder: Bool = false,
          supportsAttentionV2: Bool = false,
          quantized: Bool = false,
-         isXL: Bool = false) {
+         isXL: Bool = false,
+         isSD3: Bool = false) {
         self.modelId = modelId
         self.modelVersion = modelVersion
         self.originalAttentionSuffix = originalAttentionSuffix
@@ -65,6 +70,7 @@ struct ModelInfo {
         self.supportsAttentionV2 = supportsAttentionV2
         self.quantized = quantized
         self.isXL = isXL
+        self.isSD3 = isSD3
     }
 }
 
@@ -202,6 +208,22 @@ extension ModelInfo {
         isXL: true
     )
 
+    static let sd3 = ModelInfo(
+        modelId: "argmaxinc/coreml-stable-diffusion-3-medium",
+        modelVersion: "SD3 medium (512, macOS)",
+        supportsEncoder: false,
+        quantized: false,
+        isSD3: true
+    )
+
+    static let sd3highres = ModelInfo(
+        modelId: "argmaxinc/coreml-stable-diffusion-3-medium-1024-t5",
+        modelVersion: "SD3 medium (1024, T5, macOS)",
+        supportsEncoder: false,
+        quantized: false,
+        isSD3: true
+    )
+
     static let MODELS: [ModelInfo] = {
         if deviceSupportsQuantization {
             var models = [
@@ -218,7 +240,9 @@ extension ModelInfo {
                 models.append(contentsOf: [
                     ModelInfo.xl,
                     ModelInfo.xlWithRefiner,
-                    ModelInfo.xlmbp
+                    ModelInfo.xlmbp,
+                    ModelInfo.sd3,
+                    ModelInfo.sd3highres,
                 ])
             } else {
                 models.append(ModelInfo.xlmbpChunked)
