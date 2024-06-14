@@ -28,8 +28,14 @@ class Downloader: NSObject, ObservableObject {
         self.destination = destination
         super.init()
         
+        var config = URLSessionConfiguration.default
+        #if !os(macOS)
         // .background allows downloads to proceed in the background
-        let config = URLSessionConfiguration.background(withIdentifier: "net.pcuenca.diffusion.download")
+        // helpful for devices that may not keep the device in the foreground for the download duration
+        config = URLSessionConfiguration.background(withIdentifier: sessionIdentifier)
+        config.isDiscretionary = false
+        config.sessionSendsLaunchEvents = true
+        #endif
         urlSession = URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue())
         downloadState.value = .downloading(0)
         urlSession?.getAllTasks { tasks in

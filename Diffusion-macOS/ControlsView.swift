@@ -155,9 +155,15 @@ struct ControlsView: View {
         VStack {
             Spacer()
             PromptTextField(text: $generation.positivePrompt, isPositivePrompt: true, model: $model)
+                .onChange(of: generation.positivePrompt) { prompt in
+                    Settings.shared.prompt = prompt
+                }
                 .padding(.top, 5)
             Spacer()
             PromptTextField(text: $generation.negativePrompt, isPositivePrompt: false, model: $model)
+                .onChange(of: generation.negativePrompt) { negativePrompt in
+                    Settings.shared.negativePrompt = negativePrompt
+                }
                 .padding(.bottom, 5)
             Spacer()
         }
@@ -242,7 +248,11 @@ struct ControlsView: View {
                             Text("Guidance Scale")
                             Spacer()
                             Text(guidanceScaleValue)
-                        }.padding(.leading, 10)
+                        }
+                        .onChange(of: generation.guidanceScale) { guidanceScale in
+                            Settings.shared.guidanceScale = guidanceScale
+                        }
+                        .padding(.leading, 10)
                     } label: {
                         HStack {
                             Label("Guidance Scale", systemImage: "scalemass").foregroundColor(.secondary)
@@ -269,7 +279,11 @@ struct ControlsView: View {
                             Text("Steps")
                             Spacer()
                             Text("\(Int(generation.steps))")
-                        }.padding(.leading, 10)
+                        }
+                        .onChange(of: generation.steps) { steps in
+                            Settings.shared.stepCount = steps
+                        }
+                        .padding(.leading, 10)
                     } label: {
                         HStack {
                             Label("Step count", systemImage: "square.3.layers.3d.down.left").foregroundColor(.secondary)
@@ -295,7 +309,11 @@ struct ControlsView: View {
                             Text("Previews")
                             Spacer()
                             Text("\(Int(generation.previews))")
-                        }.padding(.leading, 10)
+                        }
+                        .onChange(of: generation.previews) { previews in
+                            Settings.shared.previewCount = previews
+                        }
+                        .padding(.leading, 10)
                     } label: {
                         HStack {
                             Label("Preview count", systemImage: "eye.square").foregroundColor(.secondary)
@@ -334,7 +352,7 @@ struct ControlsView: View {
                                     seedHelp($showSeedHelp)
                                 }
                             } else {
-                                Text("\(Int(generation.seed))")
+                                Text(generation.seed.formatted(.number.grouping(.never)))
                             }
                         }
                         .foregroundColor(.secondary)
@@ -430,8 +448,10 @@ struct ControlsView: View {
             set: { newValue in
                 if let seed = UInt32(newValue) {
                     generation.seed = seed
+                    Settings.shared.seed = seed
                 } else {
                     generation.seed = 0
+                    Settings.shared.seed = 0
                 }
             }
         )
@@ -442,8 +462,10 @@ struct ControlsView: View {
                 .onChange(of: seedBinding.wrappedValue, perform: { newValue in
                     if let seed = UInt32(newValue) {
                         generation.seed = seed
+                        Settings.shared.seed = seed
                     } else {
                         generation.seed = 0
+                        Settings.shared.seed = 0
                     }
                 })
                 .onReceive(Just(seedBinding.wrappedValue)) { newValue in
