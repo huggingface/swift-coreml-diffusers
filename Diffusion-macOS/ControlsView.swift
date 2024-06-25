@@ -108,6 +108,15 @@ struct ControlsView: View {
             return
         }
 
+        if !model.supportsNeuralEngine && generation.computeUnits == .cpuAndNeuralEngine {
+            // Reset compute units to GPU if Neural Engine is not supported
+            Settings.shared.userSelectedComputeUnits = .cpuAndGPU
+            resetComputeUnitsState()
+            print("Neural Engine not supported for model \(model), switching to GPU")
+        } else {
+            resetComputeUnitsState()
+        }
+
         Settings.shared.currentModel = model
 
         pipelineLoader?.cancel()
@@ -360,17 +369,24 @@ struct ControlsView: View {
 
                     if Capabilities.hasANE {
                         Divider()
+                        let isNeuralEngineDisabled = !(ModelInfo.from(modelVersion: model)?.supportsNeuralEngine ?? true)
                         DisclosureGroup(isExpanded: $disclosedAdvanced) {
                             HStack {
                                 Picker(selection: $generation.computeUnits, label: Text("Use")) {
                                     Text("GPU").tag(ComputeUnits.cpuAndGPU)
-                                    Text("Neural Engine").tag(ComputeUnits.cpuAndNeuralEngine)
+                                    Text("Neural Engine\(isNeuralEngineDisabled ? " (unavailable)" : "")")
+                                        .foregroundColor(isNeuralEngineDisabled ? .secondary : .primary)
+                                        .tag(ComputeUnits.cpuAndNeuralEngine)
                                     Text("GPU and Neural Engine").tag(ComputeUnits.all)
                                 }.pickerStyle(.radioGroup).padding(.leading)
                                 Spacer()
                             }
                             .onChange(of: generation.computeUnits) { units in
                                 guard let currentModel = ModelInfo.from(modelVersion: model) else { return }
+                                if isNeuralEngineDisabled && units == .cpuAndNeuralEngine {
+                                    resetComputeUnitsState()
+                                    return
+                                }
                                 let variantDownloaded = isModelDownloaded(currentModel, computeUnits: units)
                                 if variantDownloaded {
                                     updateComputeUnitsState()
