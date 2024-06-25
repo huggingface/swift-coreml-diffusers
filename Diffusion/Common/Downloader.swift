@@ -31,7 +31,7 @@ class Downloader: NSObject, ObservableObject {
         var config = URLSessionConfiguration.default
         #if !os(macOS)
         // .background allows downloads to proceed in the background
-        // helpful for devices that may not keep the device in the foreground for the download duration
+        // helpful for devices that may not keep the app in the foreground for the download duration
         config = URLSessionConfiguration.background(withIdentifier: sessionIdentifier)
         config.isDiscretionary = false
         config.sessionSendsLaunchEvents = true
