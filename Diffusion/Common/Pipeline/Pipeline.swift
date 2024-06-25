@@ -50,6 +50,13 @@ class Pipeline {
         return false
     }
 
+    var isSD3: Bool {
+        if #available(macOS 14.0, iOS 17.0, *) {
+            return (pipeline as? StableDiffusion3Pipeline) != nil
+        }
+        return false
+    }
+
     var progress: StableDiffusionProgress? = nil {
         didSet {
             progressPublisher.value = progress
@@ -92,6 +99,13 @@ class Pipeline {
             config.encoderScaleFactor = 0.13025
             config.decoderScaleFactor = 0.13025
             config.schedulerTimestepSpacing = .karras
+        }
+
+        if isSD3 {
+            config.encoderScaleFactor = 1.5305
+            config.decoderScaleFactor = 1.5305
+            config.decoderShiftFactor = 0.0609
+            config.schedulerTimestepShift = 3.0
         }
 
         // Evenly distribute previews based on inference steps

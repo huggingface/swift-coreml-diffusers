@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		16AFDD4F2C1B7D6200536A62 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = 16AFDD4E2C1B7D6200536A62 /* StableDiffusion */; };
+		16AFDD512C1B7D6700536A62 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = 16AFDD502C1B7D6700536A62 /* StableDiffusion */; };
 		8C4B32042A770C1D0090EF17 /* DiffusionImage+macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4B32032A770C1D0090EF17 /* DiffusionImage+macOS.swift */; };
 		8C4B32062A770C300090EF17 /* DiffusionImage+iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4B32052A770C300090EF17 /* DiffusionImage+iOS.swift */; };
 		8C4B32082A77F90C0090EF17 /* Utils_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C4B32072A77F90C0090EF17 /* Utils_iOS.swift */; };
@@ -16,8 +18,6 @@
 		8CEEB7D92A54C88C00C23829 /* DiffusionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEEB7D82A54C88C00C23829 /* DiffusionImage.swift */; };
 		8CEEB7DA2A54C88C00C23829 /* DiffusionImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CEEB7D82A54C88C00C23829 /* DiffusionImage.swift */; };
 		EB067F872992E561004D1AD9 /* HelpContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB067F862992E561004D1AD9 /* HelpContent.swift */; };
-		EB25B3D62A3A2DC4000E25A1 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB25B3D52A3A2DC4000E25A1 /* StableDiffusion */; };
-		EB25B3D82A3A2DD5000E25A1 /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = EB25B3D72A3A2DD5000E25A1 /* StableDiffusion */; };
 		EB560F0429A3C20800C0F8B8 /* Capabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB560F0329A3C20800C0F8B8 /* Capabilities.swift */; };
 		EBB5BA5329425BEE003A2A5B /* PipelineLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5229425BEE003A2A5B /* PipelineLoader.swift */; };
 		EBB5BA5A29426E06003A2A5B /* Downloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5BA5929426E06003A2A5B /* Downloader.swift */; };
@@ -116,8 +116,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EB25B3D62A3A2DC4000E25A1 /* StableDiffusion in Frameworks */,
 				EBB5BA5D294504DE003A2A5B /* ZIPFoundation in Frameworks */,
+				16AFDD512C1B7D6700536A62 /* StableDiffusion in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,7 +140,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F155203C297118E700DC009B /* CompactSlider in Frameworks */,
-				EB25B3D82A3A2DD5000E25A1 /* StableDiffusion in Frameworks */,
+				16AFDD4F2C1B7D6200536A62 /* StableDiffusion in Frameworks */,
 				EBDD7DAF29731FB300C1C4B2 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -318,7 +318,7 @@
 			name = Diffusion;
 			packageProductDependencies = (
 				EBB5BA5C294504DE003A2A5B /* ZIPFoundation */,
-				EB25B3D52A3A2DC4000E25A1 /* StableDiffusion */,
+				16AFDD502C1B7D6700536A62 /* StableDiffusion */,
 			);
 			productName = Diffusion;
 			productReference = EBE755C5293E37DD00806B32 /* Diffusion.app */;
@@ -378,7 +378,7 @@
 			packageProductDependencies = (
 				F155203B297118E700DC009B /* CompactSlider */,
 				EBDD7DAE29731FB300C1C4B2 /* ZIPFoundation */,
-				EB25B3D72A3A2DD5000E25A1 /* StableDiffusion */,
+				16AFDD4E2C1B7D6200536A62 /* StableDiffusion */,
 			);
 			productName = "Diffusion-macOS";
 			productReference = F15520212971093300DC009B /* Diffusers.app */;
@@ -422,7 +422,7 @@
 			packageReferences = (
 				EBB5BA5B294504DE003A2A5B /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				F155203A297118E600DC009B /* XCRemoteSwiftPackageReference "CompactSlider" */,
-				EB25B3D42A3A2DC4000E25A1 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
+				16AFDD4D2C1B7D4800536A62 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */,
 			);
 			productRefGroup = EBE755C6293E37DD00806B32 /* Products */;
 			projectDirPath = "";
@@ -876,7 +876,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -904,7 +904,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.1;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.huggingface.Diffusers;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -963,9 +963,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		EB25B3D42A3A2DC4000E25A1 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */ = {
+		16AFDD4D2C1B7D4800536A62 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/ml-stable-diffusion";
+			repositoryURL = "https://github.com/argmaxinc/ml-stable-diffusion.git";
 			requirement = {
 				branch = main;
 				kind = branch;
@@ -990,18 +990,18 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		16AFDD4E2C1B7D6200536A62 /* StableDiffusion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16AFDD4D2C1B7D4800536A62 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
+			productName = StableDiffusion;
+		};
+		16AFDD502C1B7D6700536A62 /* StableDiffusion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 16AFDD4D2C1B7D4800536A62 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
+			productName = StableDiffusion;
+		};
 		EB0199482A31FEAF00B133E2 /* StableDiffusion */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = StableDiffusion;
-		};
-		EB25B3D52A3A2DC4000E25A1 /* StableDiffusion */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB25B3D42A3A2DC4000E25A1 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
-			productName = StableDiffusion;
-		};
-		EB25B3D72A3A2DD5000E25A1 /* StableDiffusion */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EB25B3D42A3A2DC4000E25A1 /* XCRemoteSwiftPackageReference "ml-stable-diffusion" */;
 			productName = StableDiffusion;
 		};
 		EBB5BA5C294504DE003A2A5B /* ZIPFoundation */ = {

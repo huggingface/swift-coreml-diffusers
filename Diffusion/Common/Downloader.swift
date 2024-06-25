@@ -28,8 +28,14 @@ class Downloader: NSObject, ObservableObject {
         self.destination = destination
         super.init()
         
+        var config = URLSessionConfiguration.default
+        #if !os(macOS)
         // .background allows downloads to proceed in the background
-        let config = URLSessionConfiguration.background(withIdentifier: "net.pcuenca.diffusion.download")
+        // helpful for devices that may not keep the app in the foreground for the download duration
+        config = URLSessionConfiguration.background(withIdentifier: "net.pcuenca.diffusion.download")
+        config.isDiscretionary = false
+        config.sessionSendsLaunchEvents = true
+        #endif
         urlSession = URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue())
         downloadState.value = .downloading(0)
         urlSession?.getAllTasks { tasks in
@@ -75,8 +81,8 @@ class Downloader: NSObject, ObservableObject {
 }
 
 extension Downloader: URLSessionDelegate, URLSessionDownloadDelegate {
-    func urlSession(_: URLSession, downloadTask: URLSessionDownloadTask, didWriteData _: Int64, totalBytesWritten _: Int64, totalBytesExpectedToWrite _: Int64) {
-        downloadState.value = .downloading(downloadTask.progress.fractionCompleted)
+    func urlSession(_: URLSession, downloadTask: URLSessionDownloadTask, didWriteData _: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        downloadState.value = .downloading(Double(totalBytesWritten) / Double(totalBytesExpectedToWrite))
     }
 
     func urlSession(_: URLSession, downloadTask _: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
