@@ -123,6 +123,8 @@ struct StatusView: View {
                         .frame(height: 50)
                 }
                 .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(KeyEquivalent("\r"), modifiers:.command)
+                       .help("Genertae new image (⌘+return)")
                 
                 AnyView(generationStatusView())
             }
