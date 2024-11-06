@@ -38,28 +38,33 @@ class Downloader: NSObject, ObservableObject {
         #endif
         urlSession = URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue())
         downloadState.value = .downloading(0)
-        urlSession?.getAllTasks { tasks in
-            // If there's an existing pending background task with the same URL, let it proceed.
+        urlSession?.getAllTasks { [weak self] tasks in
+            // Avoiding retain cycles by capturing weak self in stead of self.
+            guard let weakSelf = self else { return }
             guard tasks.filter({ $0.originalRequest?.url == url }).isEmpty else {
                 print("Already downloading \(url)")
                 return
             }
             print("Starting download of \(url)")
-            
+        
             var request = URLRequest(url: url)
             if let authToken = authToken {
                 request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
             }
-
-            self.urlSession?.downloadTask(with: request).resume()
+            // if we used strong self, retain cycles may occur, especially in async network calls.
+            // To avoid that, we should use weak self.
+            weakSelf.urlSession?.downloadTask(with: request).resume()
         }
+
     }
     
     @discardableResult
     func waitUntilDone() throws -> URL {
         // It's either this, or stream the bytes ourselves (add to a buffer, save to disk, etc; boring and finicky)
         let semaphore = DispatchSemaphore(value: 0)
-        stateSubscriber = downloadState.sink { state in
+        stateSubscriber = downloadState.sink { [weak self] state in
+            // Without [weak self], this could create a retain cycle, especially since sink maintains a strong reference to self for the duration of the subscription.
+            guard let weakSelf = self else { return }
             switch state {
             case .completed: semaphore.signal()
             case .failed:    semaphore.signal()
